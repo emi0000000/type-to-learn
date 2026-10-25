@@ -1,5 +1,5 @@
 // principal.js: arranca el juego y maneja el menú principal.
-// El menú está dividido en secciones (Idiomas, Matemáticas, Código, Datos, Teclado y Ratón); cada una tiene sus modos.
+// El menú está dividido en secciones (Idiomas, Matemáticas, Código, Datos, Teclado, Ratón y Redes); cada una tiene sus modos.
 // Es el último archivo que se carga, así que todo lo demás ya está disponible.
 
 // Idiomas que se pueden aprender en la sección Idiomas (el desplegable «Quiero aprender»).
@@ -17,7 +17,8 @@ function tarjetasDeOtroIdioma(idioma, insignia, color) {
 
 // Secciones del menú con sus modos.
 // Cada modo: { modo, insignia (texto del cuadrado de color), color, archivo (de dónde salen sus frases),
-//              aprende (en Idiomas: para qué idiomas que se aprenden sale la tarjeta) }.
+//              aprende (en Idiomas: para qué idiomas que se aprenden sale la tarjeta),
+//              nivel (en Redes: 1, 2 o 3, según el nivel elegido) }.
 // Los botones de cada tarjeta y su línea de estado los crea pintarSeccion.
 const SECCIONES = [
   // Idiomas: se elige qué idioma se quiere aprender y salen sus modos.
@@ -100,6 +101,20 @@ const SECCIONES = [
     // Una tarjeta por lección.
     modos: Raton.modos.map((modo, posicion) => ({ modo, insignia: ["↖", "1×", "2×", "◑", "⇢", "↕", "✱"][posicion], color: ["cian", "azul", "violeta", "coral", "verde", "ambar", "cian"][posicion] })),
   },
+  // Redes: laboratorios como los de Packet Tracer (Cisco y Linux) y comandos sueltos.
+  {
+    id: "redes", // nombre interno
+    ajuste: "nivelRedes", // desplegable de nivel encima de las tarjetas
+    nota: "seccion.nota.redes", // aclaración bajo el desplegable
+    modos: [
+      // Un laboratorio por tarjeta (solo los del nivel elegido).
+      ...Laboratorio.modos.map((modo) => ({ modo, insignia: modo.insignia, color: modo.color, nivel: modo.nivel })),
+      // Comandos sueltos del nivel elegido.
+      { modo: ModosRedes.escribir, insignia: ">_", color: "verde", archivo: "datos/redes.js" }, // escribir comandos
+      { modo: ModosRedes.errores, insignia: "✓✗", color: "coral", archivo: "datos/redes.js" }, // detectar el error
+      { modo: ModosRedes.usos, insignia: "?#", color: "azul", archivo: "datos/redes.js" }, // casos de uso
+    ],
+  },
 ];
 
 // Opciones de los desplegables de las secciones: ajuste -> [valor, clave del texto].
@@ -110,6 +125,8 @@ const OPCIONES_DE_SECCION = {
   lenguajeCodigo: ["todos", ...ModosCodigo.LENGUAJES].map((valor) => [valor, `lenguaje.${valor}`]),
   // Herramientas de análisis de datos.
   herramientaDatos: ["todos", ...ModosDatos.LENGUAJES].map((valor) => [valor, `lenguaje.${valor}`]),
+  // Nivel de la sección Redes.
+  nivelRedes: ["facil", "medio", "dificil"].map((valor) => [valor, `redes.nivel.${valor}`]),
   // Tipos de teclado.
   teclado: ["auto", "es", "la", "us"].map((valor) => [valor, valor === "auto" ? "teclado.auto" : `teclado.nombre.${valor}`]),
 };
@@ -123,17 +140,19 @@ function seccionActual() {
   return SECCIONES.find((seccion) => seccion.id === Ajustes.valor("seccion")) || SECCIONES[0];
 }
 
-// Tarjetas que se ven en una sección (en Idiomas, solo las del idioma que se aprende).
+// Tarjetas que se ven en una sección (en Idiomas, solo las del idioma que se aprende; en Redes, las del nivel).
 function modosVisibles(seccion) {
   // Idioma que se aprende.
   const aprende = Ajustes.valor("idiomaAprender");
-  // Las que no dicen idioma, o las de ese idioma.
-  return seccion.modos.filter((tarjeta) => !tarjeta.aprende || tarjeta.aprende.includes(aprende));
+  // Nivel de Redes (1, 2 o 3).
+  const nivel = ["facil", "medio", "dificil"].indexOf(Ajustes.valor("nivelRedes")) + 1;
+  // Las que no dicen idioma ni nivel, o las que coinciden.
+  return seccion.modos.filter((tarjeta) => (!tarjeta.aprende || tarjeta.aprende.includes(aprende)) && (!tarjeta.nivel || tarjeta.nivel === nivel));
 }
 
 // ¿Se puede jugar un modo? Hace falta que tenga frases y, si lo pide, que el navegador sepa hacerlo (voz, micrófono).
 function sePuedeJugar(modo) {
-  // Las lecciones del ratón siempre se pueden.
+  // Las lecciones del ratón y los laboratorios siempre se pueden.
   if (modo.empezar) {
     // Sí.
     return true;
@@ -150,7 +169,7 @@ function empezar(modo, opciones = {}) {
     // Pasamos a pantalla completa.
     App.entrarPantallaCompleta();
   }
-  // Las lecciones del ratón tienen su propia pantalla.
+  // Las lecciones del ratón y los laboratorios tienen su propia pantalla.
   if (modo.empezar) {
     // Empezamos la lección.
     modo.empezar();
@@ -214,8 +233,8 @@ function crearTarjeta({ modo, insignia, color, archivo, extra }, posicion) {
   const cuadro = crearElemento("span", "modo-insignia", insignia);
   // Los lectores de pantalla no la leen.
   cuadro.setAttribute("aria-hidden", "true");
-  // Tema o dirección del modo.
-  const direccion = crearElemento("span", "modo-direccion", t(`modo.${modo.id}.direccion`));
+  // Tema o dirección del modo (los laboratorios traen sus propios textos).
+  const direccion = crearElemento("span", "modo-direccion", modo.direccion ? modo.direccion() : t(`modo.${modo.id}.direccion`));
   // Juntamos la cabecera.
   cabecera.append(cuadro, direccion);
   // Las nueve primeras tarjetas tienen tecla de atajo.
@@ -228,18 +247,18 @@ function crearTarjeta({ modo, insignia, color, archivo, extra }, posicion) {
     cabecera.append(tecla);
   }
   // Nombre del modo.
-  const nombre = crearElemento("h2", "modo-nombre", t(`modo.${modo.id}.nombre`));
+  const nombre = crearElemento("h2", "modo-nombre", modo.nombre ? modo.nombre() : t(`modo.${modo.id}.nombre`));
   // Qué se hace en él.
-  const detalle = crearElemento("p", "modo-detalle", t(`modo.${modo.id}.detalle`));
+  const detalle = crearElemento("p", "modo-detalle", modo.detalle ? modo.detalle() : t(`modo.${modo.id}.detalle`));
   // Línea de estado: frases, sin ver, récord.
   const estado = crearElemento("p", "modo-estado");
   // Botones.
   const acciones = crearElemento("div", "modo-acciones");
-  // Botón de jugar (en el ratón, «Empezar»).
+  // Botón de jugar (en el ratón y los laboratorios, «Empezar»).
   const jugar = crearBoton("boton-principal", t(modo.empezar ? "menu.empezar" : "menu.jugar"), () => empezar(modo));
   // Lo añadimos.
   acciones.append(jugar);
-  // Las lecciones del ratón tienen su propia línea de estado (objetivos y mejor tiempo).
+  // Las lecciones del ratón y los laboratorios tienen su propia línea de estado.
   if (modo.empezar) {
     // Estado.
     estado.textContent = modo.estado();

@@ -55,6 +55,8 @@
   <script defer src="datos/falsos-amigos.js"></script>
   <script defer src="datos/analisis.js"></script>
   <script defer src="datos/lenguajes.js"></script>
+  <script defer src="datos/redes.js"></script>
+  <script defer src="datos/laboratorios.js"></script>
   <!-- 2. Textos de la interfaz en español e inglés. -->
   <script defer src="js/textos.js"></script>
   <!-- 3. Guardar datos en el navegador. -->
@@ -73,6 +75,8 @@
   <!-- 7 ter. Números con letras y problemas de cálculo. -->
   <script defer src="js/numerosEnPalabras.js"></script>
   <script defer src="js/aritmetica.js"></script>
+  <!-- 7 quater. Lógica de la consola de los laboratorios (Cisco, Linux y PC). -->
+  <script defer src="js/consola.js"></script>
   <!-- 8. Cambiar de pantalla. -->
   <script defer src="js/pantallas.js"></script>
   <!-- 9. Ajustes: idioma, tema, dificultad, sonido, voz. -->
@@ -104,9 +108,12 @@
   <script defer src="js/modos/matematicas.js"></script>
   <script defer src="js/modos/calculos.js"></script>
   <script defer src="js/modos/codigo.js"></script>
+  <script defer src="js/modos/redes.js"></script>
   <script defer src="js/modos/teclado.js"></script>
   <!-- 14 bis. Lecciones del ratón (tienen su propia pantalla). -->
   <script defer src="js/raton.js"></script>
+  <!-- 14 ter. Laboratorios de redes (tienen su propia pantalla). -->
+  <script defer src="js/laboratorio.js"></script>
   <!-- 15. Arranque y menú: siempre el último. -->
   <script defer src="js/principal.js"></script>
 </head>
@@ -204,7 +211,7 @@
         </ul>
       </div>
 
-      <!-- Pestañas de las secciones: Idiomas, Matemáticas, Código, Datos, Teclado y Ratón (las crea principal.js). -->
+      <!-- Pestañas de las secciones: Idiomas, Matemáticas, Código, Datos, Teclado, Ratón y Redes (las crea principal.js). -->
       <nav id="menu-secciones" class="secciones" role="tablist" data-t-aria-label="menu.secciones"></nav>
       <!-- Opciones de la sección (idioma que se aprende, lenguaje de programación, tipo de teclado...). -->
       <div id="menu-opciones" class="seccion-opciones"></div>
@@ -237,6 +244,8 @@
           <li data-t="reglas.9"></li>
           <!-- Dictado y pronunciación. -->
           <li data-t="reglas.10"></li>
+          <!-- Laboratorios de redes. -->
+          <li data-t="reglas.11"></li>
         </ol>
       </details>
       <!-- Pista de los atajos de teclado (se oculta en pantallas táctiles). -->
@@ -406,6 +415,141 @@
         <p class="fuente"></p>
         <!-- Terminar ahora. -->
         <button id="raton-terminar" class="boton-secundario" type="button" data-t="juego.terminar">Terminar partida</button>
+      </footer>
+    </section>
+
+    <!-- ===== Pantalla de los laboratorios de redes (la maneja laboratorio.js) ===== -->
+    <section id="pantalla-lab" class="pantalla" aria-labelledby="lab-titulo" hidden>
+      <!-- Cabecera: nivel, título, forma de hacerlo y contadores. -->
+      <header class="lab-cabecera">
+        <!-- Nivel y título. -->
+        <div class="lab-titulos">
+          <!-- Nivel y tipo de equipo (lo pone laboratorio.js). -->
+          <p id="lab-nivel" class="etiqueta-modo"></p>
+          <!-- Título del laboratorio. -->
+          <h2 id="lab-titulo" class="lab-titulo"></h2>
+        </div>
+        <!-- Guiado, plantilla o examen. -->
+        <div id="lab-ayudas" class="lab-ayudas" role="radiogroup" data-t-aria-label="lab.ayuda">
+          <!-- Se ve el comando entero. -->
+          <button type="button" role="radio" data-ayuda="guiado" data-t="lab.ayuda.guiado" data-t-title="lab.ayuda.guiadoTitulo">Guiado</button>
+          <!-- Se ve con huecos. -->
+          <button type="button" role="radio" data-ayuda="plantilla" data-t="lab.ayuda.plantilla" data-t-title="lab.ayuda.plantillaTitulo">Plantilla</button>
+          <!-- Solo la tarea. -->
+          <button type="button" role="radio" data-ayuda="examen" data-t="lab.ayuda.examen" data-t-title="lab.ayuda.examenTitulo">Examen</button>
+        </div>
+        <!-- Contadores. -->
+        <dl class="cifras">
+          <!-- Paso actual. -->
+          <div><dt data-t="lab.paso">Paso</dt><dd id="lab-paso">1/1</dd></div>
+          <!-- Errores. -->
+          <div><dt data-t="juego.errores">Errores</dt><dd id="lab-errores">0</dd></div>
+          <!-- Tiempo. -->
+          <div><dt data-t="fin.tiempo">Tiempo</dt><dd id="lab-tiempo">0:00</dd></div>
+        </dl>
+      </header>
+
+      <!-- Parte de trabajo (se oculta al terminar). -->
+      <div id="lab-cuerpo" class="lab-cuerpo">
+        <!-- Columna principal: tarea y consola. -->
+        <div class="lab-principal">
+          <!-- La tarea. -->
+          <div class="lab-tarea">
+            <!-- Parte del laboratorio. -->
+            <p id="lab-parte" class="lab-parte" hidden></p>
+            <!-- Lo que hay que hacer. -->
+            <p id="lab-tarea-texto" class="lab-tarea-texto"></p>
+            <!-- El comando, la plantilla o la pista. -->
+            <p id="lab-guia" class="lab-guia" hidden></p>
+            <!-- Pregunta del cuestionario. -->
+            <div id="lab-pregunta" class="lab-pregunta" hidden>
+              <!-- Texto de la pregunta, con la pista de las teclas. -->
+              <p class="lab-pregunta-titulo"><span class="lab-pregunta-texto"></span> <span class="pista" data-t="juego.pista">Pulsa 1, 2 o 3</span></p>
+              <!-- Opciones (las crea laboratorio.js). -->
+              <div id="lab-opciones" class="lab-opciones"></div>
+              <!-- Seguir tras responder. -->
+              <button id="lab-continuar" class="boton-principal" type="button" data-t="lab.continuar" hidden>Continuar</button>
+            </div>
+            <!-- Aciertos, errores y explicaciones. -->
+            <p id="lab-mensaje" class="lab-mensaje" role="status" aria-live="polite"></p>
+          </div>
+          <!-- La consola. -->
+          <div id="lab-consola" class="lab-consola">
+            <!-- Pestañas de los equipos. -->
+            <div id="lab-equipos" class="lab-equipos" role="tablist" data-t-aria-label="lab.equipos"></div>
+            <!-- Las líneas de la consola. -->
+            <div id="lab-salida" class="lab-salida" role="log" aria-live="polite"></div>
+            <!-- La línea donde se escribe: el prompt y la caja. -->
+            <div id="lab-linea" class="lab-linea">
+              <!-- Prompt (S1#...), que hace de etiqueta de la caja. -->
+              <label id="lab-prompt" for="lab-entrada" class="lab-prompt"></label>
+              <!-- Caja. Sin autocorrección: hay que escribirlo tal cual. -->
+              <input id="lab-entrada" class="lab-entrada" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="send">
+            </div>
+            <!-- Aviso al mirar la consola de otro equipo. -->
+            <p id="lab-otro-equipo" class="lab-otro-equipo" hidden></p>
+          </div>
+          <!-- Atajos de la consola. -->
+          <p class="lab-atajos" data-t="lab.atajos"></p>
+        </div>
+        <!-- Columna lateral: objetivo, esquema, direcciones y plantilla de pasos. -->
+        <aside class="lab-lateral">
+          <!-- Objetivo. -->
+          <details class="lab-caja" open>
+            <!-- Título. -->
+            <summary data-t="lab.objetivo">Objetivo</summary>
+            <!-- Texto. -->
+            <p id="lab-objetivo" class="lab-objetivo"></p>
+          </details>
+          <!-- Esquema de la red. -->
+          <details class="lab-caja" open>
+            <!-- Título. -->
+            <summary data-t="lab.esquema">Esquema</summary>
+            <!-- Dibujo (lo crea laboratorio.js). -->
+            <div id="lab-esquema" class="lab-esquema"></div>
+          </details>
+          <!-- Tabla de direcciones. -->
+          <details id="lab-direcciones-caja" class="lab-caja">
+            <!-- Título. -->
+            <summary data-t="lab.direcciones">Tabla de direcciones</summary>
+            <!-- Tabla (la crea laboratorio.js). -->
+            <div id="lab-direcciones" class="lab-direcciones"></div>
+          </details>
+          <!-- Plantilla de pasos. -->
+          <details class="lab-caja" open>
+            <!-- Título. -->
+            <summary data-t="lab.pasos">Plantilla de pasos</summary>
+            <!-- Lista (la crea laboratorio.js). -->
+            <ol id="lab-pasos" class="lab-pasos"></ol>
+          </details>
+        </aside>
+      </div>
+
+      <!-- Resultado del laboratorio. -->
+      <div id="lab-fin" class="lab-fin" hidden>
+        <!-- Título. -->
+        <h2 id="lab-fin-titulo" class="titulo-fin"></h2>
+        <!-- Resumen. -->
+        <p id="lab-fin-texto" class="raton-fin-texto"></p>
+        <!-- Qué hacer ahora. -->
+        <div class="acciones">
+          <!-- Repetir. -->
+          <button id="lab-repetir" class="boton-principal" type="button" data-t="lab.repetir">Repetir</button>
+          <!-- Siguiente laboratorio. -->
+          <button id="lab-siguiente" class="boton-secundario" type="button" data-t="lab.siguiente">Siguiente laboratorio</button>
+          <!-- Volver al menú. -->
+          <button id="lab-volver" class="boton-secundario" type="button" data-t="fin.volver">Volver al menú</button>
+        </div>
+        <!-- Configuración de cada equipo, para copiarla: título, explicación y bloques (los crea laboratorio.js). -->
+        <div id="lab-fin-config" class="lab-fin-config"></div>
+      </div>
+
+      <!-- Pie: terminar el laboratorio. -->
+      <footer class="pie-juego">
+        <!-- Hueco a la izquierda. -->
+        <p class="fuente"></p>
+        <!-- Terminar ahora. -->
+        <button id="lab-terminar" class="boton-secundario" type="button" data-t="juego.terminar">Terminar partida</button>
       </footer>
     </section>
 

@@ -1833,6 +1833,583 @@ body[data-pantalla="pantalla-menu"] .marca {
   justify-content: center; /* botones centrados */
 }
 
+/* ===== Laboratorios de redes ===== */
+body[data-pantalla="pantalla-lab"] .contenedor {
+  max-width: 1240px; /* el laboratorio necesita más ancho: consola y lateral */
+}
+
+.lab-cabecera {
+  display: grid; /* títulos, ayudas y cifras */
+  grid-template-columns: 1fr auto auto; /* el título ocupa lo que sobra */
+  align-items: center; /* centrados en vertical */
+  gap: 12px 20px; /* separación */
+  margin: 4px 0 16px; /* espacio debajo */
+}
+
+.lab-titulos {
+  min-width: 0; /* puede encogerse */
+}
+
+.lab-titulo {
+  margin: 4px 0 0; /* junto a la etiqueta */
+  font-size: clamp(1.15rem, 2.4vw, 1.5rem); /* tamaño medio */
+  line-height: 1.2; /* líneas juntas */
+}
+
+.lab-ayudas {
+  display: inline-flex; /* botones en fila */
+  padding: 4px; /* relleno */
+  background: var(--superficie); /* fondo de tarjeta */
+  border: 1px solid var(--borde); /* borde */
+  border-radius: 999px; /* píldora */
+}
+
+.lab-ayudas button {
+  padding: 7px 14px; /* relleno */
+  background: none; /* sin fondo */
+  border: 0; /* sin borde */
+  border-radius: 999px; /* píldora */
+  color: var(--texto-suave); /* texto secundario */
+  font-weight: 700; /* negrita */
+  cursor: pointer; /* manita */
+}
+
+.lab-ayudas button[aria-checked="true"] {
+  background: var(--acento); /* elegida: ámbar */
+  color: var(--sobre-acento); /* texto oscuro */
+}
+
+.lab-cuerpo {
+  display: grid; /* dos columnas */
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); /* consola más ancha que el lateral */
+  gap: 18px; /* separación */
+  align-items: start; /* arriba */
+}
+
+.lab-tarea {
+  margin-bottom: 12px; /* espacio antes de la consola */
+  padding: 14px 16px; /* relleno */
+  background: var(--superficie); /* fondo de tarjeta */
+  border: 1px solid var(--borde); /* borde */
+  border-radius: var(--radio); /* esquinas redondeadas */
+}
+
+.lab-parte {
+  margin: 0 0 4px; /* espacio debajo */
+  color: var(--acento-fuerte); /* ámbar */
+  font-size: 0.78rem; /* pequeña */
+  font-weight: 800; /* muy negrita */
+  letter-spacing: 0.06em; /* letras separadas */
+  text-transform: uppercase; /* mayúsculas */
+}
+
+.lab-tarea-texto {
+  margin: 0; /* sin márgenes */
+  font-size: 1.08rem; /* algo grande */
+  font-weight: 700; /* negrita */
+}
+
+.lab-tarea-texto:empty {
+  display: none; /* sin tarea (pregunta), no ocupa */
+}
+
+.lab-guia {
+  display: flex; /* etiqueta y comando en fila */
+  flex-wrap: wrap; /* si no caben, en dos líneas */
+  align-items: baseline; /* alineados por el texto */
+  gap: 8px; /* separación */
+  margin: 10px 0 0; /* espacio arriba */
+}
+
+.lab-guia-etiqueta {
+  color: var(--texto-suave); /* texto secundario */
+  font-size: 0.82rem; /* pequeña */
+  font-weight: 700; /* negrita */
+}
+
+.lab-guia-comando {
+  padding: 4px 10px; /* relleno */
+  background: var(--superficie-2); /* fondo */
+  border: 1px dashed var(--borde-fuerte); /* borde discontinuo */
+  border-radius: 8px; /* esquinas redondeadas */
+  font-family: var(--letra-maquina); /* letra de máquina */
+  font-size: 1rem; /* tamaño normal */
+  white-space: pre-wrap; /* respeta los espacios de los huecos */
+  overflow-wrap: anywhere; /* los comandos largos se cortan */
+}
+
+.lab-mensaje {
+  min-height: 1.4em; /* reserva su línea */
+  margin: 10px 0 0; /* espacio arriba */
+  font-weight: 600; /* seminegrita */
+}
+
+.lab-mensaje:empty {
+  min-height: 0; /* sin mensaje, sin hueco */
+  margin: 0; /* ni margen */
+}
+
+.lab-mensaje[data-tipo="bien"] {
+  color: var(--hecho); /* verde */
+}
+
+.lab-mensaje[data-tipo="error"] {
+  color: var(--peligro); /* rojo */
+}
+
+.lab-pregunta-titulo {
+  margin: 0 0 10px; /* espacio debajo */
+  font-size: 1.05rem; /* algo grande */
+  font-weight: 700; /* negrita */
+}
+
+.lab-opciones {
+  display: grid; /* opciones en columna */
+  gap: 8px; /* separación */
+  margin-bottom: 12px; /* espacio debajo */
+}
+
+.lab-opcion {
+  display: flex; /* número y texto en fila */
+  align-items: center; /* centrados */
+  gap: 12px; /* separación */
+  padding: 10px 14px; /* relleno */
+  background: var(--superficie-2); /* fondo */
+  border: 1px solid var(--borde-fuerte); /* borde */
+  border-radius: 12px; /* esquinas redondeadas */
+  color: var(--texto); /* texto principal */
+  text-align: left; /* texto a la izquierda */
+  cursor: pointer; /* manita */
+}
+
+.lab-opcion:hover:not(:disabled) {
+  border-color: var(--acento); /* borde ámbar al pasar por encima */
+}
+
+.lab-opcion-numero {
+  display: inline-grid; /* cuadradito */
+  place-items: center; /* número centrado */
+  flex: none; /* no se encoge */
+  width: 28px; /* ancho */
+  height: 28px; /* alto */
+  background: var(--superficie-3); /* fondo */
+  border-radius: 8px; /* esquinas redondeadas */
+  font-weight: 800; /* muy negrita */
+}
+
+.lab-opcion-bien {
+  border-color: var(--hecho); /* correcta: verde */
+  background: color-mix(in srgb, var(--hecho) 14%, var(--superficie-2)); /* fondo verde suave */
+}
+
+.lab-opcion-mal {
+  border-color: var(--peligro); /* equivocada: rojo */
+  background: color-mix(in srgb, var(--peligro) 14%, var(--superficie-2)); /* fondo rojo suave */
+}
+
+.lab-consola {
+  overflow: hidden; /* nada se sale de las esquinas */
+  background: #0b0d12; /* la consola siempre es oscura, como una terminal */
+  border: 1px solid #2a2f3d; /* borde */
+  border-radius: var(--radio); /* esquinas redondeadas */
+  box-shadow: var(--sombra); /* sombra */
+  color: #d7dae3; /* texto claro */
+  font-family: var(--letra-maquina); /* letra de máquina */
+  font-size: 0.92rem; /* tamaño cómodo */
+  cursor: text; /* cursor de texto */
+}
+
+.lab-equipos {
+  display: flex; /* pestañas en fila */
+  flex-wrap: wrap; /* si no caben, en dos líneas */
+  gap: 4px; /* separación */
+  padding: 8px 8px 0; /* relleno */
+  background: #151821; /* barra un poco más clara */
+  border-bottom: 1px solid #2a2f3d; /* línea */
+}
+
+.lab-equipo {
+  padding: 6px 12px; /* relleno */
+  background: none; /* sin fondo */
+  border: 1px solid transparent; /* borde invisible */
+  border-bottom: 0; /* sin borde abajo */
+  border-radius: 8px 8px 0 0; /* forma de pestaña */
+  color: #9aa0b2; /* texto apagado */
+  font: inherit; /* letra de máquina */
+  font-size: 0.82rem; /* pequeña */
+  cursor: pointer; /* manita */
+}
+
+.lab-equipo::before {
+  margin-right: 6px; /* separado del nombre */
+  opacity: 0.8; /* algo apagado */
+}
+
+.lab-equipo[data-tipo="cisco"]::before {
+  content: "⇄"; /* router o switch */
+}
+
+.lab-equipo[data-tipo="linux"]::before {
+  content: "$"; /* servidor */
+}
+
+.lab-equipo[data-tipo="pc"]::before {
+  content: "▭"; /* PC */
+}
+
+.lab-equipo[aria-selected="true"] {
+  background: #0b0d12; /* pestaña elegida: del color de la consola */
+  border-color: #2a2f3d; /* con borde */
+  color: #f3f0e9; /* texto claro */
+}
+
+.lab-equipo.lab-equipo-tarea::after {
+  content: " •"; /* punto: aquí está la tarea */
+  color: #f7bd4f; /* ámbar */
+}
+
+.lab-salida {
+  height: clamp(220px, 42vh, 460px); /* alto fijo con desplazamiento */
+  padding: 10px 14px 4px; /* relleno */
+  overflow-y: auto; /* se desplaza */
+  overscroll-behavior: contain; /* no arrastra la página */
+}
+
+.lab-l {
+  min-height: 1.35em; /* las líneas vacías también ocupan */
+  white-space: pre-wrap; /* respeta los espacios (columnas de show) */
+  overflow-wrap: anywhere; /* las líneas larguísimas se cortan */
+  line-height: 1.35; /* líneas juntas */
+}
+
+.lab-eco {
+  color: #ffffff; /* lo escrito, en blanco */
+}
+
+.lab-err {
+  color: #ff8c7a; /* errores del equipo, en rojo claro */
+}
+
+.lab-sis {
+  color: #7f8698; /* bienvenida, apagada */
+}
+
+.lab-linea {
+  display: flex; /* prompt y caja en fila */
+  align-items: center; /* centrados */
+  padding: 4px 14px 12px; /* relleno */
+}
+
+.lab-prompt {
+  flex: none; /* el prompt no se encoge */
+  color: #6fd59a; /* verde terminal */
+  white-space: pre; /* respeta el espacio final */
+}
+
+.lab-entrada {
+  flex: 1; /* la caja ocupa lo que sobra */
+  min-width: 0; /* y puede encogerse */
+  padding: 2px 0 2px 2px; /* poco relleno */
+  background: none; /* sin fondo: parece escrito en la consola */
+  border: 0; /* sin borde */
+  outline: none; /* sin contorno */
+  color: #ffffff; /* texto blanco */
+  font: inherit; /* letra de máquina */
+  caret-color: #f7bd4f; /* cursor ámbar */
+}
+
+.lab-otro-equipo {
+  margin: 0; /* sin márgenes */
+  padding: 8px 14px 12px; /* relleno */
+  color: #f7bd4f; /* ámbar */
+  font-family: var(--letra-general); /* letra normal */
+  font-size: 0.85rem; /* pequeña */
+}
+
+.lab-atajos {
+  margin: 8px 0 0; /* espacio arriba */
+  color: var(--texto-suave); /* texto secundario */
+  font-size: 0.8rem; /* pequeño */
+}
+
+.lab-lateral {
+  display: grid; /* cajas en columna */
+  gap: 10px; /* separación */
+}
+
+.lab-caja {
+  padding: 10px 14px; /* relleno */
+  background: var(--superficie); /* fondo de tarjeta */
+  border: 1px solid var(--borde); /* borde */
+  border-radius: var(--radio); /* esquinas redondeadas */
+}
+
+.lab-caja summary {
+  cursor: pointer; /* manita: se pliega */
+  font-weight: 700; /* negrita */
+}
+
+.lab-objetivo {
+  margin: 8px 0 2px; /* espacio */
+  color: var(--texto-suave); /* texto secundario */
+  font-size: 0.9rem; /* algo pequeño */
+}
+
+.lab-esquema {
+  margin-top: 8px; /* espacio arriba */
+}
+
+.esquema {
+  display: block; /* sin hueco debajo */
+  width: 100%; /* ocupa el ancho (hasta su tamaño real) */
+  height: auto; /* proporcional */
+  margin: 0 auto; /* centrado */
+}
+
+.esq-enlace {
+  stroke: var(--borde-fuerte); /* cable gris */
+  stroke-width: 2.5; /* grosor */
+}
+
+.esq-serie {
+  stroke: var(--peligro); /* cable serie en rojo, como en Packet Tracer */
+  stroke-dasharray: 7 4; /* discontinuo */
+}
+
+.esq-consola {
+  stroke: var(--cian); /* cable de consola en celeste */
+  stroke-dasharray: 2 4; /* punteado */
+}
+
+.esq-puerto {
+  fill: var(--texto-suave); /* texto secundario */
+  font-size: 10px; /* pequeño */
+  font-family: var(--letra-maquina); /* letra de máquina */
+  paint-order: stroke; /* el borde por debajo del texto... */
+  stroke: var(--superficie); /* ...del color del fondo, para que se lea sobre la línea */
+  stroke-width: 4px; /* grosor del borde */
+}
+
+.esq-nombre {
+  fill: var(--texto); /* texto principal */
+  font-size: 12px; /* tamaño */
+  font-weight: 800; /* muy negrita */
+}
+
+.esq-nota {
+  fill: var(--texto-suave); /* texto secundario */
+  font-size: 10px; /* pequeño */
+}
+
+.esq-cuerpo {
+  stroke-width: 2; /* borde de los equipos */
+}
+
+.esq-router {
+  fill: color-mix(in srgb, var(--azul) 28%, var(--superficie)); /* router azul */
+  stroke: var(--azul); /* borde azul */
+}
+
+.esq-switch {
+  fill: color-mix(in srgb, var(--cian) 26%, var(--superficie)); /* switch celeste */
+  stroke: var(--cian); /* borde celeste */
+}
+
+.esq-mls {
+  fill: color-mix(in srgb, var(--violeta) 28%, var(--superficie)); /* switch de capa 3 violeta */
+  stroke: var(--violeta); /* borde violeta */
+}
+
+.esq-pc,
+.esq-servidor {
+  fill: var(--superficie-3); /* PC y servidor grises */
+  stroke: var(--borde-fuerte); /* borde gris */
+}
+
+.esq-nube {
+  fill: color-mix(in srgb, var(--texto-suave) 18%, var(--superficie)); /* nube gris clara */
+  stroke: var(--texto-suave); /* borde gris */
+}
+
+.esq-pantalla {
+  fill: color-mix(in srgb, var(--azul) 35%, var(--superficie)); /* pantalla del PC */
+}
+
+.esq-flecha,
+.esq-linea {
+  fill: none; /* sin relleno */
+  stroke: var(--texto); /* trazo del color del texto */
+  stroke-width: 2; /* grosor */
+  stroke-linecap: round; /* puntas redondeadas */
+  stroke-linejoin: round; /* esquinas redondeadas */
+}
+
+.esq-led {
+  fill: var(--hecho); /* luz verde del servidor */
+}
+
+.lab-direcciones {
+  margin-top: 8px; /* espacio arriba */
+  overflow-x: auto; /* la tabla se desplaza si no cabe */
+}
+
+.lab-tabla {
+  width: 100%; /* todo el ancho */
+  border-collapse: collapse; /* bordes juntos */
+  font-size: 0.8rem; /* pequeña */
+}
+
+.lab-tabla th,
+.lab-tabla td {
+  padding: 5px 6px; /* relleno */
+  border-bottom: 1px solid var(--borde); /* línea entre filas */
+  text-align: left; /* a la izquierda */
+  white-space: nowrap; /* sin cortar */
+}
+
+.lab-tabla td {
+  font-family: var(--letra-maquina); /* datos en letra de máquina */
+}
+
+.lab-pasos {
+  position: relative; /* para centrar el paso actual */
+  max-height: min(52vh, 520px); /* alto máximo con desplazamiento */
+  margin: 8px 0 2px; /* espacio */
+  padding: 0; /* sin sangría */
+  overflow-y: auto; /* se desplaza */
+  list-style: none; /* sin números */
+  font-size: 0.85rem; /* pequeña */
+}
+
+.lab-p,
+.lab-p-parte {
+  display: flex; /* marca y contenido en fila */
+  align-items: baseline; /* alineados por el texto */
+  gap: 4px 8px; /* separación */
+  padding: 4px 6px; /* relleno */
+  border-radius: 8px; /* esquinas redondeadas */
+}
+
+.lab-p-parte {
+  margin-top: 8px; /* separado de lo anterior */
+  color: var(--acento-fuerte); /* ámbar */
+  font-size: 0.75rem; /* pequeña */
+  font-weight: 800; /* muy negrita */
+  text-transform: uppercase; /* mayúsculas */
+}
+
+.lab-p-marca {
+  flex: none; /* no se encoge */
+  width: 1em; /* ancho fijo */
+  color: var(--texto-suave); /* gris */
+  text-align: center; /* centrada */
+}
+
+.lab-p-equipo {
+  padding: 0 6px; /* relleno */
+  background: var(--superficie-3); /* fondo */
+  border-radius: 6px; /* esquinas redondeadas */
+  font-size: 0.72rem; /* pequeña */
+  font-weight: 800; /* muy negrita */
+}
+
+.lab-p-comando {
+  flex: 1 1 0; /* ocupa lo que sobra en la misma línea que la marca... */
+  min-width: 0; /* ...y se corta dentro si es largo */
+  font-family: var(--letra-maquina); /* letra de máquina */
+  white-space: pre-wrap; /* respeta los huecos */
+  overflow-wrap: anywhere; /* corta los largos */
+}
+
+.lab-p-texto {
+  flex: 1 1 0; /* ocupa lo que sobra en la misma línea */
+  min-width: 0; /* y se corta dentro si es largo */
+  color: var(--texto-suave); /* texto secundario */
+}
+
+.lab-p-hecho .lab-p-marca,
+.lab-p-hecho .lab-p-comando {
+  color: var(--hecho); /* hechos en verde */
+}
+
+.lab-p-actual {
+  background: color-mix(in srgb, var(--acento) 16%, transparent); /* el actual, resaltado */
+}
+
+.lab-p-actual .lab-p-marca {
+  color: var(--acento-fuerte); /* flecha ámbar */
+}
+
+.lab-p-futuro {
+  opacity: 0.62; /* los que faltan, apagados */
+}
+
+.lab-fin {
+  padding: 8px 0 20px; /* espacio */
+  text-align: center; /* centrado */
+  animation: aparecer 0.25s ease; /* aparece suavemente */
+}
+
+.lab-fin .acciones {
+  justify-content: center; /* botones centrados */
+}
+
+.lab-fin-config {
+  display: grid; /* bloques en columna */
+  gap: 12px; /* separación */
+  margin-top: 28px; /* separado de los botones */
+  text-align: left; /* texto a la izquierda */
+}
+
+.lab-fin-config .subtitulo,
+.lab-fin-config .nota {
+  margin: 0; /* el hueco ya lo da la rejilla */
+}
+
+.lab-config {
+  padding: 12px 14px; /* relleno */
+  background: var(--superficie); /* fondo de tarjeta */
+  border: 1px solid var(--borde); /* borde */
+  border-radius: var(--radio); /* esquinas redondeadas */
+}
+
+.lab-config-cabecera {
+  display: flex; /* nombre y botón en fila */
+  align-items: center; /* centrados */
+  justify-content: space-between; /* a los extremos */
+  gap: 10px; /* separación */
+  margin-bottom: 8px; /* espacio debajo */
+}
+
+.lab-config-equipo {
+  margin: 0; /* sin márgenes */
+  font-size: 1rem; /* tamaño normal */
+}
+
+.lab-config-texto {
+  max-height: 320px; /* alto máximo */
+  margin: 0; /* sin márgenes */
+  padding: 10px 12px; /* relleno */
+  overflow: auto; /* se desplaza */
+  background: #0b0d12; /* fondo de consola */
+  border-radius: 10px; /* esquinas redondeadas */
+  color: #d7dae3; /* texto claro */
+  font-family: var(--letra-maquina); /* letra de máquina */
+  font-size: 0.85rem; /* algo pequeña */
+}
+
+.boton-pequeno-texto {
+  min-height: 36px; /* botón más bajo */
+  padding: 6px 14px; /* relleno */
+}
+
+/* ===== Laboratorios en pantallas medianas: una sola columna ===== */
+@media (max-width: 980px) {
+  .lab-cuerpo {
+    grid-template-columns: 1fr; /* el lateral pasa debajo de la consola */
+  }
+}
+
 /* ===== Pantallas táctiles: sin pistas de teclado ===== */
 @media (hover: none) {
   .pista,
@@ -1876,6 +2453,18 @@ body[data-pantalla="pantalla-menu"] .marca {
 
   .marcador-raton .cifras {
     grid-column: auto; /* en el ratón, las cifras caben al lado del nombre */
+  }
+
+  .lab-cabecera {
+    grid-template-columns: 1fr; /* en el móvil, todo en columna */
+  }
+
+  .lab-ayudas {
+    justify-self: start; /* los botones de ayuda, a la izquierda */
+  }
+
+  .lab-consola {
+    font-size: 0.8rem; /* consola algo más pequeña */
   }
 
   .estadisticas div,

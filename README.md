@@ -1,12 +1,12 @@
 # type-to-learn
-Typing game to learn English and Spanish (both ways, plus French, Portuguese, Italian and German words), vocabulary, dictation, pronunciation, mental math and formulas, programming, data analysis (Excel, pandas, NumPy), the keyboard and the mouse.
+Typing game to learn English and Spanish (both ways, plus French, Portuguese, Italian and German words), vocabulary, dictation, pronunciation, mental math and formulas, programming, data analysis (Excel, pandas, NumPy), networking labs (Cisco IOS like Packet Tracer, and Linux servers), the keyboard and the mouse.
 
 ## Qué es
 
 **Frase Exacta** es un juego de mecanografía para aprender escribiendo. Aparece una frase (o una palabra, una fórmula,
 una línea de código), la copias exactamente igual y cada error te cuesta una vida. Está inspirado en la mecánica de *Final Sentence*.
 
-Tiene seis secciones, cada una con sus modos:
+Tiene siete secciones, cada una con sus modos:
 
 - **Idiomas:** eliges qué quieres aprender (*Quiero aprender:* inglés, español, francés, portugués, italiano o alemán).
   En inglés y en español hay frases, palabras por temas, dictado, pronunciación, números con letras, falsos amigos
@@ -21,6 +21,10 @@ Tiene seis secciones, cada una con sus modos:
 - **Teclado:** el teclado dibujado en la pantalla (de España, latinoamericano o de EE. UU.) con la siguiente tecla
   señalada, lecciones por filas y un buscador para saber dónde está cualquier carácter (@, #, ñ, ¿, ^...).
 - **Ratón:** lecciones para quien empieza: mover, clic, doble clic, clic derecho, arrastrar y soltar, la rueda y un repaso.
+- **Redes:** laboratorios como los de Cisco Packet Tracer, de fácil a difícil: configuras routers, switches, PC y
+  servidores Linux paso a paso en una consola realista, desde `enable` hasta tener la red funcionando (VLAN, troncales,
+  rutas, OSPF, DHCP, SSH, ACL, NAT, EtherChannel, cortafuegos...). Con esquema de la red, tabla de direcciones y
+  preguntas entre los pasos. También hay modos de comandos sueltos (escribir, detectar el error y ¿qué comando es?).
 
 Funciona de dos formas, con el mismo código:
 
@@ -35,7 +39,7 @@ para que sirva tanto a quien aprende inglés como a quien aprende español.
 
 ### Cómo se juega
 
-1. Abre el juego, elige una sección (Idiomas, Matemáticas, Código, Datos, Teclado o Ratón) y un modo.
+1. Abre el juego, elige una sección (Idiomas, Matemáticas, Código, Datos, Teclado, Ratón o Redes) y un modo.
 2. Aparece una frase. Escríbela tal cual: letras, tildes, mayúsculas, signos (¿ ¡ , . ') y espacios.
 3. Empiezas con 5 vidas. Cada carácter equivocado resta una y el juego te explica qué esperaba.
 4. Las frases empiezan cortas y se van alargando.
@@ -107,6 +111,8 @@ Cada modo es independiente: tiene sus propias frases, su récord, su lista de fr
 | Datos | Escribe fórmulas, Detecta el error, Casos de uso | Lo mismo que en Código con Excel / Google Sheets, pandas y NumPy |
 | Teclado | 8 lecciones | Fila central, de arriba y de abajo, todas las letras, mayúsculas, números, tildes y símbolos |
 | Ratón | 7 lecciones | Mover, clic, doble clic, clic derecho, arrastrar y soltar, la rueda y un repaso con todo |
+| Redes | 21 laboratorios | Configurar equipos Cisco y servidores Linux paso a paso, en tres niveles (fácil, medio, difícil) |
+| Redes | Escribe comandos, Detecta el error, ¿Qué comando es? | Comandos sueltos de Cisco IOS y de Linux, del nivel elegido |
 
 En el menú, las teclas **1**, **2**, **3**... empiezan cada modo de la sección que estás viendo.
 
@@ -126,6 +132,31 @@ Cada lección pone 10 objetivos, uno tras otro, que van encogiendo. Cuenta el ti
 objetivo o con el botón equivocado) y guarda tu mejor tiempo. Si algo no sale, el juego da una pista: por ejemplo,
 en el doble clic, que hagas los dos clics más rápido y sin mover el ratón; en el clic derecho de un panel táctil,
 que toques con dos dedos. Funciona también con el dedo en pantallas táctiles (salvo el clic derecho).
+
+### Sección Redes: laboratorios como en Packet Tracer
+
+Cada laboratorio es una práctica completa, como las de Cisco Networking Academy: un **objetivo**, el **esquema de la red**
+(routers, switches, PC, servidores y cables, con sus puertos), la **tabla de direcciones** y una lista de pasos que
+se hacen **siempre desde el principio**: `enable`, `configure terminal`... hasta comprobar con `show` y `ping` que todo funciona.
+
+- **Una consola que se comporta como la de verdad.** El prompt cambia con cada modo (`Switch>`, `S1#`, `S1(config)#`,
+  `S1(config-if)#`, `R1(config-router)#`...), acepta las abreviaturas de Cisco (`conf t`, `int g0/0`, `sw mo acc`,
+  `no sh`), responde con sus mensajes (`%LINK-5-CHANGED`, `% Invalid input detected at '^' marker.`, `% Incomplete command.`),
+  pide contraseñas y confirmaciones (`Password:`, `Destination filename [startup-config]?`), **Tab** completa la palabra,
+  **?** da ayuda y **↑ ↓** recuperan los comandos anteriores. Si hay varios equipos, cada uno tiene su consola (pestañas).
+  También hay consolas de **PC** (`C:\>` con `ipconfig`, `ping`, `tracert`, `ssh`) y de **servidores Linux** (`sudo`, `apt`,
+  `systemctl`, `ufw`...).
+- **Tres formas de hacerlo**, que se pueden cambiar en cualquier momento: **Guiado** (ves el comando entero),
+  **Plantilla** (ves el comando con huecos y lo completas) y **Examen** (solo la tarea; si fallas, primero sale una pista
+  y después la respuesta). La lista de pasos de la derecha es la plantilla que se va llenando con lo que escribes.
+- **Cuestionario:** entre los comandos hay preguntas de tres opciones (qué significa un prompt, por qué una ACL va en
+  una interfaz, qué es «Inside local» en NAT...), con su explicación.
+- **Tres niveles:** fácil (modos del IOS, contraseñas, IP del switch, interfaces de un router, comandos show, primeros
+  pasos en Linux), medio (VLAN, troncales, router-on-a-stick, rutas estáticas, DHCP, SSH, servidor web Nginx) y difícil
+  (OSPF, ACL, NAT/PAT, seguridad de puertos y STP, switch de capa 3, EtherChannel, un **proyecto de oficina completo**
+  de 77 comandos y un servidor Linux seguro).
+- **Al terminar** ves la configuración de cada equipo con un botón para copiarla y pegarla en la consola de Packet Tracer.
+- El juego guarda con qué forma completaste cada laboratorio y con cuántos errores.
 
 ## Probarlo en local
 
@@ -185,6 +216,8 @@ Las pruebas están en [`tests/`](tests/) y comprueban:
 - `nuevos.test.js`: los números con letras en inglés y en español, que los problemas de cálculo tienen la respuesta
   correcta (y que las soluciones de la fórmula general cumplen la ecuación), que «2,5», «5/2» y «2.5» valen lo mismo,
   los verbos irregulares, los falsos amigos, las palabras en otros idiomas, las fórmulas de datos y los lenguajes.
+- `redes.test.js`: la consola (abreviaturas, errores, prompts de cada modo, plantillas, Tab, ? y ping), que cada paso de
+  cada laboratorio está completo y que **cada comando de Cisco se escribe en el modo correcto del IOS**, y los comandos sueltos.
 - `app.test.js`: que la copia sin conexión (`sw.js`) incluye todos los archivos del juego y que la ficha de la app es válida.
 
 Si todo va bien, al final verás `pass` con el total de pruebas y `fail 0`.
@@ -262,6 +295,10 @@ las fórmulas de análisis de datos ([`datos/analisis.js`](datos/analisis.js), 4
 juego ([`js/aritmetica.js`](js/aritmetica.js)), siempre los mismos, para poder recordar cuáles ya salieron.
 El dictado en inglés y en español usa las frases cortas de Tatoeba sin comas.
 
+Los laboratorios de redes ([`datos/laboratorios.js`](datos/laboratorios.js): 21 laboratorios, 402 comandos y 45 preguntas)
+y los comandos sueltos ([`datos/redes.js`](datos/redes.js), 59) también están escritos para el proyecto. Las salidas de
+los comandos `show` imitan las de Packet Tracer.
+
 ### Actualizar la lista de frases
 
 Necesitas Python 3.8 o más reciente; no hace falta instalar paquetes.
@@ -294,6 +331,7 @@ js/teclado.js               Los tres tipos de teclado, qué teclas pulsar para c
 js/letras.js                El abecedario en inglés y en español, y cómo se deletrea
 js/numerosEnPalabras.js     Escribe números con letras en inglés y en español
 js/aritmetica.js            Crea los problemas de cálculo y compara respuestas numéricas
+js/consola.js               Lógica de la consola de los laboratorios: abreviaturas de Cisco, prompts, errores, plantillas
 js/pantallas.js             Cambia entre pantallas
 js/ajustes.js               Ajustes: idioma, tema, tamaño, dificultad, teclado, sonido y voz
 js/sonidos.js               Efectos de sonido (creados al momento, sin archivos de audio)
@@ -317,8 +355,10 @@ js/modos/abecedario.js      Modo abecedario (deletreo) y tabla de letras
 js/modos/matematicas.js     Modos de álgebra, trigonometría y cálculo
 js/modos/calculos.js        Modos de «solo el resultado» (sumas, operaciones, fórmula general, mezcla)
 js/modos/codigo.js          Modos de código y de datos (escribir, detectar el error, casos de uso) y «¿Qué lenguaje es?»
+js/modos/redes.js           Modos de comandos sueltos de redes
 js/modos/teclado.js         Lecciones de teclado
 js/raton.js                 Lecciones del ratón
+js/laboratorio.js           Pantalla de los laboratorios de redes (consola, plantilla, esquema, cuestionario, resultado)
 js/principal.js             Arranque y menú principal por secciones
 datos/frases-es.js          Frases en español (generado, no editar a mano)
 datos/frases-en.js          Parejas inglés-español (generado, no editar a mano)
@@ -330,6 +370,8 @@ datos/verbos.js             Verbos irregulares del inglés (escrito para el proy
 datos/falsos-amigos.js      Falsos amigos inglés-español (escrito para el proyecto)
 datos/analisis.js           Fórmulas de Excel, pandas y NumPy con sus errores típicos (escrito para el proyecto)
 datos/lenguajes.js          Líneas de 19 lenguajes para «¿Qué lenguaje es?» (escrito para el proyecto)
+datos/laboratorios.js       Laboratorios de redes de Cisco y Linux (escrito para el proyecto)
+datos/redes.js              Comandos de redes con sus errores típicos (escrito para el proyecto)
 herramientas/preparar_frases.py   Descarga y filtra las frases de Tatoeba
 tests/                      Pruebas automáticas
 FICHA.md                    Ficha del proyecto
@@ -347,7 +389,9 @@ Todo el código está comentado línea por línea para que se pueda leer y apren
 5. ✅ Secciones de vocabulario, abecedario, matemáticas, código y teclado.
 6. ✅ Más idiomas, dictado, pronunciación, números, verbos, falsos amigos, cálculo mental, «¿Qué lenguaje es?»,
    sección Datos (Excel, pandas, NumPy) y sección Ratón.
-7. Más adelante: lecturas, frases en francés, portugués, italiano y alemán, y más temas de matemáticas (estadística, geometría).
+7. ✅ Sección Redes: laboratorios de Cisco (como Packet Tracer) y de servidores Linux, en tres niveles.
+8. Más adelante: lecturas, frases en francés, portugués, italiano y alemán, más laboratorios (IPv6, HSRP, VPN)
+   y más temas de matemáticas (estadística, geometría).
 
 ## Cómo colaborar
 

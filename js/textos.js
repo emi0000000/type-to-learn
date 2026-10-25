@@ -18,7 +18,7 @@ const TEXTOS = {
     "barra.ajustes": "Ajustes", // botón de ajustes
 
     // --- Menú ---
-    "menu.lema": "Aprende escribiendo: idiomas, matemáticas, código, análisis de datos, el teclado y el ratón. Copia exacto: cada error te cuesta una vida.", // frase bajo el título
+    "menu.lema": "Aprende escribiendo: idiomas, matemáticas, código, datos, redes, el teclado y el ratón. Copia exacto: cada error te cuesta una vida.", // frase bajo el título
     "menu.diasSeguidos": (d) => (d.n === 1 ? "1 día seguido" : `${d.n} días seguidos`), // racha de días
     "menu.frasesEscritas": (d) => (d.n === 1 ? "1 frase escrita" : `${d.n} frases escritas`), // frases totales
     "menu.tiempo": "{t} practicando", // tiempo total
@@ -508,6 +508,86 @@ const TEXTOS = {
     "modo.raton-mezcla.direccion": "Repaso", // tema
     "modo.raton-mezcla.detalle": "Clic, doble clic, botón derecho y arrastrar, mezclados. Cada objetivo dice qué hacer.", // descripción
 
+    // --- Ronda 4: sección Redes (laboratorios de Cisco y Linux) ---
+    "seccion.redes": "Redes", // pestaña de redes
+    "seccion.ajuste.nivelRedes": "Nivel:", // desplegable de nivel de redes
+    "seccion.nota.redes": "Laboratorios como los de Cisco Packet Tracer: configuras cada equipo paso a paso, desde enable hasta dejar la red funcionando. Al terminar puedes copiar la configuración y pegarla en Packet Tracer.", // nota de la sección Redes
+    "redes.nivel.facil": "Fácil", // nivel
+    "redes.nivel.medio": "Medio", // nivel
+    "redes.nivel.dificil": "Difícil", // nivel
+    "redes.tema.basico": "Básico", // tema de los comandos
+    "redes.tema.switching": "Switching", // tema de los comandos
+    "redes.tema.routing": "Routing", // tema de los comandos
+    "redes.tema.servicios": "Servicios", // tema de los comandos
+    "redes.tema.seguridad": "Seguridad", // tema de los comandos
+    "redes.tema.linux": "Linux", // tema de los comandos
+    "reglas.11": "En Redes, los laboratorios se hacen en una consola como la de Cisco: acepta abreviaturas (conf t, int g0/0), Tab completa y ? da ayuda. Elige Guiado, Plantilla o Examen según cuánta ayuda quieras.", // regla 11
+    "lab.laboratorio": "Laboratorio", // tema de la tarjeta de un laboratorio
+    "lab.tipo.cisco": "Cisco IOS", // tipo de equipo
+    "lab.tipo.linux": "Linux", // tipo de equipo
+    "lab.tipo.pc": "PC", // tipo de equipo
+    "lab.ayuda": "Forma de hacerlo", // nombre de los botones de ayuda
+    "lab.ayuda.guiado": "Guiado", // ayuda: se ve el comando
+    "lab.ayuda.plantilla": "Plantilla", // ayuda: comando con huecos
+    "lab.ayuda.examen": "Examen", // ayuda: solo la tarea
+    "lab.ayuda.guiadoTitulo": "Se ve el comando entero: lo copias", // ayuda del botón
+    "lab.ayuda.plantillaTitulo": "Se ve el comando con huecos: completa las palabras que faltan", // ayuda del botón
+    "lab.ayuda.examenTitulo": "Solo se ve la tarea: escribe el comando de memoria", // ayuda del botón
+    "lab.paso": "Paso", // contador de pasos
+    "lab.equipos": "Equipos", // pestañas de equipos para lectores de pantalla
+    "lab.atajos": "Intro: enviar · Tab: completar la palabra · ↑ ↓: comandos anteriores · ?: ayuda (en Cisco)", // atajos de la consola
+    "lab.objetivo": "Objetivo", // título del objetivo
+    "lab.esquema": "Esquema de la red", // título del esquema
+    "lab.direcciones": "Tabla de direcciones", // título de la tabla
+    "lab.pasos": "Plantilla de pasos", // título de la lista de pasos
+    "lab.equipo": "Equipo", // columna
+    "lab.interfaz": "Interfaz", // columna
+    "lab.ip": "Dirección IP", // columna
+    "lab.mascara": "Máscara", // columna
+    "lab.puerta": "Puerta de enlace", // columna
+    "lab.escribe": "Escribe:", // etiqueta de la guía en modo guiado
+    "lab.completa": "Completa:", // etiqueta de la plantilla
+    "lab.pista": "Pista:", // etiqueta de la pista
+    "lab.respuesta": "Respuesta:", // etiqueta de la respuesta
+    "lab.responde": "Responde a lo que pregunta el equipo.", // tarea genérica de una pregunta del equipo
+    "lab.verEquipo": "Estás viendo la consola de {equipo}; la tarea es en {actual}.", // aviso al mirar otro equipo
+    "lab.bien": "¡Bien!", // al acertar un comando
+    "lab.continuar": "Continuar", // botón tras una pregunta
+    "lab.pregunta.bien": "¡Correcto!", // pregunta acertada
+    "lab.pregunta.mal": "No es esa: la correcta está en verde.", // pregunta fallada
+    "lab.error.vacio": "Escribe el comando y pulsa Intro.", // sin nada escrito
+    "lab.error.otro": "Ese comando existe, pero no es el que pide la tarea.", // otro comando
+    "lab.error.invalido": "Hay un error en «{palabra}» (el ^ lo señala).", // error en una palabra
+    "lab.error.revisa": "Hay un error en «{palabra}».", // error en una palabra (Linux y PC, sin marca ^)
+    "lab.error.incompleto": "Al comando le falta algo.", // comando incompleto
+    "lab.error.ambiguo": "«{palabra}» es demasiado corto: puede ser varios comandos. Escribe más letras.", // abreviatura ambigua
+    "lab.error.desconocido": "«{palabra}» no es un comando de este equipo.", // orden que no existe
+    "lab.error.respuesta": "No es la respuesta que espera el equipo.", // respuesta equivocada a una pregunta del equipo
+    "lab.error.copia": "Escribe el comando que ves arriba.", // ayuda en modo guiado
+    "lab.error.mira": "Mira la respuesta arriba y escríbela.", // ayuda tras dos fallos
+    "lab.error.pista": "Tienes una pista arriba.", // ayuda tras un fallo en examen
+    "lab.fin.titulo": "¡Laboratorio completado!", // título del resultado
+    "lab.fin.resumen": (d) => `${d.comandos} comandos · ${d.errores === 1 ? "1 error" : `${d.errores} errores`} · ${d.tiempo} · ${d.ayuda}`, // resumen del resultado
+    "lab.fin.config": "Tu configuración", // título de la configuración final
+    "lab.fin.configNota": "Es lo que has configurado en cada equipo. Puedes copiarlo y pegarlo en la consola (CLI) de Packet Tracer o de un equipo de verdad.", // explicación de la configuración final
+    "lab.copiar": "Copiar", // botón de copiar
+    "lab.copiado": "¡Copiado!", // tras copiar
+    "lab.seleccionado": "Seleccionado: pulsa Ctrl+C", // si no se puede copiar solo
+    "lab.repetir": "Repetir", // botón de repetir
+    "lab.siguiente": "Siguiente laboratorio", // botón de siguiente
+    "lab.estado.pasos": (d) => `${d.comandos} comandos y ${d.preguntas === 1 ? "1 pregunta" : `${d.preguntas} preguntas`}`, // estado de la tarjeta
+    "lab.estado.nuevo": "Sin hacer", // estado sin completar
+    "lab.estado.hecho": (d) => `✓ ${d.ayuda} (${d.errores === 1 ? "1 error" : `${d.errores} errores`})`, // forma completada
+    "modo.redes-escribir.nombre": "Escribe comandos", // nombre
+    "modo.redes-escribir.direccion": "Comandos", // tema
+    "modo.redes-escribir.detalle": "Copia comandos de Cisco y de Linux viendo qué hacen, y luego elige qué hace cada uno.", // descripción
+    "modo.redes-errores.nombre": "Detecta el error", // nombre
+    "modo.redes-errores.direccion": "Comandos", // tema
+    "modo.redes-errores.detalle": "Tres versiones del comando y solo una está bien: el orden, un guion, máscara o wildcard… Encuéntrala y escríbela.", // descripción
+    "modo.redes-usos.nombre": "¿Qué comando es?", // nombre
+    "modo.redes-usos.direccion": "Comandos", // tema
+    "modo.redes-usos.detalle": "Te damos una tarea (crear una VLAN, una ruta, una ACL…) y eliges el comando que la hace.", // descripción
+
     // --- Créditos ---
     "creditos.frasesDe": "Frases de", // inicio de los créditos
     "creditos.codigo": "Código abierto con licencia MIT", // licencia del código
@@ -527,7 +607,7 @@ const TEXTOS = {
     "barra.ajustes": "Settings",
 
     // --- Menu ---
-    "menu.lema": "Learn by typing: languages, math, code, data analysis, the keyboard and the mouse. Copy it exactly: every mistake costs you a life.",
+    "menu.lema": "Learn by typing: languages, math, code, data, networking, the keyboard and the mouse. Copy it exactly: every mistake costs you a life.",
     "menu.diasSeguidos": (d) => `${d.n}-day streak`,
     "menu.frasesEscritas": (d) => (d.n === 1 ? "1 sentence typed" : `${d.n} sentences typed`),
     "menu.tiempo": "{t} of practice",
@@ -1017,6 +1097,86 @@ const TEXTOS = {
     "modo.raton-mezcla.nombre": "Everything",
     "modo.raton-mezcla.direccion": "Review",
     "modo.raton-mezcla.detalle": "Click, double-click, right-click and drag, mixed. Each target tells you what to do.",
+
+    // --- Round 4: Networking section (Cisco and Linux labs) ---
+    "seccion.redes": "Networking",
+    "seccion.ajuste.nivelRedes": "Level:",
+    "seccion.nota.redes": "Labs like Cisco Packet Tracer's: you configure each device step by step, from enable to a working network. At the end you can copy the configuration and paste it into Packet Tracer.",
+    "redes.nivel.facil": "Easy",
+    "redes.nivel.medio": "Intermediate",
+    "redes.nivel.dificil": "Advanced",
+    "redes.tema.basico": "Basics",
+    "redes.tema.switching": "Switching",
+    "redes.tema.routing": "Routing",
+    "redes.tema.servicios": "Services",
+    "redes.tema.seguridad": "Security",
+    "redes.tema.linux": "Linux",
+    "reglas.11": "In Networking, labs run in a Cisco-like console: it accepts abbreviations (conf t, int g0/0), Tab completes and ? gives help. Choose Guided, Template or Exam depending on how much help you want.",
+    "lab.laboratorio": "Lab",
+    "lab.tipo.cisco": "Cisco IOS",
+    "lab.tipo.linux": "Linux",
+    "lab.tipo.pc": "PC",
+    "lab.ayuda": "How to do it",
+    "lab.ayuda.guiado": "Guided",
+    "lab.ayuda.plantilla": "Template",
+    "lab.ayuda.examen": "Exam",
+    "lab.ayuda.guiadoTitulo": "You see the whole command: copy it",
+    "lab.ayuda.plantillaTitulo": "You see the command with blanks: fill in the missing words",
+    "lab.ayuda.examenTitulo": "You only see the task: type the command from memory",
+    "lab.paso": "Step",
+    "lab.equipos": "Devices",
+    "lab.atajos": "Enter: send · Tab: complete the word · ↑ ↓: previous commands · ?: help (on Cisco)",
+    "lab.objetivo": "Objective",
+    "lab.esquema": "Network diagram",
+    "lab.direcciones": "Addressing table",
+    "lab.pasos": "Step template",
+    "lab.equipo": "Device",
+    "lab.interfaz": "Interface",
+    "lab.ip": "IP address",
+    "lab.mascara": "Subnet mask",
+    "lab.puerta": "Default gateway",
+    "lab.escribe": "Type:",
+    "lab.completa": "Complete:",
+    "lab.pista": "Hint:",
+    "lab.respuesta": "Answer:",
+    "lab.responde": "Answer what the device is asking.",
+    "lab.verEquipo": "You're looking at {equipo}'s console; the task is on {actual}.",
+    "lab.bien": "Good!",
+    "lab.continuar": "Continue",
+    "lab.pregunta.bien": "Correct!",
+    "lab.pregunta.mal": "Not that one: the right one is in green.",
+    "lab.error.vacio": "Type the command and press Enter.",
+    "lab.error.otro": "That command exists, but it's not the one the task asks for.",
+    "lab.error.invalido": "There's a mistake in “{palabra}” (the ^ marks it).",
+    "lab.error.revisa": "There's a mistake in “{palabra}”.",
+    "lab.error.incompleto": "The command is missing something.",
+    "lab.error.ambiguo": "“{palabra}” is too short: it could be several commands. Type more letters.",
+    "lab.error.desconocido": "“{palabra}” isn't a command on this device.",
+    "lab.error.respuesta": "That's not the answer the device expects.",
+    "lab.error.copia": "Type the command shown above.",
+    "lab.error.mira": "Look at the answer above and type it.",
+    "lab.error.pista": "There's a hint above.",
+    "lab.fin.titulo": "Lab complete!",
+    "lab.fin.resumen": (d) => `${d.comandos} commands · ${d.errores === 1 ? "1 mistake" : `${d.errores} mistakes`} · ${d.tiempo} · ${d.ayuda}`,
+    "lab.fin.config": "Your configuration",
+    "lab.fin.configNota": "This is what you configured on each device. You can copy it and paste it into the CLI of Packet Tracer or a real device.",
+    "lab.copiar": "Copy",
+    "lab.copiado": "Copied!",
+    "lab.seleccionado": "Selected: press Ctrl+C",
+    "lab.repetir": "Repeat",
+    "lab.siguiente": "Next lab",
+    "lab.estado.pasos": (d) => `${d.comandos} commands and ${d.preguntas === 1 ? "1 question" : `${d.preguntas} questions`}`,
+    "lab.estado.nuevo": "Not done yet",
+    "lab.estado.hecho": (d) => `✓ ${d.ayuda} (${d.errores === 1 ? "1 mistake" : `${d.errores} mistakes`})`,
+    "modo.redes-escribir.nombre": "Type commands",
+    "modo.redes-escribir.direccion": "Commands",
+    "modo.redes-escribir.detalle": "Copy Cisco and Linux commands while seeing what they do, then pick what each one does.",
+    "modo.redes-errores.nombre": "Spot the error",
+    "modo.redes-errores.direccion": "Commands",
+    "modo.redes-errores.detalle": "Three versions of the command and only one is right: the order, a hyphen, mask or wildcard… Find it and type it.",
+    "modo.redes-usos.nombre": "Which command?",
+    "modo.redes-usos.direccion": "Commands",
+    "modo.redes-usos.detalle": "We give you a task (create a VLAN, a route, an ACL…) and you pick the command that does it.",
 
     // --- Credits ---
     "creditos.frasesDe": "Sentences from",

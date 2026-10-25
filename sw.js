@@ -5,7 +5,7 @@
 // Solo funciona cuando el juego se abre desde internet o desde un servidor local, no como archivo.
 
 // Nombre de la copia guardada. Cambia el número al cambiar la lista de archivos, para empezar una copia nueva.
-const VERSION = "frase-exacta-v4";
+const VERSION = "frase-exacta-v5";
 
 // Archivos que forman el juego (tests/app.test.js comprueba que la lista está completa).
 const ARCHIVOS = [
@@ -23,6 +23,8 @@ const ARCHIVOS = [
   "datos/falsos-amigos.js", // falsos amigos
   "datos/analisis.js", // fórmulas de Excel, pandas y NumPy
   "datos/lenguajes.js", // líneas de muchos lenguajes
+  "datos/redes.js", // comandos de redes
+  "datos/laboratorios.js", // laboratorios de redes
   "js/textos.js", // textos en español e inglés
   "js/memoria.js", // guardar datos
   "js/comparar.js", // comparar lo escrito
@@ -33,6 +35,7 @@ const ARCHIVOS = [
   "js/letras.js", // abecedario
   "js/numerosEnPalabras.js", // números con letras
   "js/aritmetica.js", // problemas de cálculo
+  "js/consola.js", // lógica de la consola de los laboratorios
   "js/pantallas.js", // cambiar de pantalla
   "js/ajustes.js", // ajustes
   "js/sonidos.js", // efectos de sonido
@@ -56,8 +59,10 @@ const ARCHIVOS = [
   "js/modos/matematicas.js", // modos de matemáticas
   "js/modos/calculos.js", // modos de cálculo (solo el resultado)
   "js/modos/codigo.js", // modos de código
+  "js/modos/redes.js", // modos de comandos de redes
   "js/modos/teclado.js", // lecciones de teclado
   "js/raton.js", // lecciones del ratón
+  "js/laboratorio.js", // laboratorios de redes
   "js/principal.js", // arranque y menú
   "iconos/icono.svg", // icono
   "iconos/icono-192.png", // icono pequeño

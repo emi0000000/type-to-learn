@@ -20,7 +20,9 @@ function segunIdioma(valor) {
 //   lista():      función que devuelve las líneas
 //   ajuste:       ajuste que guarda el lenguaje (o herramienta) elegido
 //   lenguajes:    lenguajes de la lista, en el orden del desplegable
-function crearModosDeCodigo({ prefijo, lista, ajuste, lenguajes }) {
+//   filtro:       (opcional) función (línea, valor del ajuste) que dice si una línea entra; por defecto, por lenguaje
+//   claveEtiqueta: (opcional) comienzo de la clave del texto de la etiqueta ("lenguaje" -> "lenguaje.python")
+function crearModosDeCodigo({ prefijo, lista, ajuste, lenguajes, filtro, claveEtiqueta = "lenguaje" }) {
   // Qué hace una línea, en el idioma de la interfaz.
   function queHace(entrada) {
     // Inglés o español.
@@ -51,8 +53,8 @@ function crearModosDeCodigo({ prefijo, lista, ajuste, lenguajes }) {
       clavePreparada = clave;
       // Líneas del lenguaje (o todas), en formato de frase.
       preparadas = lista()
-        // Filtramos por lenguaje.
-        .filter((entrada) => lenguaje === "todos" || entrada[1] === lenguaje)
+        // Filtramos por lenguaje (o con el filtro propio del modo).
+        .filter((entrada) => (filtro ? filtro(entrada, lenguaje) : lenguaje === "todos" || entrada[1] === lenguaje))
         // Formato de frase.
         .map((entrada) => [entrada[0], segunIdioma(entrada[2]), "", entrada[0], queHace(entrada), "", entrada]);
     }
@@ -74,7 +76,7 @@ function crearModosDeCodigo({ prefijo, lista, ajuste, lenguajes }) {
     sinIdioma: true, // no se muestra el idioma
     sinVoz: true, // no tiene sentido leer código en voz alta
     frases, // lista de líneas
-    etiqueta: (frase) => t(`lenguaje.${frase[6][1]}`), // el lenguaje de la línea
+    etiqueta: (frase) => t(`${claveEtiqueta}.${frase[6][1]}`), // el lenguaje (o el tema) de la línea
     creditos: () => [], // contenido propio del proyecto
   };
 

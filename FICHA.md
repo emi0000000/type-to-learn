@@ -24,6 +24,7 @@ Cada modo va separado: no se mezclan.
 | ¿Qué lenguaje es? | Una línea de código | Eliges en qué lenguaje está y la escribes | ✅ |
 | Datos | Fórmulas de Excel / Sheets, pandas y NumPy | Igual que Código | ✅ |
 | Ratón | Objetivos en la pantalla | Mover, clic, doble clic, clic derecho, arrastrar, rueda | ✅ |
+| Redes | Laboratorios de Cisco y Linux con esquema y tabla de direcciones | Configuras cada equipo paso a paso en una consola realista (guiado, plantilla o examen) | ✅ |
 
 ## Lo que NO debe hacer
 
@@ -39,7 +40,8 @@ Cada modo va separado: no se mezclan.
 4. Modo español, interfaz en dos idiomas, voz, repaso y versión como aplicación. ✅
 5. Vocabulario, abecedario, matemáticas, código y teclado. ✅
 6. Más idiomas, dictado, pronunciación, modos de resultado, «¿Qué lenguaje es?», Datos y Ratón. ✅
-7. Más adelante: lecturas.
+7. Sección Redes: laboratorios de Cisco y Linux. ✅
+8. Más adelante: lecturas.
 
 ## Norma del código
 
@@ -148,3 +150,19 @@ Cada modo va separado: no se mezclan.
 - **Datos:** las fórmulas de Excel salen en el idioma de la interfaz (=SUMA en español, =SUM en inglés), como en Excel.
 - **Ratón:** pantalla propia (no es una partida de escribir). Sin vidas: cuenta el tiempo y los fallos, y guarda el mejor
   tiempo. Las lecciones también cuentan para los días seguidos y el tiempo practicado.
+
+## Decisiones tomadas para la sección Redes
+
+- **Laboratorios completos, no comandos sueltos:** en Cisco nada funciona con un comando solo; hay que encadenar varios
+  en el modo correcto. Por eso cada laboratorio empieza siempre en `enable` y acaba comprobando con `show` o `ping`.
+  Los comandos sueltos están aparte, en tres modos como los de Código.
+- **Consola realista:** el prompt se calcula con los modos del IOS (no está escrito a mano en los datos), así que siempre
+  cuadra. Se aceptan las abreviaturas de Cisco (las palabras clave con al menos dos letras, «t» de terminal) y los nombres
+  de interfaz en cualquier forma (fa0/1, f 0/1, FastEthernet0/1). Los datos (nombres, contraseñas, IP) se escriben exactos.
+  Los errores son los del IOS (con la marca ^) y además se explican.
+- **Tres formas de hacerlo:** guiado (copiar), plantilla (huecos en las palabras clave, se ven los datos) y examen
+  (solo la tarea; pista tras el primer fallo y respuesta tras el segundo). El récord se guarda para la forma que más ayudó.
+- **Sin vidas:** un laboratorio largo no se pierde a mitad; se cuentan los errores y el tiempo.
+- **Packet Tracer:** las salidas imitan las suyas (2960, 2911, 3560) y la configuración final se puede copiar y pegar
+  en su consola. Al exportar, `copy running-config startup-config` se cambia por `write memory` (que no pregunta).
+- **Comprobado por las pruebas:** cada comando de Cisco de cada laboratorio se simula y se comprueba que va en su modo.

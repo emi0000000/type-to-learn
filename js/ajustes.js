@@ -16,7 +16,9 @@ const Ajustes = (() => {
     lenguajeCodigo: ["todos", "python", "javascript", "web", "sql", "terminal"], // lenguaje de los modos de código
     herramientaDatos: ["todos", "excel", "pandas", "numpy"], // herramienta de los modos de datos
     idiomaAprender: ["en", "es", "fr", "pt", "it", "de"], // idioma que se quiere aprender (sección Idiomas)
-    seccion: ["idiomas", "matematicas", "codigo", "datos", "teclado", "raton"], // sección del menú que se ve
+    nivelRedes: ["facil", "medio", "dificil"], // nivel de la sección Redes
+    ayudaLab: ["guiado", "plantilla", "examen"], // forma de hacer los laboratorios de redes
+    seccion: ["idiomas", "matematicas", "codigo", "datos", "teclado", "raton", "redes"], // sección del menú que se ve
   };
   // Vidas de cada dificultad (Infinity: no se pierden nunca).
   const VIDAS = { normal: 5, dificil: 3, practica: Infinity };
@@ -36,6 +38,8 @@ const Ajustes = (() => {
     lenguajeCodigo: "todos", // todos los lenguajes de programación
     herramientaDatos: "todos", // todas las herramientas de datos
     idiomaAprender: "en", // se aprende inglés (o español si la interfaz está en inglés: se cambia justo debajo)
+    nivelRedes: "facil", // la sección Redes empieza por lo fácil
+    ayudaLab: "guiado", // los laboratorios empiezan guiados
     seccion: "idiomas", // el menú empieza en los idiomas
   };
   // Quien tiene la interfaz en inglés probablemente quiere aprender español.
