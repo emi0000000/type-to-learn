@@ -1,0 +1,11 @@
+{
+  "name": "frase-exacta",
+  "version": "0.1.0",
+  "description": "Juego para aprender ortografía en español copiando frases exactas.",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test",
+    "frases": "python herramientas/preparar_frases.py"
+  }
+}
