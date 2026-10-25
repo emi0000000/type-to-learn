@@ -10,7 +10,7 @@ Cada modo va separado: no se mezclan.
 | Modo | Qué hace | Regla | Estado |
 |---|---|---|---|
 | Ortografía | Muestra una frase en español | La escribes exacta; cada error resta una vida | ✅ Versión 1 |
-| Inglés | Muestra una frase y su traducción | La escribes bien y confirmas que entiendes el significado | Siguiente paso |
+| Inglés | Muestra una frase y su traducción | La escribes bien y confirmas que entiendes el significado | ✅ Versión 1 |
 | Código | Muestra comandos y sintaxis | Los escribes correctamente | Versión 2 |
 
 ## Lo que NO debe hacer
@@ -23,7 +23,7 @@ Cada modo va separado: no se mezclan.
 
 1. Ficha y README. ✅
 2. Modo ortografía, probado y funcionando. ✅
-3. Modo inglés.
+3. Modo inglés. ✅
 4. Más adelante: modo código, módulo de voz y lecturas.
 
 ## Norma del código
@@ -49,3 +49,23 @@ Cada modo va separado: no se mezclan.
   - no usan tildes que la RAE ya no recomienda desde 2010 (*sólo*, *éste*, *guión*…);
   - no tienen números, comillas, paréntesis ni palabras de programación.
 - **Teclados sin ñ o tildes:** hay botones en pantalla para á, é, í, ó, ú, ü, ñ, ¿ y ¡.
+- **Etiquetas de Tatoeba:** se descartan las frases con avisos de revisión (*@check*, *@change*,
+  *needs native check*…) o etiquetas de contenido inadecuado o anticuado (*vulgar*, *offensive*, *archaic*…).
+
+## Decisiones tomadas para el modo inglés
+
+- **Cómo se confirma que entiendes la frase:** mientras escribes ves la frase en inglés y su traducción.
+  Al terminarla, la traducción se oculta y eliges qué significa entre tres opciones en español
+  (ratón o teclas 1, 2 y 3). Acertar cuenta la frase; fallar resta una vida y muestra la respuesta correcta.
+- **Opciones equivocadas parecidas:** se eligen traducciones que comparten palabras con la correcta
+  (por ejemplo, otra frase con «fuerte» o «cansado»), para que haya que entender la frase y no solo
+  reconocer una palabra. Nunca se ofrece como equivocada una frase que significa lo mismo
+  («I'm tired» y «I am tired» cuentan como iguales).
+- **Calidad:** la frase en inglés debe estar aprobada por otra persona y escrita o aprobada por un nativo
+  de inglés; la traducción, escrita o aprobada por un nativo de español y con la misma ortografía
+  exigida en el modo ortografía.
+- **Tamaño:** de unas 40 000 parejas válidas se guardan 5000 (1500 cortas, 2000 medianas y 1500 largas),
+  priorizando las que tienen las dos frases revisadas. Así el archivo pesa unos 600 KB.
+- **Sin botones de tildes:** el inglés no los necesita; el apóstrofo (*don't*, *I'm*) está en cualquier teclado.
+- **Código compartido:** lo común a todos los modos (vidas, errores, resultado) está en `js/motor.js`.
+  Cada modo solo describe sus reglas en `js/modos/`, y tiene sus propias frases, récord y frases vistas.

@@ -1,5 +1,5 @@
 // Archivo generado por herramientas/preparar_frases.py. No lo edites a mano: vuelve a ejecutar el script.
-// Generado el 2026-10-24 con 3475 frases.
+// Generado el 2026-10-24 con 3467 frases.
 // Frases de Tatoeba (https://tatoeba.org), con licencia CC BY 2.0 FR (https://creativecommons.org/licenses/by/2.0/fr/).
 // Cada frase es una lista: [número de la frase en Tatoeba, texto, autor].
 window.FRASES_ES = [
@@ -575,7 +575,6 @@ window.FRASES_ES = [
   [1542740, "Le lanzó una flecha al ciervo.", "marcelostockle"],
   [1543865, "El perro de San Roque no tiene rabo porque Ramón Ramirez se lo ha cortado.", "wallebot"],
   [1545423, "Mi nombre es Ivan.", "marcelostockle"],
-  [1546234, "Toma algunas galletas para calmar el hambre hasta la cena.", "wallebot"],
   [1547849, "Papá no come postre.", "marcelostockle"],
   [1547950, "Tú y yo amamos los juegos.", "marcelostockle"],
   [1549912, "Su ceguera fue provocada por factores externos.", "hayastan"],
@@ -1166,7 +1165,6 @@ window.FRASES_ES = [
   [3045030, "A la luz del sentido común esto es absurdo.", "al_ex_an_der"],
   [3069274, "La forma del edificio se asemeja a una flor.", "al_ex_an_der"],
   [3084147, "Él regresará a Japón algún día.", "marcelostockle"],
-  [3084416, "Bien vestido, bien recibido, pero la mejor pieza es una buena cabeza.", "al_ex_an_der"],
   [3100103, "A Tom le da exactamente lo mismo lo que piense Mary.", "Shishir"],
   [3100831, "Hablaba con mi tío por teléfono.", "marcelostockle"],
   [3113406, "¿Cómo se pronuncia tu nombre?", "marcelostockle"],
@@ -1181,9 +1179,7 @@ window.FRASES_ES = [
   [3231173, "¿Cuánto tiempo necesitas?", "Shishir"],
   [3235793, "Tom no se rio de mi broma.", "Shishir"],
   [3239704, "Tom intenta ganar suficiente dinero para comprarse una trompeta nueva.", "Shishir"],
-  [3247806, "El hombre moderno necesita cada día una neurosis nueva.", "al_ex_an_der"],
   [3255017, "Siento no haberle comprendido; usted habla demasiado de prisa.", "al_ex_an_der"],
-  [3255096, "Con cierta constancia, se puede aprender cualquier idioma.", "al_ex_an_der"],
   [3256219, "No hablo estonio.", "Shishir"],
   [3260167, "La Academia permite ambas formas.", "al_ex_an_der"],
   [3273866, "Tienen que limpiar la habitación.", "Shishir"],
@@ -3417,7 +3413,6 @@ window.FRASES_ES = [
   [11698396, "Es mejor que dejes de salir con ella.", "Jokubas"],
   [11728078, "Ñoños como él hay muy pocos en mi familia.", "Seael"],
   [11733949, "Me pregunto de quién es este perro.", "samir_t"],
-  [11842658, "Déjame ser tu compañero de viaje en esta maravillosa aventura llamada vida.", "Amastan"],
   [11844818, "Me leíste la mente.", "morbrorper"],
   [11878973, "Me acabo de desocupar.", "JSKabylie15"],
   [11878979, "Está como ido.", "JSKabylie15"],
@@ -3466,8 +3461,6 @@ window.FRASES_ES = [
   [12008775, "Cruzamos hacia Sidi Aich.", "JSKabylie15"],
   [12008777, "Pasa las noches en vela.", "JSKabylie15"],
   [12008779, "¿Alistó la casa?", "JSKabylie15"],
-  [12018220, "Es inútil esperar.", "maaster"],
-  [12033293, "Sé que eres golosita. Acurruquémonos con unos dulces y una película, mi gatita.", "DJ_Saidez"],
   [12041150, "Alguien limpió mi habitación mientras yo estaba fuera.", "morbrorper"],
   [12041927, "Alguien limpió mi cuarto mientras yo no estaba.", "morbrorper"],
   [12589198, "Dos al cuadrado es cuatro.", "Logical_Art_1013"],
@@ -3477,5 +3470,4 @@ window.FRASES_ES = [
   [13093191, "Creo que ganaré.", "arh"],
   [13093221, "Debe ir inmediatamente.", "arh"],
   [13227434, "¡Monstruo!", "jan_Junipa"],
-  [13402061, "Falta puntuación final.", "EugeneGS"],
 ];

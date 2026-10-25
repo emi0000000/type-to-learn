@@ -93,6 +93,9 @@ a {
 }
 
 .modo {
+  display: flex; /* contenido en columna... */
+  flex-direction: column; /* ...uno debajo de otro... */
+  justify-content: flex-start; /* ...empezando arriba de la tarjeta */
   padding: 18px; /* relleno interior */
   text-align: left; /* texto alineado a la izquierda */
   background: var(--superficie); /* fondo de tarjeta */
@@ -127,10 +130,25 @@ a {
   font-size: 0.95rem; /* un poco más pequeño */
 }
 
-.nota {
-  margin: 20px 0 0; /* separado de las tarjetas */
+.modo-estado {
+  display: block; /* en su propia línea */
+  margin-top: 12px; /* separado de la descripción */
   color: var(--texto-suave); /* texto secundario */
-  font-size: 0.95rem; /* un poco más pequeño */
+  font-family: var(--letra-maquina); /* letra de máquina */
+  font-size: 0.78rem; /* pequeño */
+}
+
+.modo-estado:empty {
+  display: none; /* si no hay estado (modo código), no ocupa espacio */
+}
+
+.etiqueta-modo {
+  margin: 0 0 8px; /* espacio debajo */
+  color: var(--acento); /* dorado */
+  font-family: var(--letra-maquina); /* letra de máquina */
+  font-size: 0.8rem; /* pequeño */
+  letter-spacing: 0.12em; /* letras separadas */
+  text-transform: uppercase; /* en mayúsculas */
 }
 
 .reglas {
@@ -231,6 +249,99 @@ a {
 
 .frase.lograda {
   animation: lograr 0.8s ease; /* la frase brilla al completarla */
+}
+
+.traduccion {
+  margin: -8px 0 24px; /* pegada a la frase y separada de la caja */
+  color: var(--texto-suave); /* texto secundario */
+  font-size: 1.1rem; /* un poco más grande que el normal */
+}
+
+.traduccion-etiqueta {
+  display: inline-block; /* cajita con borde */
+  margin-right: 8px; /* separada del texto */
+  padding: 1px 8px; /* relleno interior */
+  border: 1px solid var(--borde); /* borde suave */
+  border-radius: 999px; /* forma de píldora */
+  font-size: 0.72rem; /* pequeña */
+  letter-spacing: 0.08em; /* letras separadas */
+  text-transform: uppercase; /* en mayúsculas */
+  vertical-align: middle; /* centrada con el texto */
+}
+
+.pregunta {
+  margin: 0 0 32px; /* espacio debajo */
+}
+
+.pregunta-titulo {
+  margin: 0 0 10px; /* espacio debajo */
+  font-weight: 600; /* seminegrita */
+}
+
+.pista {
+  margin-left: 8px; /* separada del título */
+  color: var(--texto-suave); /* texto secundario */
+  font-size: 0.85rem; /* pequeña */
+  font-weight: 400; /* sin negrita */
+}
+
+.opciones {
+  display: grid; /* opciones una debajo de otra... */
+  gap: 8px; /* ...con separación */
+}
+
+.opcion {
+  display: flex; /* número y texto en fila */
+  align-items: center; /* centrados en vertical */
+  gap: 12px; /* separación entre número y texto */
+  width: 100%; /* todo el ancho */
+  padding: 12px 14px; /* relleno interior */
+  text-align: left; /* texto a la izquierda */
+  background: var(--superficie); /* fondo de tarjeta */
+  color: var(--texto); /* color del texto */
+  border: 2px solid var(--borde); /* borde suave */
+  border-radius: var(--radio); /* esquinas redondeadas */
+  cursor: pointer; /* manita */
+}
+
+.opcion:hover:not(:disabled) {
+  border-color: var(--acento); /* borde dorado al pasar por encima */
+}
+
+.opcion:disabled {
+  cursor: default; /* ya respondida: sin manita */
+}
+
+.opcion:disabled:not(.correcta):not(.incorrecta) {
+  opacity: 0.5; /* las opciones que no importan se apagan */
+}
+
+.opcion-numero {
+  display: inline-grid; /* cajita para el número... */
+  place-items: center; /* ...con el número centrado */
+  flex: none; /* no se encoge */
+  width: 28px; /* ancho */
+  height: 28px; /* alto */
+  background: var(--borde); /* fondo suave */
+  border-radius: 6px; /* esquinas redondeadas */
+  font-family: var(--letra-maquina); /* letra de máquina */
+  font-size: 0.9rem; /* tamaño del número */
+}
+
+.opcion.correcta {
+  background: rgba(140, 192, 127, 0.12); /* fondo verde suave */
+  border-color: var(--hecho); /* borde verde */
+}
+
+.opcion.incorrecta {
+  background: rgba(229, 88, 63, 0.12); /* fondo rojo suave */
+  border-color: var(--peligro); /* borde rojo */
+}
+
+@media (hover: none) {
+  .pista {
+    display: none; /* en pantallas táctiles no hay teclas 1, 2, 3: ocultamos la pista */
+  }
 }
 
 .entrada {

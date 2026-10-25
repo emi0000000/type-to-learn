@@ -9,7 +9,7 @@
   <!-- Título de la pestaña del navegador. -->
   <title>Frase Exacta</title>
   <!-- Descripción para buscadores y para cuando se comparte el enlace. -->
-  <meta name="description" content="Juego para practicar ortografía en español copiando frases exactas. Cada error te cuesta una vida.">
+  <meta name="description" content="Juego para practicar ortografía en español e inglés copiando frases exactas. Cada error te cuesta una vida.">
   <!-- Color de la barra del navegador en móviles. -->
   <meta name="theme-color" content="#15120f">
   <!-- Icono de la pestaña: un corazón dibujado con SVG, sin archivos extra. -->
@@ -17,19 +17,25 @@
   <!-- Hoja de estilos del juego. -->
   <link rel="stylesheet" href="css/estilos.css">
   <!-- Scripts: "defer" los ejecuta en este orden cuando la página ya está construida. -->
-  <!-- 1. Las frases (generadas por herramientas/preparar_frases.py). -->
+  <!-- 1. Las frases de cada modo (generadas por herramientas/preparar_frases.py). -->
   <script defer src="datos/frases-es.js"></script>
+  <script defer src="datos/frases-en.js"></script>
   <!-- 2. Guardar datos en el navegador. -->
   <script defer src="js/memoria.js"></script>
   <!-- 3. Comparar lo escrito con la frase. -->
   <script defer src="js/comparar.js"></script>
   <!-- 4. Elegir frases sin repetir. -->
   <script defer src="js/seleccion.js"></script>
-  <!-- 5. Cambiar de pantalla. -->
+  <!-- 5. Elegir las opciones de la pregunta de significado (modo inglés). -->
+  <script defer src="js/significado.js"></script>
+  <!-- 6. Cambiar de pantalla. -->
   <script defer src="js/pantallas.js"></script>
-  <!-- 6. El modo ortografía. -->
+  <!-- 7. El motor común de las partidas. -->
+  <script defer src="js/motor.js"></script>
+  <!-- 8. Los modos de juego. -->
   <script defer src="js/modos/ortografia.js"></script>
-  <!-- 7. Arranque y menú: siempre el último. -->
+  <script defer src="js/modos/ingles.js"></script>
+  <!-- 9. Arranque y menú: siempre el último. -->
   <script defer src="js/principal.js"></script>
 </head>
 <body>
@@ -44,19 +50,23 @@
       <p class="lema">Copia la frase tal cual. Cada error te cuesta una vida.</p>
       <!-- Botones de los modos: cada modo va por separado. -->
       <div class="modos">
-        <!-- Modo ortografía: disponible. -->
+        <!-- Modo ortografía. -->
         <button id="boton-ortografia" class="modo" type="button">
           <!-- Nombre del modo. -->
           <span class="modo-nombre">Ortografía</span>
           <!-- Qué se hace en él. -->
           <span class="modo-detalle">Frases en español. Escríbelas exactas.</span>
+          <!-- Frases, sin ver y récord (lo rellena principal.js). -->
+          <span id="estado-ortografia" class="modo-estado"></span>
         </button>
-        <!-- Modo inglés: todavía no disponible. -->
-        <button class="modo" type="button" disabled>
+        <!-- Modo inglés. -->
+        <button id="boton-ingles" class="modo" type="button">
           <!-- Nombre del modo. -->
           <span class="modo-nombre">Inglés</span>
-          <!-- Cuándo llega. -->
-          <span class="modo-detalle">Próximamente</span>
+          <!-- Qué se hace en él. -->
+          <span class="modo-detalle">Frases en inglés con su traducción. Escríbelas y elige qué significan.</span>
+          <!-- Frases, sin ver y récord (lo rellena principal.js). -->
+          <span id="estado-ingles" class="modo-estado"></span>
         </button>
         <!-- Modo código: previsto para la versión 2. -->
         <button class="modo" type="button" disabled>
@@ -66,56 +76,75 @@
           <span class="modo-detalle">En la versión 2</span>
         </button>
       </div>
-      <!-- Frases disponibles y récord (lo rellena principal.js). -->
-      <p id="menu-estado" class="nota"></p>
       <!-- Reglas, plegadas para no ocupar espacio. -->
       <details class="reglas">
         <!-- Título desplegable. -->
         <summary>Reglas</summary>
         <!-- Lista de reglas. -->
         <ul>
-          <!-- Regla 1. -->
+          <!-- Regla general 1. -->
           <li>Escribe la frase exactamente igual: letras, tildes, mayúsculas, signos y espacios.</li>
-          <!-- Regla 2. -->
+          <!-- Regla general 2. -->
           <li>Empiezas con 5 vidas. Cada carácter equivocado resta una.</li>
-          <!-- Regla 3. -->
+          <!-- Regla del modo inglés. -->
+          <li>En inglés, al terminar de escribir se oculta la traducción y eliges qué significa la frase (teclas 1, 2 o 3). Equivocarte también resta una vida.</li>
+          <!-- Regla general 3. -->
           <li>Las frases empiezan cortas y se van alargando.</li>
-          <!-- Regla 4. -->
-          <li>No se repiten frases: el juego recuerda cuáles ya te salieron.</li>
-          <!-- Regla 5. -->
+          <!-- Regla general 4. -->
+          <li>No se repiten frases: el juego recuerda cuáles ya te salieron en cada modo.</li>
+          <!-- Regla general 5. -->
           <li>No se puede pegar texto. Si te faltan teclas (ñ, tildes, ¿ ¡), usa los botones de la pantalla.</li>
         </ul>
       </details>
     </section>
 
-    <!-- ===== Pantalla 2: partida de ortografía ===== -->
-    <section id="pantalla-ortografia" class="pantalla" aria-label="Partida de ortografía" hidden>
-      <!-- Marcador: vidas a la izquierda, contadores a la derecha. -->
+    <!-- ===== Pantalla 2: partida (la usan todos los modos) ===== -->
+    <section id="pantalla-juego" class="pantalla" aria-labelledby="juego-modo" hidden>
+      <!-- Marcador: modo y vidas a la izquierda, contadores a la derecha. -->
       <header class="marcador">
-        <!-- Corazones (los dibuja ortografia.js). -->
-        <div id="orto-vidas" class="vidas" role="img" aria-label="Vidas"></div>
+        <!-- Parte izquierda del marcador. -->
+        <div>
+          <!-- Nombre del modo que se está jugando. -->
+          <p id="juego-modo" class="etiqueta-modo">Ortografía</p>
+          <!-- Corazones (los dibuja motor.js). -->
+          <div id="juego-vidas" class="vidas" role="img" aria-label="Vidas"></div>
+        </div>
         <!-- Contadores. -->
         <div class="cifras">
-          <!-- Frases completadas. -->
-          <span>Frases <strong id="orto-completadas">0</strong></span>
+          <!-- Frases superadas. -->
+          <span>Frases <strong id="juego-completadas">0</strong></span>
           <!-- Errores cometidos. -->
-          <span>Errores <strong id="orto-errores">0</strong></span>
+          <span>Errores <strong id="juego-errores">0</strong></span>
         </div>
       </header>
       <!-- La frase completa, solo para lectores de pantalla. -->
-      <p id="orto-frase-lectores" class="solo-lectores"></p>
+      <p id="juego-frase-lectores" class="solo-lectores"></p>
       <!-- La frase letra por letra, con colores (los lectores de pantalla la ignoran). -->
-      <p id="orto-frase" class="frase" aria-hidden="true"></p>
+      <p id="juego-frase" class="frase" aria-hidden="true"></p>
+      <!-- Traducción de la frase (solo en el modo inglés; la maneja ingles.js). -->
+      <p id="ingles-traduccion" class="traduccion" hidden>
+        <!-- Etiqueta. -->
+        <span class="traduccion-etiqueta">Traducción</span>
+        <!-- Texto de la traducción. -->
+        <span id="ingles-traduccion-texto" lang="es"></span>
+      </p>
       <!-- Etiqueta de la caja de texto, solo para lectores de pantalla. -->
-      <label for="orto-entrada" class="solo-lectores">Escribe la frase</label>
+      <label for="juego-entrada" class="solo-lectores">Escribe la frase</label>
       <!-- Caja donde se escribe. Sin autocorrección ni sugerencias: tiene que escribirlo la persona. -->
-      <input id="orto-entrada" class="entrada" type="text" lang="es"
+      <input id="juego-entrada" class="entrada" type="text"
              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
              enterkeyhint="done" placeholder="Escribe aquí la frase…">
       <!-- Mensajes de error o de ánimo; los lectores de pantalla los leen al cambiar. -->
-      <p id="orto-mensaje" class="mensaje" role="status" aria-live="polite"></p>
-      <!-- Botones para caracteres que no todos los teclados tienen. -->
-      <div id="orto-teclas" class="teclas" role="group" aria-label="Caracteres especiales">
+      <p id="juego-mensaje" class="mensaje" role="status" aria-live="polite"></p>
+      <!-- Pregunta de significado (solo en el modo inglés; la maneja ingles.js). -->
+      <div id="ingles-pregunta" class="pregunta" role="group" aria-labelledby="ingles-pregunta-titulo" hidden>
+        <!-- Título de la pregunta, con una pista de las teclas. -->
+        <p id="ingles-pregunta-titulo" class="pregunta-titulo">¿Qué significa? <span class="pista">Pulsa 1, 2 o 3</span></p>
+        <!-- Botones de las opciones (los crea ingles.js). -->
+        <div id="ingles-opciones" class="opciones"></div>
+      </div>
+      <!-- Botones para caracteres que no todos los teclados tienen (solo en ortografía). -->
+      <div id="juego-teclas" class="teclas" role="group" aria-label="Caracteres especiales">
         <!-- Vocales con tilde. -->
         <button type="button" data-caracter="á">á</button>
         <button type="button" data-caracter="é">é</button>
@@ -129,49 +158,51 @@
         <button type="button" data-caracter="¿">¿</button>
         <button type="button" data-caracter="¡">¡</button>
         <!-- Mayúscula para el siguiente botón pulsado. -->
-        <button id="orto-mayus" type="button" aria-pressed="false" title="La siguiente letra irá en mayúscula">⇧ Mayús</button>
+        <button id="juego-mayus" type="button" aria-pressed="false" title="La siguiente letra irá en mayúscula">⇧ Mayús</button>
       </div>
       <!-- Pie de la partida: origen de la frase y botón para terminar. -->
       <footer class="pie-juego">
-        <!-- Número y autor de la frase en Tatoeba. -->
-        <p id="orto-fuente" class="fuente"></p>
+        <!-- Número y autor de la frase (y de su traducción) en Tatoeba. -->
+        <p id="juego-fuente" class="fuente"></p>
         <!-- Terminar la partida ahora. -->
-        <button id="orto-terminar" class="boton-secundario" type="button">Terminar partida</button>
+        <button id="juego-terminar" class="boton-secundario" type="button">Terminar partida</button>
       </footer>
     </section>
 
-    <!-- ===== Pantalla 3: resultado de ortografía ===== -->
-    <section id="pantalla-orto-fin" class="pantalla" aria-labelledby="orto-fin-titulo" hidden>
+    <!-- ===== Pantalla 3: resultado (la usan todos los modos) ===== -->
+    <section id="pantalla-fin" class="pantalla" aria-labelledby="fin-titulo" hidden>
+      <!-- Nombre del modo jugado. -->
+      <p id="fin-modo" class="etiqueta-modo"></p>
       <!-- Título: "Fin de la partida" o "¡Nuevo récord!". -->
-      <h2 id="orto-fin-titulo" class="titulo-fin">Fin de la partida</h2>
-      <!-- Resultado principal: frases completadas. -->
+      <h2 id="fin-titulo" class="titulo-fin">Fin de la partida</h2>
+      <!-- Resultado principal: frases superadas. -->
       <p class="resultado-grande">
         <!-- Número. -->
-        <strong id="orto-fin-completadas">0</strong>
+        <strong id="fin-completadas">0</strong>
         <!-- Unidad. -->
-        <span id="orto-fin-unidad">frases completadas</span>
+        <span id="fin-unidad">frases superadas</span>
       </p>
       <!-- Otras cifras de la partida. -->
       <dl class="estadisticas">
         <!-- Letras correctas. -->
-        <div><dt>Letras correctas</dt><dd id="orto-fin-letras">0</dd></div>
+        <div><dt>Letras correctas</dt><dd id="fin-letras">0</dd></div>
         <!-- Errores. -->
-        <div><dt>Errores</dt><dd id="orto-fin-errores">0</dd></div>
-        <!-- Precisión. -->
-        <div><dt>Precisión</dt><dd id="orto-fin-precision">100 %</dd></div>
+        <div><dt>Errores</dt><dd id="fin-errores">0</dd></div>
+        <!-- Precisión al escribir. -->
+        <div><dt>Precisión</dt><dd id="fin-precision">100 %</dd></div>
         <!-- Mejor resultado. -->
-        <div><dt>Récord</dt><dd id="orto-fin-record">0</dd></div>
+        <div><dt>Récord</dt><dd id="fin-record">0</dd></div>
       </dl>
       <!-- Título de la lista de repaso. -->
       <h3 class="subtitulo">Para repasar</h3>
-      <!-- Palabras donde hubo errores (la rellena ortografia.js). -->
-      <ul id="orto-fin-repaso" class="repaso"></ul>
+      <!-- Errores de la partida (la rellena motor.js). -->
+      <ul id="fin-repaso" class="repaso"></ul>
       <!-- Qué hacer ahora. -->
       <div class="acciones">
-        <!-- Empezar otra partida. -->
-        <button id="orto-otra-vez" class="boton-principal" type="button">Jugar otra vez</button>
+        <!-- Empezar otra partida del mismo modo. -->
+        <button id="fin-otra-vez" class="boton-principal" type="button">Jugar otra vez</button>
         <!-- Volver al menú principal. -->
-        <button id="orto-volver" class="boton-secundario" type="button">Volver al menú</button>
+        <button id="fin-volver" class="boton-secundario" type="button">Volver al menú</button>
       </div>
     </section>
 

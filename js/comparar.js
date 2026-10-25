@@ -101,6 +101,11 @@ function explicarError(esperado, recibido) {
     // Recordamos que en español se abren las preguntas y exclamaciones.
     return `Falta el signo de apertura: ${detalle}.`;
   }
+  // Caso 2 bis: falta el apóstrofo de las contracciones inglesas (don't, I'm).
+  if (esperado === "'") {
+    // Recordamos el apóstrofo.
+    return `Falta el apóstrofo: ${detalle}.`;
+  }
   // Caso 3: es la misma letra, pero cambia mayúscula por minúscula o al revés.
   if (esperado !== recibido && esperado.toLowerCase() === recibido.toLowerCase()) {
     // Indicamos si tocaba mayúscula o minúscula.

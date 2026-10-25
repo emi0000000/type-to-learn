@@ -95,6 +95,8 @@ test("explicarError reconoce los errores típicos", () => {
   assert.equal(explicarError("q", "Q"), "Ojo con la minúscula: se esperaba «q» y escribiste «Q».");
   // Signo de apertura.
   assert.equal(explicarError("¿", "Q"), "Falta el signo de apertura: se esperaba «¿» y escribiste «Q».");
+  // Apóstrofo de las contracciones inglesas.
+  assert.equal(explicarError("'", "t"), "Falta el apóstrofo: se esperaba «'» y escribiste «t».");
   // Eñe por ene.
   assert.equal(explicarError("ñ", "n"), "Revisa la letra: se esperaba «ñ» y escribiste «n».");
   // Espacio.
