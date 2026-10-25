@@ -104,3 +104,23 @@ test("explicarError reconoce los errores típicos", () => {
   // Texto de más.
   assert.equal(explicarError("", "x"), "La frase ya terminó: sobra «x».");
 });
+
+// Con la interfaz en inglés, las explicaciones salen en inglés.
+test("explicarError también explica en inglés", () => {
+  // Falta la tilde.
+  assert.equal(explicarError("á", "a", "en"), "Missing the accent: expected “á” but you typed “a”.");
+  // Mayúscula.
+  assert.equal(explicarError("Q", "q", "en"), "Watch the capital letter: expected “Q” but you typed “q”.");
+  // Signo de apertura.
+  assert.equal(explicarError("¿", "Q", "en"), "Missing the opening mark: expected “¿” but you typed “Q”.");
+  // Espacio.
+  assert.equal(explicarError(" ", "m", "en"), "Mistake: expected a space but you typed “m”.");
+  // Texto de más.
+  assert.equal(explicarError("", "x", "en"), "The sentence already ended: “x” is extra.");
+});
+
+// Un "$" escrito no se toma como código especial al rellenar el mensaje.
+test("explicarError muestra bien el signo $", () => {
+  // El dólar aparece tal cual.
+  assert.equal(explicarError("a", "$"), "Error: se esperaba «a» y escribiste «$».");
+});

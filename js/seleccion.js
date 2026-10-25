@@ -27,6 +27,12 @@ function tramoSegunProgreso(completadas) {
   return elegido;
 }
 
+// Devuelve el nivel de dificultad (1, 2 o 3) según las frases completadas, para mostrarlo en pantalla.
+function nivelSegunProgreso(completadas) {
+  // El nivel es la posición del tramo en la lista, empezando en 1.
+  return TRAMOS.indexOf(tramoSegunProgreso(completadas)) + 1;
+}
+
 // Elige al azar una frase que todavía no se haya usado, del largo que toca.
 //   frases:      lista de frases, cada una [número, texto, autor]
 //   usadas:      conjunto (Set) con los números de las frases ya vistas
@@ -56,5 +62,5 @@ function elegirFrase(frases, usadas, completadas, azar = Math.random) {
 // Si este archivo se carga desde Node (en las pruebas), exportamos lo necesario.
 if (typeof module !== "undefined" && module.exports) {
   // Lista de lo que pueden usar las pruebas.
-  module.exports = { TRAMOS, tramoSegunProgreso, elegirFrase };
+  module.exports = { TRAMOS, tramoSegunProgreso, nivelSegunProgreso, elegirFrase };
 }

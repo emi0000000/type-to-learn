@@ -1,150 +1,371 @@
 <!doctype html>
-<!-- Página única del juego: contiene el menú, la partida y la pantalla de resultados. -->
-<html lang="es">
+<!-- Página única del juego: contiene el menú, la partida, el resultado y el panel de ajustes. -->
+<!-- Funciona como página web y como aplicación instalable a pantalla completa (mira manifest.webmanifest y sw.js). -->
+<html lang="es" data-tema="oscuro">
 <head>
   <!-- Codificación de caracteres: UTF-8, para que se vean bien tildes, ñ y signos. -->
   <meta charset="utf-8">
-  <!-- Ajuste para móviles: el ancho de la página es el de la pantalla. -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Ajuste para móviles: el ancho de la página es el de la pantalla; viewport-fit ocupa también la zona de la cámara. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <!-- Título de la pestaña del navegador. -->
   <title>Frase Exacta</title>
   <!-- Descripción para buscadores y para cuando se comparte el enlace. -->
-  <meta name="description" content="Juego para practicar ortografía en español e inglés copiando frases exactas. Cada error te cuesta una vida.">
-  <!-- Color de la barra del navegador en móviles. -->
-  <meta name="theme-color" content="#15120f">
-  <!-- Icono de la pestaña: un corazón dibujado con SVG, sin archivos extra. -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9D%A4%3C/text%3E%3C/svg%3E">
+  <meta name="description" content="Aprende inglés y español escribiendo: copia frases exactas, elige su significado y no pierdas tus vidas.">
+  <!-- Color de la barra del navegador en móviles (tema oscuro y claro). -->
+  <meta name="theme-color" content="#101117" media="(prefers-color-scheme: dark)">
+  <!-- Color de la barra del navegador con el sistema en modo claro. -->
+  <meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+  <!-- Ficha de la aplicación instalable: nombre, iconos y modo pantalla completa. -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <!-- Icono de la pestaña (dibujo vectorial). -->
+  <link rel="icon" href="iconos/icono.svg" type="image/svg+xml">
+  <!-- Icono para la pantalla de inicio de iPhone y iPad. -->
+  <link rel="apple-touch-icon" href="iconos/apple-touch-icon.png">
+  <!-- En iPhone y iPad, al abrirla desde la pantalla de inicio se ve como una aplicación, sin barras. -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <!-- Lo mismo para otros navegadores móviles. -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <!-- Nombre corto bajo el icono en iPhone y iPad. -->
+  <meta name="apple-mobile-web-app-title" content="Frase Exacta">
+  <!-- Barra de estado de iPhone transparente sobre el fondo oscuro. -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <!-- Hoja de estilos del juego. -->
   <link rel="stylesheet" href="css/estilos.css">
+  <!-- Antes de pintar nada, aplicamos el tema guardado para que la página no parpadee al cargar. -->
+  <script>
+    // Intentamos leer los ajustes guardados (puede fallar en modo privado).
+    try {
+      // Ponemos el tema guardado, o el oscuro si no hay ninguno.
+      document.documentElement.dataset.tema = (JSON.parse(localStorage.getItem("frase-exacta:ajustes")) || {}).tema || "oscuro";
+      // Si falla...
+    } catch (error) {
+      // ...nos quedamos con el oscuro.
+      document.documentElement.dataset.tema = "oscuro";
+    }
+  </script>
   <!-- Scripts: "defer" los ejecuta en este orden cuando la página ya está construida. -->
-  <!-- 1. Las frases de cada modo (generadas por herramientas/preparar_frases.py). -->
+  <!-- 1. Las frases (generadas por herramientas/preparar_frases.py). -->
   <script defer src="datos/frases-es.js"></script>
   <script defer src="datos/frases-en.js"></script>
-  <!-- 2. Guardar datos en el navegador. -->
+  <!-- 2. Textos de la interfaz en español e inglés. -->
+  <script defer src="js/textos.js"></script>
+  <!-- 3. Guardar datos en el navegador. -->
   <script defer src="js/memoria.js"></script>
-  <!-- 3. Comparar lo escrito con la frase. -->
+  <!-- 4. Comparar lo escrito con la frase y explicar los errores. -->
   <script defer src="js/comparar.js"></script>
-  <!-- 4. Elegir frases sin repetir. -->
+  <!-- 5. Elegir frases sin repetir. -->
   <script defer src="js/seleccion.js"></script>
-  <!-- 5. Elegir las opciones de la pregunta de significado (modo inglés). -->
+  <!-- 6. Elegir las opciones de la pregunta de significado. -->
   <script defer src="js/significado.js"></script>
-  <!-- 6. Cambiar de pantalla. -->
+  <!-- 7. Estadísticas: días seguidos, velocidad, tiempo. -->
+  <script defer src="js/estadisticas.js"></script>
+  <!-- 8. Cambiar de pantalla. -->
   <script defer src="js/pantallas.js"></script>
-  <!-- 7. El motor común de las partidas. -->
+  <!-- 9. Ajustes: idioma, tema, dificultad, sonido, voz. -->
+  <script defer src="js/ajustes.js"></script>
+  <!-- 10. Efectos de sonido. -->
+  <script defer src="js/sonidos.js"></script>
+  <!-- 11. Leer frases en voz alta. -->
+  <script defer src="js/voz.js"></script>
+  <!-- 12. Aplicación: instalar, pantalla completa y uso sin conexión. -->
+  <script defer src="js/app.js"></script>
+  <!-- 13. El motor común de las partidas. -->
   <script defer src="js/motor.js"></script>
-  <!-- 8. Los modos de juego. -->
+  <!-- 14. Los modos de juego. -->
   <script defer src="js/modos/ortografia.js"></script>
+  <script defer src="js/modos/traduccion.js"></script>
   <script defer src="js/modos/ingles.js"></script>
-  <!-- 9. Arranque y menú: siempre el último. -->
+  <script defer src="js/modos/espanol.js"></script>
+  <!-- 15. Arranque y menú: siempre el último. -->
   <script defer src="js/principal.js"></script>
 </head>
-<body>
+<body data-pantalla="pantalla-menu">
+  <!-- Dibujos (iconos) que se reutilizan en toda la página con <use href="#...">. No se ven por sí solos. -->
+  <svg class="iconos" aria-hidden="true" focusable="false">
+    <!-- Corazón de las vidas. -->
+    <symbol id="i-corazon" viewBox="0 0 24 24"><path d="M12 21s-7.4-4.5-9.6-9.1C.8 8.4 3 4.5 6.8 4.5c2.1 0 3.6 1.1 5.2 3 1.6-1.9 3.1-3 5.2-3 3.8 0 6 3.9 4.4 7.4C19.4 16.5 12 21 12 21z"/></symbol>
+    <!-- Sol (tema claro). -->
+    <symbol id="i-sol" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g></symbol>
+    <!-- Luna (tema oscuro). -->
+    <symbol id="i-luna" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+    <!-- Ampliar a pantalla completa. -->
+    <symbol id="i-ampliar" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+    <!-- Salir de pantalla completa. -->
+    <symbol id="i-reducir" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></symbol>
+    <!-- Ajustes (deslizadores). -->
+    <symbol id="i-ajustes" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2.4" fill="currentColor"/><circle cx="15" cy="12" r="2.4" fill="currentColor"/><circle cx="7" cy="18" r="2.4" fill="currentColor"/></g></symbol>
+    <!-- Descargar (instalar). -->
+    <symbol id="i-instalar" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+    <!-- Altavoz (escuchar). -->
+    <symbol id="i-altavoz" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11"/></g></symbol>
+    <!-- Cerrar. -->
+    <symbol id="i-cerrar" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></symbol>
+    <!-- Llama (racha). -->
+    <symbol id="i-llama" viewBox="0 0 24 24"><path d="M12 22c-4.4 0-7.5-3-7.5-7.2 0-3.3 2-5.6 3.8-7.6.6 1.9 1.6 3 2.8 3.4C11 6.9 12.6 4.2 15 2c.4 3.2 1.9 5 3.1 6.8 1.1 1.6 1.9 3.3 1.9 5.9C20 19 16.5 22 12 22z"/></symbol>
+    <!-- Calendario (días seguidos). -->
+    <symbol id="i-calendario" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></g></symbol>
+    <!-- Teclado (frases escritas). -->
+    <symbol id="i-teclado" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></g></symbol>
+    <!-- Reloj (tiempo). -->
+    <symbol id="i-reloj" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></g></symbol>
+  </svg>
+
+  <!-- Fondo decorativo con brillos de color (no tiene contenido). -->
+  <div class="fondo-decorado" aria-hidden="true"></div>
+
+  <!-- ===== Barra superior: nombre del juego y botones generales ===== -->
+  <header class="barra">
+    <!-- Nombre del juego (pequeño). -->
+    <p class="marca" aria-hidden="true">
+      <!-- Icono del juego. -->
+      <svg class="marca-icono"><use href="#i-corazon"/></svg>
+      <!-- Nombre. -->
+      <span>Frase <b>Exacta</b></span>
+    </p>
+    <!-- Botones de la barra. -->
+    <nav class="barra-acciones">
+      <!-- Instalar como aplicación (solo aparece si el navegador lo permite; lo maneja app.js). -->
+      <button id="boton-instalar" class="boton-chip" type="button" hidden>
+        <!-- Icono. -->
+        <svg aria-hidden="true"><use href="#i-instalar"/></svg>
+        <!-- Texto. -->
+        <span data-t="barra.instalar">Instalar app</span>
+      </button>
+      <!-- Cambiar el idioma de la interfaz (español / inglés). -->
+      <button id="boton-idioma" class="boton-icono boton-idioma" type="button" data-t-title="barra.idioma" data-t-aria-label="barra.idioma">EN</button>
+      <!-- Cambiar entre tema claro y oscuro (el icono lo cambia ajustes.js). -->
+      <button id="boton-tema" class="boton-icono" type="button">
+        <!-- Icono. -->
+        <svg aria-hidden="true"><use href="#i-sol"/></svg>
+      </button>
+      <!-- Pantalla completa (lo maneja app.js). -->
+      <button id="boton-pantalla" class="boton-icono" type="button" data-t-title="barra.pantalla" data-t-aria-label="barra.pantalla">
+        <!-- Icono. -->
+        <svg aria-hidden="true"><use href="#i-ampliar"/></svg>
+      </button>
+      <!-- Abrir el panel de ajustes. -->
+      <button id="boton-ajustes" class="boton-icono" type="button" data-t-title="barra.ajustes" data-t-aria-label="barra.ajustes">
+        <!-- Icono. -->
+        <svg aria-hidden="true"><use href="#i-ajustes"/></svg>
+      </button>
+    </nav>
+  </header>
+
   <!-- Contenido principal, centrado. -->
   <main class="contenedor">
 
     <!-- ===== Pantalla 1: menú ===== -->
     <section id="pantalla-menu" class="pantalla" aria-labelledby="titulo-juego">
-      <!-- Nombre del juego. -->
-      <h1 id="titulo-juego" class="titulo">Frase <span>Exacta</span></h1>
-      <!-- Frase que resume el juego. -->
-      <p class="lema">Copia la frase tal cual. Cada error te cuesta una vida.</p>
-      <!-- Botones de los modos: cada modo va por separado. -->
+      <!-- Portada: título, lema y resumen del progreso. -->
+      <div class="portada">
+        <!-- Nombre del juego. -->
+        <h1 id="titulo-juego" class="titulo">Frase <span>Exacta</span></h1>
+        <!-- Frase que resume el juego. -->
+        <p class="lema" data-t="menu.lema">Aprende inglés y español escribiendo.</p>
+        <!-- Progreso: días seguidos, frases y tiempo (lo rellena principal.js). -->
+        <ul id="menu-resumen" class="resumen" hidden>
+          <!-- Días seguidos. -->
+          <li><svg aria-hidden="true"><use href="#i-calendario"/></svg><span id="resumen-dias"></span></li>
+          <!-- Frases escritas. -->
+          <li><svg aria-hidden="true"><use href="#i-teclado"/></svg><span id="resumen-frases"></span></li>
+          <!-- Tiempo practicando. -->
+          <li><svg aria-hidden="true"><use href="#i-reloj"/></svg><span id="resumen-tiempo"></span></li>
+        </ul>
+      </div>
+
+      <!-- Tarjetas de los modos: cada modo va por separado. -->
       <div class="modos">
         <!-- Modo ortografía. -->
-        <button id="boton-ortografia" class="modo" type="button">
+        <article class="modo" data-modo="ortografia">
+          <!-- Cabecera: insignia e idioma. -->
+          <div class="modo-cabecera">
+            <!-- Insignia del modo. -->
+            <span class="modo-insignia" aria-hidden="true">Ñ</span>
+            <!-- Idioma del modo. -->
+            <span class="modo-direccion" data-t="modo.ortografia.direccion">Español</span>
+            <!-- Tecla de atajo. -->
+            <kbd class="modo-tecla" aria-hidden="true">1</kbd>
+          </div>
           <!-- Nombre del modo. -->
-          <span class="modo-nombre">Ortografía</span>
+          <h2 class="modo-nombre" data-t="modo.ortografia.nombre">Ortografía</h2>
           <!-- Qué se hace en él. -->
-          <span class="modo-detalle">Frases en español. Escríbelas exactas.</span>
+          <p class="modo-detalle" data-t="modo.ortografia.detalle"></p>
           <!-- Frases, sin ver y récord (lo rellena principal.js). -->
-          <span id="estado-ortografia" class="modo-estado"></span>
-        </button>
+          <p id="estado-ortografia" class="modo-estado"></p>
+          <!-- Botones del modo. -->
+          <div class="modo-acciones">
+            <!-- Jugar. -->
+            <button id="jugar-ortografia" class="boton-principal" type="button" data-t="menu.jugar">Jugar</button>
+            <!-- Repasar las frases falladas (solo si hay alguna). -->
+            <button id="repasar-ortografia" class="boton-secundario" type="button" data-t-title="menu.repasarTitulo" hidden></button>
+          </div>
+        </article>
         <!-- Modo inglés. -->
-        <button id="boton-ingles" class="modo" type="button">
+        <article class="modo" data-modo="ingles">
+          <!-- Cabecera: insignia y dirección. -->
+          <div class="modo-cabecera">
+            <!-- Insignia del modo. -->
+            <span class="modo-insignia" aria-hidden="true">EN</span>
+            <!-- Dirección del modo. -->
+            <span class="modo-direccion" data-t="modo.ingles.direccion">Inglés → Español</span>
+            <!-- Tecla de atajo. -->
+            <kbd class="modo-tecla" aria-hidden="true">2</kbd>
+          </div>
           <!-- Nombre del modo. -->
-          <span class="modo-nombre">Inglés</span>
+          <h2 class="modo-nombre" data-t="modo.ingles.nombre">Inglés</h2>
           <!-- Qué se hace en él. -->
-          <span class="modo-detalle">Frases en inglés con su traducción. Escríbelas y elige qué significan.</span>
+          <p class="modo-detalle" data-t="modo.ingles.detalle"></p>
           <!-- Frases, sin ver y récord (lo rellena principal.js). -->
-          <span id="estado-ingles" class="modo-estado"></span>
-        </button>
-        <!-- Modo código: previsto para la versión 2. -->
-        <button class="modo" type="button" disabled>
+          <p id="estado-ingles" class="modo-estado"></p>
+          <!-- Botones del modo. -->
+          <div class="modo-acciones">
+            <!-- Jugar. -->
+            <button id="jugar-ingles" class="boton-principal" type="button" data-t="menu.jugar">Jugar</button>
+            <!-- Repasar las frases falladas. -->
+            <button id="repasar-ingles" class="boton-secundario" type="button" data-t-title="menu.repasarTitulo" hidden></button>
+          </div>
+        </article>
+        <!-- Modo español (al revés que el inglés). -->
+        <article class="modo" data-modo="espanol">
+          <!-- Cabecera: insignia y dirección. -->
+          <div class="modo-cabecera">
+            <!-- Insignia del modo. -->
+            <span class="modo-insignia" aria-hidden="true">ES</span>
+            <!-- Dirección del modo. -->
+            <span class="modo-direccion" data-t="modo.espanol.direccion">Español → Inglés</span>
+            <!-- Tecla de atajo. -->
+            <kbd class="modo-tecla" aria-hidden="true">3</kbd>
+          </div>
           <!-- Nombre del modo. -->
-          <span class="modo-nombre">Código</span>
+          <h2 class="modo-nombre" data-t="modo.espanol.nombre">Español</h2>
+          <!-- Qué se hace en él. -->
+          <p class="modo-detalle" data-t="modo.espanol.detalle"></p>
+          <!-- Frases, sin ver y récord (lo rellena principal.js). -->
+          <p id="estado-espanol" class="modo-estado"></p>
+          <!-- Botones del modo. -->
+          <div class="modo-acciones">
+            <!-- Jugar. -->
+            <button id="jugar-espanol" class="boton-principal" type="button" data-t="menu.jugar">Jugar</button>
+            <!-- Repasar las frases falladas. -->
+            <button id="repasar-espanol" class="boton-secundario" type="button" data-t-title="menu.repasarTitulo" hidden></button>
+          </div>
+        </article>
+        <!-- Modo código: previsto para la versión 2. -->
+        <article class="modo modo-pronto" data-modo="codigo" aria-disabled="true">
+          <!-- Cabecera: insignia y tema. -->
+          <div class="modo-cabecera">
+            <!-- Insignia del modo. -->
+            <span class="modo-insignia" aria-hidden="true">&lt;/&gt;</span>
+            <!-- Tema del modo. -->
+            <span class="modo-direccion" data-t="modo.codigo.direccion">Programación</span>
+          </div>
+          <!-- Nombre del modo. -->
+          <h2 class="modo-nombre" data-t="modo.codigo.nombre">Código</h2>
+          <!-- Qué se hará en él. -->
+          <p class="modo-detalle" data-t="modo.codigo.detalle"></p>
           <!-- Cuándo llega. -->
-          <span class="modo-detalle">En la versión 2</span>
-        </button>
+          <p class="modo-estado" data-t="modo.codigo.pronto"></p>
+        </article>
       </div>
+
       <!-- Reglas, plegadas para no ocupar espacio. -->
       <details class="reglas">
         <!-- Título desplegable. -->
-        <summary>Reglas</summary>
+        <summary data-t="menu.reglas">Cómo se juega</summary>
         <!-- Lista de reglas. -->
-        <ul>
-          <!-- Regla general 1. -->
-          <li>Escribe la frase exactamente igual: letras, tildes, mayúsculas, signos y espacios.</li>
-          <!-- Regla general 2. -->
-          <li>Empiezas con 5 vidas. Cada carácter equivocado resta una.</li>
-          <!-- Regla del modo inglés. -->
-          <li>En inglés, al terminar de escribir se oculta la traducción y eliges qué significa la frase (teclas 1, 2 o 3). Equivocarte también resta una vida.</li>
-          <!-- Regla general 3. -->
-          <li>Las frases empiezan cortas y se van alargando.</li>
-          <!-- Regla general 4. -->
-          <li>No se repiten frases: el juego recuerda cuáles ya te salieron en cada modo.</li>
-          <!-- Regla general 5. -->
-          <li>No se puede pegar texto. Si te faltan teclas (ñ, tildes, ¿ ¡), usa los botones de la pantalla.</li>
-        </ul>
+        <ol>
+          <!-- Escribir exacto. -->
+          <li data-t="reglas.1"></li>
+          <!-- Vidas. -->
+          <li data-t="reglas.2"></li>
+          <!-- Pregunta de significado. -->
+          <li data-t="reglas.3"></li>
+          <!-- Recuperar vidas. -->
+          <li data-t="reglas.4"></li>
+          <!-- Dificultad creciente. -->
+          <li data-t="reglas.5"></li>
+          <!-- Sin repeticiones y repaso. -->
+          <li data-t="reglas.6"></li>
+          <!-- Voz y teclas especiales. -->
+          <li data-t="reglas.7"></li>
+        </ol>
       </details>
+      <!-- Pista de los atajos de teclado (se oculta en pantallas táctiles). -->
+      <p class="atajos" data-t="menu.atajos"></p>
     </section>
 
     <!-- ===== Pantalla 2: partida (la usan todos los modos) ===== -->
     <section id="pantalla-juego" class="pantalla" aria-labelledby="juego-modo" hidden>
-      <!-- Marcador: modo y vidas a la izquierda, contadores a la derecha. -->
+      <!-- Marcador: modo y nivel, vidas, y contadores. -->
       <header class="marcador">
-        <!-- Parte izquierda del marcador. -->
-        <div>
+        <!-- Modo y nivel. -->
+        <div class="marcador-modo">
           <!-- Nombre del modo que se está jugando. -->
           <p id="juego-modo" class="etiqueta-modo">Ortografía</p>
-          <!-- Corazones (los dibuja motor.js). -->
-          <div id="juego-vidas" class="vidas" role="img" aria-label="Vidas"></div>
+          <!-- Nivel de dificultad (lo pinta motor.js). -->
+          <p id="juego-nivel" class="chip-nivel"></p>
         </div>
+        <!-- Corazones (los dibuja motor.js). -->
+        <div id="juego-vidas" class="vidas" role="img" aria-label="Vidas"></div>
         <!-- Contadores. -->
-        <div class="cifras">
+        <dl class="cifras">
           <!-- Frases superadas. -->
-          <span>Frases <strong id="juego-completadas">0</strong></span>
+          <div><dt data-t="juego.frases">Frases</dt><dd id="juego-completadas">0</dd></div>
+          <!-- Racha de frases perfectas. -->
+          <div class="cifra-racha"><dt data-t="juego.racha">Racha</dt><dd><svg aria-hidden="true"><use href="#i-llama"/></svg><span id="juego-racha">0</span></dd></div>
+          <!-- Palabras por minuto. -->
+          <div data-t-title="juego.ppmTitulo"><dt data-t="juego.ppm">PPM</dt><dd id="juego-ppm">–</dd></div>
           <!-- Errores cometidos. -->
-          <span>Errores <strong id="juego-errores">0</strong></span>
-        </div>
+          <div><dt data-t="juego.errores">Errores</dt><dd id="juego-errores">0</dd></div>
+        </dl>
       </header>
-      <!-- La frase completa, solo para lectores de pantalla. -->
-      <p id="juego-frase-lectores" class="solo-lectores"></p>
-      <!-- La frase letra por letra, con colores (los lectores de pantalla la ignoran). -->
-      <p id="juego-frase" class="frase" aria-hidden="true"></p>
-      <!-- Traducción de la frase (solo en el modo inglés; la maneja ingles.js). -->
-      <p id="ingles-traduccion" class="traduccion" hidden>
-        <!-- Etiqueta. -->
-        <span class="traduccion-etiqueta">Traducción</span>
-        <!-- Texto de la traducción. -->
-        <span id="ingles-traduccion-texto" lang="es"></span>
-      </p>
+
+      <!-- Hoja con la frase que hay que copiar. -->
+      <div class="hoja">
+        <!-- Cabecera de la hoja: idioma de la frase y botón de escuchar. -->
+        <div class="hoja-cabecera">
+          <!-- Idioma de la frase (ES o EN). -->
+          <span id="juego-idioma" class="chip-idioma">ES</span>
+          <!-- Escuchar la frase en voz alta (lo maneja motor.js). -->
+          <button id="juego-escuchar" class="boton-icono boton-pequeno" type="button" data-t-title="juego.escuchar" data-t-aria-label="juego.escuchar">
+            <!-- Icono. -->
+            <svg aria-hidden="true"><use href="#i-altavoz"/></svg>
+          </button>
+        </div>
+        <!-- La frase completa, solo para lectores de pantalla. -->
+        <p id="juego-frase-lectores" class="solo-lectores"></p>
+        <!-- La frase letra por letra, con colores (los lectores de pantalla la ignoran). -->
+        <p id="juego-frase" class="frase" aria-hidden="true"></p>
+        <!-- Traducción de la frase (solo en los modos inglés y español; la maneja traduccion.js). -->
+        <p id="traduccion" class="traduccion" hidden>
+          <!-- Etiqueta. -->
+          <span class="traduccion-etiqueta" data-t="juego.traduccion">Traducción</span>
+          <!-- Texto de la traducción. -->
+          <span id="traduccion-texto"></span>
+        </p>
+        <!-- Barra de avance dentro de la frase. -->
+        <div class="avance" aria-hidden="true"><div id="juego-avance" class="avance-barra"></div></div>
+      </div>
+
       <!-- Etiqueta de la caja de texto, solo para lectores de pantalla. -->
-      <label for="juego-entrada" class="solo-lectores">Escribe la frase</label>
+      <label for="juego-entrada" class="solo-lectores" data-t="juego.escribe">Escribe la frase</label>
       <!-- Caja donde se escribe. Sin autocorrección ni sugerencias: tiene que escribirlo la persona. -->
       <input id="juego-entrada" class="entrada" type="text"
              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-             enterkeyhint="done" placeholder="Escribe aquí la frase…">
+             enterkeyhint="done" data-t-placeholder="juego.placeholder" placeholder="Escribe aquí la frase…">
       <!-- Mensajes de error o de ánimo; los lectores de pantalla los leen al cambiar. -->
       <p id="juego-mensaje" class="mensaje" role="status" aria-live="polite"></p>
-      <!-- Pregunta de significado (solo en el modo inglés; la maneja ingles.js). -->
-      <div id="ingles-pregunta" class="pregunta" role="group" aria-labelledby="ingles-pregunta-titulo" hidden>
+
+      <!-- Pregunta de significado (solo en los modos inglés y español; la maneja traduccion.js). -->
+      <div id="pregunta" class="pregunta" role="group" aria-labelledby="pregunta-titulo" hidden>
         <!-- Título de la pregunta, con una pista de las teclas. -->
-        <p id="ingles-pregunta-titulo" class="pregunta-titulo">¿Qué significa? <span class="pista">Pulsa 1, 2 o 3</span></p>
-        <!-- Botones de las opciones (los crea ingles.js). -->
-        <div id="ingles-opciones" class="opciones"></div>
+        <p id="pregunta-titulo" class="pregunta-titulo"><span data-t="juego.pregunta">¿Qué significa?</span> <span class="pista" data-t="juego.pista">Pulsa 1, 2 o 3</span></p>
+        <!-- Botones de las opciones (los crea traduccion.js). -->
+        <div id="opciones" class="opciones"></div>
       </div>
-      <!-- Botones para caracteres que no todos los teclados tienen (solo en ortografía). -->
-      <div id="juego-teclas" class="teclas" role="group" aria-label="Caracteres especiales">
+
+      <!-- Botones para caracteres que no todos los teclados tienen (en los modos que escriben en español). -->
+      <div id="juego-teclas" class="teclas" role="group" data-t-aria-label="juego.teclas" aria-label="Caracteres especiales">
         <!-- Vocales con tilde. -->
         <button type="button" data-caracter="á">á</button>
         <button type="button" data-caracter="é">é</button>
@@ -158,60 +379,221 @@
         <button type="button" data-caracter="¿">¿</button>
         <button type="button" data-caracter="¡">¡</button>
         <!-- Mayúscula para el siguiente botón pulsado. -->
-        <button id="juego-mayus" type="button" aria-pressed="false" title="La siguiente letra irá en mayúscula">⇧ Mayús</button>
+        <button id="juego-mayus" class="tecla-mayus" type="button" aria-pressed="false" data-t="juego.mayus" data-t-title="juego.mayusTitulo">⇧ Mayús</button>
       </div>
+
       <!-- Pie de la partida: origen de la frase y botón para terminar. -->
       <footer class="pie-juego">
         <!-- Número y autor de la frase (y de su traducción) en Tatoeba. -->
         <p id="juego-fuente" class="fuente"></p>
         <!-- Terminar la partida ahora. -->
-        <button id="juego-terminar" class="boton-secundario" type="button">Terminar partida</button>
+        <button id="juego-terminar" class="boton-secundario" type="button" data-t="juego.terminar">Terminar partida</button>
       </footer>
     </section>
 
     <!-- ===== Pantalla 3: resultado (la usan todos los modos) ===== -->
     <section id="pantalla-fin" class="pantalla" aria-labelledby="fin-titulo" hidden>
-      <!-- Nombre del modo jugado. -->
-      <p id="fin-modo" class="etiqueta-modo"></p>
-      <!-- Título: "Fin de la partida" o "¡Nuevo récord!". -->
-      <h2 id="fin-titulo" class="titulo-fin">Fin de la partida</h2>
-      <!-- Resultado principal: frases superadas. -->
-      <p class="resultado-grande">
-        <!-- Número. -->
-        <strong id="fin-completadas">0</strong>
-        <!-- Unidad. -->
-        <span id="fin-unidad">frases superadas</span>
-      </p>
+      <!-- Cabecera del resultado. -->
+      <div class="fin-cabecera">
+        <!-- Nombre del modo jugado. -->
+        <p id="fin-modo" class="etiqueta-modo"></p>
+        <!-- Título: "Fin de la partida", "¡Nuevo récord!"... -->
+        <h2 id="fin-titulo" class="titulo-fin">Fin de la partida</h2>
+        <!-- Resultado principal: frases superadas. -->
+        <p class="resultado-grande">
+          <!-- Número. -->
+          <strong id="fin-completadas">0</strong>
+          <!-- Unidad. -->
+          <span id="fin-unidad">frases superadas</span>
+        </p>
+      </div>
       <!-- Otras cifras de la partida. -->
       <dl class="estadisticas">
-        <!-- Letras correctas. -->
-        <div><dt>Letras correctas</dt><dd id="fin-letras">0</dd></div>
-        <!-- Errores. -->
-        <div><dt>Errores</dt><dd id="fin-errores">0</dd></div>
         <!-- Precisión al escribir. -->
-        <div><dt>Precisión</dt><dd id="fin-precision">100 %</dd></div>
+        <div><dt data-t="fin.precision">Precisión</dt><dd id="fin-precision">100 %</dd></div>
+        <!-- Velocidad. -->
+        <div><dt data-t="fin.ppm">Palabras por minuto</dt><dd id="fin-ppm">0</dd></div>
+        <!-- Mejor racha. -->
+        <div><dt data-t="fin.mejorRacha">Mejor racha</dt><dd id="fin-racha">0</dd></div>
+        <!-- Duración. -->
+        <div><dt data-t="fin.tiempo">Tiempo</dt><dd id="fin-tiempo">0:00</dd></div>
+        <!-- Letras correctas. -->
+        <div><dt data-t="fin.letras">Letras correctas</dt><dd id="fin-letras">0</dd></div>
+        <!-- Errores. -->
+        <div><dt data-t="fin.errores">Errores</dt><dd id="fin-errores">0</dd></div>
         <!-- Mejor resultado. -->
-        <div><dt>Récord</dt><dd id="fin-record">0</dd></div>
+        <div><dt data-t="fin.recordEtiqueta">Récord</dt><dd id="fin-record">0</dd></div>
       </dl>
       <!-- Título de la lista de repaso. -->
-      <h3 class="subtitulo">Para repasar</h3>
+      <h3 class="subtitulo" data-t="fin.paraRepasar">Para repasar</h3>
       <!-- Errores de la partida (la rellena motor.js). -->
       <ul id="fin-repaso" class="repaso"></ul>
       <!-- Qué hacer ahora. -->
       <div class="acciones">
         <!-- Empezar otra partida del mismo modo. -->
-        <button id="fin-otra-vez" class="boton-principal" type="button">Jugar otra vez</button>
+        <button id="fin-otra-vez" class="boton-principal" type="button" data-t="fin.otraVez">Jugar otra vez</button>
+        <!-- Repasar las frases falladas de este modo (solo si hay alguna). -->
+        <button id="fin-repasar" class="boton-secundario" type="button" hidden></button>
         <!-- Volver al menú principal. -->
-        <button id="fin-volver" class="boton-secundario" type="button">Volver al menú</button>
+        <button id="fin-volver" class="boton-secundario" type="button" data-t="fin.volver">Volver al menú</button>
       </div>
     </section>
 
   </main>
+
   <!-- Créditos: origen de las frases y licencia. -->
   <footer class="creditos">
-    Frases de <a href="https://tatoeba.org" target="_blank" rel="noopener noreferrer">Tatoeba</a>
+    <!-- "Frases de". -->
+    <span data-t="creditos.frasesDe">Frases de</span>
+    <!-- Enlace a Tatoeba. -->
+    <a href="https://tatoeba.org" target="_blank" rel="noopener noreferrer">Tatoeba</a>
+    <!-- Licencia de las frases. -->
     (<a href="https://creativecommons.org/licenses/by/2.0/fr/" target="_blank" rel="noopener noreferrer">CC BY 2.0 FR</a>)
-    · Código abierto con licencia MIT
+    <!-- Licencia del código. -->
+    · <span data-t="creditos.codigo">Código abierto con licencia MIT</span>
   </footer>
+
+  <!-- ===== Panel de ajustes (ventana que se abre encima; la maneja ajustes.js) ===== -->
+  <dialog id="ajustes" class="dialogo" aria-labelledby="ajustes-titulo">
+    <!-- Formulario de ajustes: cada cambio se guarda al momento. -->
+    <form id="ajustes-formulario" method="dialog">
+      <!-- Cabecera del panel. -->
+      <header class="dialogo-cabecera">
+        <!-- Título. -->
+        <h2 id="ajustes-titulo" data-t="ajustes.titulo">Ajustes</h2>
+        <!-- Cerrar (al ser un formulario "dialog", el botón cierra la ventana). -->
+        <button class="boton-icono" value="cerrar" data-t-title="ajustes.cerrar" data-t-aria-label="ajustes.cerrar">
+          <!-- Icono. -->
+          <svg aria-hidden="true"><use href="#i-cerrar"/></svg>
+        </button>
+      </header>
+
+      <!-- Sección: aspecto. -->
+      <fieldset class="ajustes-seccion">
+        <!-- Título de la sección. -->
+        <legend data-t="ajustes.seccion.aspecto">Aspecto</legend>
+        <!-- Idioma de la interfaz. -->
+        <label class="ajuste">
+          <!-- Nombre del ajuste. -->
+          <span data-t="ajustes.idioma">Idioma de la interfaz</span>
+          <!-- Opciones (los nombres de idioma se escriben en su propio idioma). -->
+          <select name="idioma">
+            <option value="es">Español</option>
+            <option value="en">English</option>
+          </select>
+        </label>
+        <!-- Tema. -->
+        <label class="ajuste">
+          <!-- Nombre del ajuste. -->
+          <span data-t="ajustes.tema">Tema</span>
+          <!-- Opciones. -->
+          <select name="tema">
+            <option value="oscuro" data-t="ajustes.tema.oscuro">Oscuro</option>
+            <option value="claro" data-t="ajustes.tema.claro">Claro</option>
+            <option value="auto" data-t="ajustes.tema.auto">Automático</option>
+          </select>
+        </label>
+        <!-- Tamaño de la frase. -->
+        <label class="ajuste">
+          <!-- Nombre del ajuste. -->
+          <span data-t="ajustes.tamano">Tamaño de la frase</span>
+          <!-- Opciones. -->
+          <select name="tamano">
+            <option value="normal" data-t="ajustes.tamano.normal">Normal</option>
+            <option value="grande" data-t="ajustes.tamano.grande">Grande</option>
+            <option value="enorme" data-t="ajustes.tamano.enorme">Muy grande</option>
+          </select>
+        </label>
+      </fieldset>
+
+      <!-- Sección: partida. -->
+      <fieldset class="ajustes-seccion">
+        <!-- Título de la sección. -->
+        <legend data-t="ajustes.seccion.juego">Partida</legend>
+        <!-- Dificultad. -->
+        <label class="ajuste">
+          <!-- Nombre del ajuste. -->
+          <span data-t="ajustes.dificultad">Dificultad</span>
+          <!-- Opciones. -->
+          <select name="dificultad">
+            <option value="normal" data-t="ajustes.dificultad.normal">Normal · 5 vidas</option>
+            <option value="dificil" data-t="ajustes.dificultad.dificil">Difícil · 3 vidas</option>
+            <option value="practica" data-t="ajustes.dificultad.practica">Práctica</option>
+          </select>
+        </label>
+        <!-- Pantalla completa al jugar. -->
+        <label class="ajuste ajuste-casilla">
+          <!-- Nombre del ajuste. -->
+          <span data-t="ajustes.pantallaCompleta">Pantalla completa al empezar a jugar</span>
+          <!-- Interruptor. -->
+          <input type="checkbox" name="pantallaCompleta" class="interruptor">
+        </label>
+      </fieldset>
+
+      <!-- Sección: sonido y voz. -->
+      <fieldset class="ajustes-seccion">
+        <!-- Título de la sección. -->
+        <legend data-t="ajustes.seccion.sonido">Sonido y voz</legend>
+        <!-- Efectos de sonido. -->
+        <label class="ajuste ajuste-casilla">
+          <!-- Nombre del ajuste. -->
+          <span data-t="ajustes.sonido">Efectos de sonido</span>
+          <!-- Interruptor. -->
+          <input type="checkbox" name="sonido" class="interruptor">
+        </label>
+        <!-- Sonido de teclas. -->
+        <label class="ajuste ajuste-casilla">
+          <!-- Nombre del ajuste. -->
+          <span data-t="ajustes.teclas">Sonido de máquina de escribir al teclear</span>
+          <!-- Interruptor. -->
+          <input type="checkbox" name="teclas" class="interruptor">
+        </label>
+        <!-- Leer en voz alta. -->
+        <label class="ajuste ajuste-casilla ajuste-voz">
+          <!-- Nombre del ajuste. -->
+          <span data-t="ajustes.voz">Leer cada frase en voz alta</span>
+          <!-- Interruptor. -->
+          <input type="checkbox" name="voz" class="interruptor">
+        </label>
+        <!-- Voz lenta. -->
+        <label class="ajuste ajuste-casilla ajuste-voz">
+          <!-- Nombre del ajuste. -->
+          <span data-t="ajustes.vozLenta">Voz más lenta</span>
+          <!-- Interruptor. -->
+          <input type="checkbox" name="vozLenta" class="interruptor">
+        </label>
+        <!-- Aviso si el navegador no puede leer en voz alta. -->
+        <p id="ajustes-sin-voz" class="nota" data-t="ajustes.sinVoz" hidden></p>
+      </fieldset>
+
+      <!-- Sección: aplicación. -->
+      <fieldset class="ajustes-seccion">
+        <!-- Título de la sección. -->
+        <legend data-t="ajustes.seccion.app">Aplicación</legend>
+        <!-- Explicación según el navegador (la escribe app.js). -->
+        <p id="ajustes-app-nota" class="nota"></p>
+        <!-- Botones de la aplicación. -->
+        <div class="ajustes-botones">
+          <!-- Instalar (solo si el navegador lo permite). -->
+          <button id="ajustes-instalar" class="boton-principal" type="button" data-t="barra.instalar" hidden>Instalar app</button>
+          <!-- Pantalla completa ahora. -->
+          <button id="ajustes-pantalla" class="boton-secundario" type="button">Pantalla completa</button>
+        </div>
+      </fieldset>
+
+      <!-- Sección: datos. -->
+      <fieldset class="ajustes-seccion">
+        <!-- Título de la sección. -->
+        <legend data-t="ajustes.seccion.datos">Tus datos</legend>
+        <!-- Borrar el progreso. -->
+        <div class="ajustes-botones">
+          <!-- Botón de borrar. -->
+          <button id="ajustes-borrar" class="boton-peligro" type="button" data-t="ajustes.borrar">Borrar mi progreso</button>
+          <!-- Confirmación tras borrar. -->
+          <span id="ajustes-borrado" class="nota" role="status" aria-live="polite"></span>
+        </div>
+      </fieldset>
+    </form>
+  </dialog>
 </body>
 </html>

@@ -1,44 +1,55 @@
 // motor.js: el motor común de las partidas.
 // Hace lo que comparten todos los modos: mostrar la frase, revisar lo que se escribe,
-// quitar vidas, contar frases y mostrar el resultado final.
+// quitar (y devolver) vidas, contar frases, racha y velocidad, guardar los errores y mostrar el resultado final.
 // Cada modo se describe en js/modos/ con un objeto que tiene:
-//   id                    nombre interno para guardar datos ("ortografia", "ingles")
-//   nombre                nombre que se ve en pantalla ("Ortografía", "Inglés")
+//   id                    nombre interno ("ortografia", "ingles", "espanol"); sus textos son "modo.<id>.nombre"...
 //   idioma                idioma de la frase que se copia ("es", "en")
 //   teclasEspeciales      true si se muestran los botones á, é, ñ, ¿...
 //   frases()              lista de frases; cada una empieza por [número, texto que se copia, ...]
-//   creditos(frase)       lista de [etiqueta, número, autor] para citar a Tatoeba
+//   creditos(frase)       lista de [clave de la etiqueta, número, autor] para citar a Tatoeba
 //   alMostrarFrase(frase)             (opcional) se llama al mostrar cada frase nueva
 //   alTerminarDeEscribir(frase, api)  (opcional) se llama al copiar la frase entera;
 //                                     si no existe, la frase cuenta como superada sin más
 //   alTerminarPartida()               (opcional) se llama al mostrar el resultado final
-// Usa funciones de memoria.js, comparar.js, seleccion.js y pantallas.js, que se cargan antes.
+// Usa funciones de textos.js, memoria.js, comparar.js, seleccion.js, estadisticas.js, pantallas.js,
+// ajustes.js, sonidos.js y voz.js, que se cargan antes.
 
 // Todo el motor va dentro de una función que se ejecuta al momento, para no llenar el espacio global.
 const Motor = (() => {
-  // Vidas con las que empieza cada partida.
-  const VIDAS_INICIALES = 5;
   // Milisegundos de pausa entre una frase superada y la siguiente.
   const PAUSA_ENTRE_FRASES = 800;
   // Milisegundos de pausa entre perder la última vida y ver el resultado.
   const PAUSA_AL_PERDER = 1400;
   // Máximo de errores que se listan en el repaso final.
   const MAXIMO_EN_REPASO = 12;
+  // Máximo de frases falladas que se guardan por modo para repasar.
+  const MAXIMO_FALLIDAS = 300;
+  // Frases perfectas seguidas que hacen falta para recuperar una vida.
+  const RACHA_PARA_VIDA = 5;
   // Teclas que mueven el cursor: las bloqueamos para que siempre se escriba al final.
   const TECLAS_DE_CURSOR = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End", "PageUp", "PageDown"];
   // Atajos de teclado bloqueados (con Ctrl o Cmd): seleccionar todo, deshacer y rehacer.
   const ATAJOS_BLOQUEADOS = ["a", "z", "y"];
+  // Espacio de nombres de los dibujos SVG (para crear los corazones).
+  const SVG = "http://www.w3.org/2000/svg";
 
   // Atajo para no escribir document.getElementById cada vez.
   const $ = (id) => document.getElementById(id);
   // Elementos de la página que usa el motor.
   const el = {
     modo: $("juego-modo"), // nombre del modo que se está jugando
+    nivel: $("juego-nivel"), // nivel de dificultad
     vidas: $("juego-vidas"), // corazones de vidas
     completadas: $("juego-completadas"), // contador de frases superadas
+    racha: $("juego-racha"), // contador de racha
+    rachaCaja: $("juego-racha").closest(".cifra-racha"), // caja de la racha (para encender la llama)
+    ppm: $("juego-ppm"), // palabras por minuto
     errores: $("juego-errores"), // contador de errores
+    idioma: $("juego-idioma"), // idioma de la frase
+    escuchar: $("juego-escuchar"), // botón de escuchar
     fraseVisible: $("juego-frase"), // la frase, letra por letra
     fraseLectores: $("juego-frase-lectores"), // la frase entera para lectores de pantalla
+    avance: $("juego-avance"), // barra de avance dentro de la frase
     entrada: $("juego-entrada"), // caja donde se escribe
     mensaje: $("juego-mensaje"), // mensajes de error o de ánimo
     teclas: $("juego-teclas"), // botones de caracteres especiales
@@ -49,12 +60,16 @@ const Motor = (() => {
     finTitulo: $("fin-titulo"), // título de la pantalla final
     finCompletadas: $("fin-completadas"), // número grande de frases superadas
     finUnidad: $("fin-unidad"), // "frase" o "frases"
+    finPrecision: $("fin-precision"), // porcentaje de acierto al escribir
+    finPpm: $("fin-ppm"), // velocidad media
+    finRacha: $("fin-racha"), // mejor racha
+    finTiempo: $("fin-tiempo"), // duración de la partida
     finLetras: $("fin-letras"), // letras correctas
     finErrores: $("fin-errores"), // errores totales
-    finPrecision: $("fin-precision"), // porcentaje de acierto al escribir
     finRecord: $("fin-record"), // mejor resultado
     finRepaso: $("fin-repaso"), // lista de errores para repasar
     otraVez: $("fin-otra-vez"), // botón "Jugar otra vez"
+    repasar: $("fin-repasar"), // botón "Repasar errores"
     volver: $("fin-volver"), // botón "Volver al menú"
   };
 
@@ -64,20 +79,36 @@ const Motor = (() => {
   let partida = null;
   // Frases ya vistas de cada modo: {id del modo: conjunto de números}.
   const usadasPorModo = {};
+  // Frases falladas de cada modo, para repasar: {id del modo: conjunto de números}.
+  const fallidasPorModo = {};
 
   // Crea el estado de una partida nueva.
-  function estadoInicial() {
+  //   repaso: true si la partida es solo de frases falladas
+  function estadoInicial(repaso) {
+    // Vidas según la dificultad (Infinity en práctica).
+    const vidas = Ajustes.vidas();
     // Devolvemos un objeto con todos los datos de la partida.
     return {
-      vidas: VIDAS_INICIALES, // vidas que quedan
+      vidas, // vidas que quedan
+      vidasMaximas: vidas, // vidas con las que se empieza (y máximo al recuperar)
+      practica: !Number.isFinite(vidas), // true si las vidas son ilimitadas
+      repaso, // true si es una partida de repaso
       completadas: 0, // frases superadas
       letras: 0, // caracteres correctos de las frases copiadas enteras
-      errores: 0, // errores totales (al escribir y, en inglés, al elegir el significado)
+      errores: 0, // errores totales (al escribir y al elegir el significado)
       erroresEscritura: 0, // errores solo al escribir, para calcular la precisión
       fallos: [], // detalle de cada error, para el repaso final
       frase: null, // frase actual: [número, texto, ...]
       progreso: 0, // caracteres correctos escritos de la frase actual
-      erroresEnFrase: 0, // errores de escritura en la frase actual
+      erroresEnFrase: 0, // errores en la frase actual
+      racha: 0, // frases perfectas seguidas
+      mejorRacha: 0, // la racha más larga de la partida
+      msEscribiendo: 0, // milisegundos escribiendo (para las palabras por minuto)
+      inicioFrase: null, // momento de la primera tecla de la frase actual
+      inicio: Date.now(), // momento en que empezó la partida
+      vistasRepaso: new Set(), // frases ya repasadas en esta partida de repaso
+      repasoCompleto: false, // true si se repasaron todas las frases falladas
+      resultado: null, // datos del resultado final (para repintarlo si cambia el idioma)
       esperando: false, // true durante las pausas y preguntas: no se acepta escritura
       terminada: false, // true cuando la partida ya acabó
       temporizador: null, // pausa pendiente, para poder cancelarla
@@ -91,17 +122,70 @@ const Motor = (() => {
     return `frase-exacta:${modoElegido.id}:${dato}`;
   }
 
-  // Devuelve el conjunto de frases ya vistas de un modo, leyéndolo del navegador si hace falta.
-  function cargarUsadas(modoElegido) {
+  // Lee del navegador un conjunto de números de frase de un modo (usadas o fallidas), una sola vez.
+  function cargarConjunto(cache, modoElegido, dato) {
     // Solo leemos del navegador la primera vez.
-    if (!usadasPorModo[modoElegido.id]) {
+    if (!cache[modoElegido.id]) {
       // Leemos la lista guardada (o una lista vacía si no hay nada).
-      const guardadas = Memoria.leer(clave(modoElegido, "usadas"), []);
+      const guardadas = Memoria.leer(clave(modoElegido, dato), []);
       // Si lo guardado no es una lista (dato roto), empezamos de cero.
-      usadasPorModo[modoElegido.id] = new Set(Array.isArray(guardadas) ? guardadas : []);
+      cache[modoElegido.id] = new Set(Array.isArray(guardadas) ? guardadas : []);
     }
     // Devolvemos el conjunto.
-    return usadasPorModo[modoElegido.id];
+    return cache[modoElegido.id];
+  }
+
+  // Conjunto de frases ya vistas de un modo.
+  function cargarUsadas(modoElegido) {
+    // Lo leemos (o lo tomamos de lo ya leído).
+    return cargarConjunto(usadasPorModo, modoElegido, "usadas");
+  }
+
+  // Conjunto de frases falladas de un modo.
+  function cargarFallidas(modoElegido) {
+    // Lo leemos (o lo tomamos de lo ya leído).
+    return cargarConjunto(fallidasPorModo, modoElegido, "fallidas");
+  }
+
+  // Anota la frase actual como fallada, para poder repasarla después.
+  function anotarFallida() {
+    // Conjunto de falladas del modo.
+    const fallidas = cargarFallidas(modo);
+    // La quitamos y la volvemos a poner, para que quede como la más reciente.
+    fallidas.delete(partida.frase[0]);
+    // La añadimos.
+    fallidas.add(partida.frase[0]);
+    // Si hay demasiadas, olvidamos las más antiguas (las primeras del conjunto).
+    while (fallidas.size > MAXIMO_FALLIDAS) {
+      // Borramos la primera.
+      fallidas.delete(fallidas.values().next().value);
+    }
+    // Guardamos en el navegador.
+    Memoria.guardar(clave(modo, "fallidas"), [...fallidas]);
+  }
+
+  // Quita la frase actual de las falladas (se escribió perfecta).
+  function quitarFallida() {
+    // Conjunto de falladas del modo.
+    const fallidas = cargarFallidas(modo);
+    // Si estaba...
+    if (fallidas.delete(partida.frase[0])) {
+      // ...guardamos el cambio.
+      Memoria.guardar(clave(modo, "fallidas"), [...fallidas]);
+    }
+  }
+
+  // Devuelve las frases falladas de un modo que todavía existen en su lista.
+  function frasesFallidas(modoElegido) {
+    // Conjunto de números fallados.
+    const fallidas = cargarFallidas(modoElegido);
+    // Si no hay, la lista está vacía (sin recorrer todas las frases).
+    if (fallidas.size === 0) {
+      // Lista vacía.
+      return [];
+    }
+    // Frases del modo cuyo número está entre los fallados.
+    return modoElegido.frases().filter((frase) => fallidas.has(frase[0]));
   }
 
   // Devuelve el récord guardado de un modo (0 si no hay).
@@ -121,29 +205,36 @@ const Motor = (() => {
   }
 
   // Empieza una partida nueva del modo indicado.
-  function jugar(modoElegido) {
+  //   opciones.repaso: true para jugar solo las frases falladas
+  function jugar(modoElegido, opciones = {}) {
     // Si quedaba una pausa pendiente de otra partida, la cancelamos.
     cancelarPausa();
+    // Si se estaba leyendo una frase en voz alta, la cortamos.
+    Voz.callar();
     // Guardamos el modo elegido.
     modo = modoElegido;
     // Creamos el estado de la nueva partida.
-    partida = estadoInicial();
-    // Mostramos el nombre del modo.
-    el.modo.textContent = modo.nombre;
+    partida = estadoInicial(Boolean(opciones.repaso));
     // Indicamos el idioma de la frase (ayuda a los lectores de pantalla y a los teclados del móvil).
     el.fraseVisible.lang = modo.idioma;
     // Lo mismo para la copia para lectores de pantalla.
     el.fraseLectores.lang = modo.idioma;
     // Y para la caja de texto.
     el.entrada.lang = modo.idioma;
+    // Etiqueta del idioma de la frase (ES o EN).
+    el.idioma.textContent = modo.idioma.toUpperCase();
     // Mostramos u ocultamos la fila de caracteres especiales.
     el.teclas.hidden = !modo.teclasEspeciales;
+    // El botón de escuchar solo aparece si el navegador sabe leer en voz alta.
+    el.escuchar.hidden = !Voz.disponible();
     // Dejamos el botón de mayúsculas apagado.
     ponerMayusculas(false);
+    // Nombre del modo en el marcador.
+    pintarEtiquetaModo();
     // Mostramos la pantalla de juego.
     mostrarPantalla("pantalla-juego");
     // Dibujamos las vidas llenas.
-    pintarVidas(false);
+    pintarVidas(null);
     // Ponemos los contadores a cero.
     pintarMarcador();
     // Sacamos la primera frase.
@@ -167,10 +258,23 @@ const Motor = (() => {
     partida.temporizador = setTimeout(siguienteFrase, pausa);
   }
 
-  // Elige y muestra la siguiente frase.
-  function siguienteFrase() {
-    // La pausa que nos trajo aquí (si la hubo) ya terminó.
-    partida.temporizador = null;
+  // Elige la siguiente frase: de las falladas en un repaso, o una nueva sin repetir.
+  // Devuelve { frase, aviso }, o null si un repaso ya no tiene más frases.
+  function elegirSiguiente() {
+    // En un repaso...
+    if (partida.repaso) {
+      // ...elegimos entre las falladas que no hayan salido en esta partida.
+      const frase = elegirFrase(frasesFallidas(modo), partida.vistasRepaso, partida.completadas);
+      // Si no queda ninguna, el repaso terminó.
+      if (frase === null) {
+        // Avisamos con null.
+        return null;
+      }
+      // La anotamos para no repetirla en este repaso.
+      partida.vistasRepaso.add(frase[0]);
+      // Devolvemos la frase.
+      return { frase, aviso: "" };
+    }
     // Lista de frases del modo.
     const lista = modo.frases();
     // Conjunto de frases ya vistas de este modo.
@@ -186,18 +290,39 @@ const Motor = (() => {
       // ...elegimos de nuevo...
       frase = elegirFrase(lista, vistas, partida.completadas);
       // ...y lo avisamos.
-      aviso = "Ya te salieron todas las frases. La lista vuelve a empezar.";
+      aviso = t("juego.listaReiniciada");
     }
     // Marcamos esta frase como vista para que no se repita.
     vistas.add(frase[0]);
     // Guardamos la lista de vistas en el navegador.
     Memoria.guardar(clave(modo, "usadas"), [...vistas]);
+    // Devolvemos la frase y el aviso.
+    return { frase, aviso };
+  }
+
+  // Elige y muestra la siguiente frase.
+  function siguienteFrase() {
+    // La pausa que nos trajo aquí (si la hubo) ya terminó.
+    partida.temporizador = null;
+    // Elegimos la frase.
+    const eleccion = elegirSiguiente();
+    // Si un repaso ya no tiene frases...
+    if (eleccion === null) {
+      // ...lo anotamos...
+      partida.repasoCompleto = true;
+      // ...y terminamos la partida.
+      terminarPartida(0);
+      // No hay más que hacer.
+      return;
+    }
     // Guardamos la frase en la partida.
-    partida.frase = frase;
+    partida.frase = eleccion.frase;
     // Todavía no hay nada escrito de esta frase.
     partida.progreso = 0;
     // Ni errores en ella.
     partida.erroresEnFrase = 0;
+    // Ni se ha empezado a escribir.
+    partida.inicioFrase = null;
     // Ya se puede escribir.
     partida.esperando = false;
     // Vaciamos la caja de texto.
@@ -208,15 +333,22 @@ const Motor = (() => {
     pintarFrase();
     // Mostramos de dónde viene.
     pintarFuente();
+    // Mostramos el nivel de dificultad.
+    pintarNivel();
     // Si el modo quiere mostrar algo más (por ejemplo, la traducción), se lo pedimos.
     if (modo.alMostrarFrase) {
       // Llamamos al modo con la frase nueva.
-      modo.alMostrarFrase(frase);
+      modo.alMostrarFrase(partida.frase);
     }
     // Mostramos el aviso, si lo hay.
-    mostrarMensaje(aviso, aviso ? "aviso" : "");
+    mostrarMensaje(eleccion.aviso, eleccion.aviso ? "aviso" : "");
     // Ponemos el cursor en la caja de texto.
     el.entrada.focus();
+    // Si está activado, leemos la frase en voz alta.
+    if (Ajustes.valor("voz")) {
+      // La leemos en su idioma.
+      Voz.decir(partida.frase[1], modo.idioma);
+    }
   }
 
   // Se ejecuta cada vez que cambia el texto de la caja.
@@ -231,10 +363,17 @@ const Motor = (() => {
       // Salimos sin revisar.
       return;
     }
+    // Si es la primera tecla de la frase, empezamos a contar el tiempo.
+    if (partida.inicioFrase === null && el.entrada.value.length > 0) {
+      // Momento actual, en milisegundos.
+      partida.inicioFrase = performance.now();
+    }
     // Texto de la frase que hay que copiar.
     const texto = partida.frase[1];
     // Comparamos lo escrito con la frase.
     const resultado = revisarEscritura(texto, el.entrada.value);
+    // ¿Se avanzó algo desde la última vez? (para el sonido de tecla)
+    const avanzo = resultado.aciertos > partida.progreso;
     // Actualizamos cuántos caracteres van bien.
     partida.progreso = resultado.aciertos;
     // Si hay un error...
@@ -250,6 +389,11 @@ const Motor = (() => {
     }
     // Sin error: actualizamos los colores de la frase.
     marcarProgreso();
+    // Si se avanzó, suena la tecla (si está activado).
+    if (avanzo) {
+      // Clic de máquina de escribir.
+      Sonidos.reproducir("tecla");
+    }
     // Si la frase está completa, la damos por escrita.
     if (resultado.estado === "completa") {
       // Celebramos y seguimos.
@@ -268,12 +412,10 @@ const Motor = (() => {
   function errorDeEscritura(resultado) {
     // Un error de escritura más en total.
     partida.erroresEscritura++;
-    // Y uno más en esta frase.
-    partida.erroresEnFrase++;
     // Buscamos la palabra donde ocurrió el error, para el repaso final.
     const { palabra, inicio } = palabraEn(partida.frase[1], resultado.aciertos);
-    // Explicación del error con palabras sencillas.
-    const explicacion = explicarError(resultado.esperado, resultado.recibido);
+    // Explicación del error con palabras sencillas, en el idioma de la interfaz.
+    const explicacion = explicarError(resultado.esperado, resultado.recibido, idiomaActual());
     // Sacudimos la frase.
     reiniciarAnimacion(el.fraseVisible, "sacudida");
     // Ponemos el borde de la caja en rojo un momento.
@@ -298,18 +440,29 @@ const Motor = (() => {
     );
   }
 
-  // Quita una vida, guarda el error para el repaso y lo explica.
+  // Quita una vida (salvo en práctica), guarda el error para el repaso y lo explica.
   // Devuelve true si la partida sigue y false si se acabaron las vidas.
   function quitarVida(fallo, mensaje) {
-    // Una vida menos.
-    partida.vidas--;
     // Un error más en total.
     partida.errores++;
-    // Guardamos el detalle del error.
-    partida.fallos.push(fallo);
+    // Uno más en esta frase.
+    partida.erroresEnFrase++;
+    // La racha de frases perfectas se rompe.
+    partida.racha = 0;
+    // Guardamos el detalle del error, con la frase entera y su idioma (para escucharla en el repaso).
+    partida.fallos.push({ ...fallo, frase: partida.frase[1], idioma: modo.idioma });
+    // Anotamos la frase para repasarla otro día.
+    anotarFallida();
+    // Suena el error.
+    Sonidos.reproducir("error");
+    // En práctica no se pierden vidas.
+    if (!partida.practica) {
+      // Una vida menos.
+      partida.vidas--;
+    }
     // Redibujamos las vidas, animando el corazón que se pierde.
-    pintarVidas(true);
-    // Actualizamos el contador de errores.
+    pintarVidas("rota");
+    // Actualizamos los contadores.
     pintarMarcador();
     // Explicamos qué pasó.
     mostrarMensaje(mensaje, "error");
@@ -328,6 +481,8 @@ const Motor = (() => {
   function fraseEscrita() {
     // Bloqueamos la escritura mientras tanto.
     partida.esperando = true;
+    // Sumamos el tiempo que se tardó en escribirla.
+    sumarTiempo();
     // Sumamos sus caracteres a las letras correctas.
     partida.letras += partida.frase[1].length;
     // Los caracteres de esta frase ya están contados.
@@ -336,6 +491,8 @@ const Motor = (() => {
     el.entrada.readOnly = true;
     // Iluminamos la frase.
     reiniciarAnimacion(el.fraseVisible, "lograda");
+    // Actualizamos la velocidad en el marcador.
+    pintarMarcador();
     // ¿Se escribió sin ningún error?
     const sinErrores = partida.erroresEnFrase === 0;
     // Si el modo tiene un paso más (por ejemplo, la pregunta de significado)...
@@ -345,18 +502,55 @@ const Motor = (() => {
       // Si no...
     } else {
       // ...la frase cuenta como superada.
-      superarFrase(sinErrores ? "¡Perfecta!" : "Completada.");
+      superarFrase(t(sinErrores ? "juego.perfecta" : "juego.completada"));
     }
   }
 
-  // Cuenta la frase como superada y prepara la siguiente.
+  // Suma al tiempo de escritura lo que se tardó desde la primera tecla de la frase.
+  function sumarTiempo() {
+    // Solo si se llegó a escribir algo.
+    if (partida.inicioFrase !== null) {
+      // Sumamos los milisegundos.
+      partida.msEscribiendo += performance.now() - partida.inicioFrase;
+      // Ya está contado.
+      partida.inicioFrase = null;
+    }
+  }
+
+  // Cuenta la frase como superada, actualiza la racha y prepara la siguiente.
   function superarFrase(mensaje) {
     // Una frase más superada.
     partida.completadas++;
-    // Actualizamos el contador.
+    // Mensaje que se mostrará (puede cambiar si se recupera una vida).
+    let texto = mensaje;
+    // Efecto de sonido que toca.
+    let efecto = "bien";
+    // Si no hubo ningún error en la frase...
+    if (partida.erroresEnFrase === 0) {
+      // ...la racha crece...
+      partida.racha++;
+      // ...guardamos la mejor...
+      partida.mejorRacha = Math.max(partida.mejorRacha, partida.racha);
+      // ...y la frase ya no está pendiente de repaso.
+      quitarFallida();
+      // Cada RACHA_PARA_VIDA perfectas seguidas, si falta alguna vida, se recupera una.
+      if (partida.racha % RACHA_PARA_VIDA === 0 && partida.vidas < partida.vidasMaximas) {
+        // Una vida más.
+        partida.vidas++;
+        // Dibujamos el corazón que vuelve.
+        pintarVidas("ganada");
+        // Lo celebramos.
+        texto = t("juego.vidaExtra", { n: RACHA_PARA_VIDA });
+        // Con su sonido.
+        efecto = "vida";
+      }
+    }
+    // Suena el efecto.
+    Sonidos.reproducir(efecto);
+    // Actualizamos los contadores.
     pintarMarcador();
     // Mensaje de ánimo.
-    mostrarMensaje(mensaje, "bien");
+    mostrarMensaje(texto, "bien");
     // Tras una pausa corta, sacamos la siguiente frase.
     programarSiguiente(PAUSA_ENTRE_FRASES);
   }
@@ -413,51 +607,51 @@ const Motor = (() => {
     }
     // Cancelamos la pausa pendiente (por ejemplo, la de pasar a la siguiente frase).
     cancelarPausa();
+    // Cortamos la voz, si estaba leyendo.
+    Voz.callar();
     // Marcamos la partida como terminada.
     partida.terminada = true;
     // Bloqueamos la escritura.
     partida.esperando = true;
     // La caja queda de solo lectura.
     el.entrada.readOnly = true;
+    // Contamos también el tiempo de la frase a medias.
+    sumarTiempo();
     // Letras correctas: las de frases copiadas enteras más las de la frase a medias.
     const letras = partida.letras + partida.progreso;
     // Total de pulsaciones revisadas: correctas más errores de escritura.
     const total = letras + partida.erroresEscritura;
     // Porcentaje de acierto al escribir, redondeado (100 si no se escribió nada).
     const precision = total === 0 ? 100 : Math.round((letras / total) * 100);
+    // Velocidad media.
+    const ppm = palabrasPorMinuto(letras, partida.msEscribiendo);
+    // Duración de la partida, en segundos.
+    const segundos = (Date.now() - partida.inicio) / 1000;
+    // El récord solo cuenta en partidas normales (ni práctica ni repaso).
+    const cuentaRecord = !partida.practica && !partida.repaso;
     // Récord anterior de este modo.
     const recordAnterior = leerRecord(modo);
     // ¿Esta partida supera el récord?
-    const esRecord = partida.completadas > recordAnterior;
+    const esRecord = cuentaRecord && partida.completadas > recordAnterior;
     // Si lo supera, lo guardamos.
     if (esRecord) {
       // Guardamos el nuevo récord.
       Memoria.guardar(clave(modo, "record"), partida.completadas);
     }
-    // Nombre del modo en la pantalla final.
-    el.finModo.textContent = `Modo ${modo.nombre.toLowerCase()}`;
-    // Título de la pantalla final.
-    el.finTitulo.textContent = esRecord ? "¡Nuevo récord!" : "Fin de la partida";
-    // Número grande de frases superadas.
-    el.finCompletadas.textContent = partida.completadas;
-    // "frase" en singular o "frases" en plural.
-    el.finUnidad.textContent = partida.completadas === 1 ? "frase superada" : "frases superadas";
-    // Letras correctas.
-    el.finLetras.textContent = letras;
-    // Errores.
-    el.finErrores.textContent = partida.errores;
-    // Precisión, con espacio antes del signo de porcentaje, como recomienda la RAE.
-    el.finPrecision.textContent = `${precision} %`;
-    // Mejor resultado hasta ahora.
-    el.finRecord.textContent = Math.max(recordAnterior, partida.completadas);
-    // Lista de errores para repasar.
-    pintarRepaso();
+    // Anotamos la partida en las estadísticas (días seguidos, totales, mejores marcas).
+    Estadisticas.registrar({ id: modo.id, frases: partida.completadas, letras, segundos, ppm, racha: partida.mejorRacha });
+    // Guardamos el resultado para pintarlo (y repintarlo si cambia el idioma).
+    partida.resultado = { letras, precision, ppm, segundos, esRecord, record: cuentaRecord ? Math.max(recordAnterior, partida.completadas) : recordAnterior };
+    // Pintamos la pantalla final.
+    pintarResultado();
     // Modo que se estaba jugando (por si cambia antes de que acabe la pausa).
     const modoTerminado = modo;
+    // Partida que termina (por si empieza otra antes de que acabe la pausa).
+    const partidaTerminada = partida;
     // Tras la pausa indicada, mostramos los resultados.
     partida.temporizador = setTimeout(() => {
       // La pausa terminó.
-      partida.temporizador = null;
+      partidaTerminada.temporizador = null;
       // Si el modo tiene algo que recoger (por ejemplo, la pregunta), se lo pedimos.
       if (modoTerminado.alTerminarPartida) {
         // Llamamos al modo.
@@ -465,9 +659,90 @@ const Motor = (() => {
       }
       // Mostramos la pantalla final.
       mostrarPantalla("pantalla-fin");
+      // Suena la fanfarria del récord o el final.
+      Sonidos.reproducir(esRecord ? "record" : "fin");
       // Ponemos el foco en "Jugar otra vez" para poder seguir con Enter.
       el.otraVez.focus();
     }, pausa);
+  }
+
+  // Escribe en la pantalla final los datos del resultado (en el idioma actual).
+  function pintarResultado() {
+    // Datos del resultado.
+    const r = partida.resultado;
+    // Nombre del modo en la pantalla final.
+    el.finModo.textContent = t("fin.modo", { modo: nombreModo() });
+    // Título de la pantalla final según cómo terminó.
+    el.finTitulo.textContent = t(
+      // Repaso de todas las falladas.
+      partida.repasoCompleto ? "fin.repasoTerminado"
+        // Récord batido.
+        : r.esRecord ? "fin.record"
+        // Práctica.
+        : partida.practica ? "fin.practica"
+        // Cualquier otro caso.
+        : "fin.titulo",
+    );
+    // Si es récord, el título da un salto.
+    el.finTitulo.classList.toggle("es-record", r.esRecord);
+    // Número grande de frases superadas.
+    el.finCompletadas.textContent = partida.completadas;
+    // "frase" en singular o "frases" en plural.
+    el.finUnidad.textContent = t("fin.unidad", { n: partida.completadas });
+    // Precisión, con espacio antes del signo de porcentaje, como recomienda la RAE.
+    el.finPrecision.textContent = `${r.precision} %`;
+    // Velocidad media.
+    el.finPpm.textContent = r.ppm;
+    // Mejor racha.
+    el.finRacha.textContent = partida.mejorRacha;
+    // Duración, como un reloj.
+    el.finTiempo.textContent = formatearReloj(r.segundos);
+    // Letras correctas.
+    el.finLetras.textContent = r.letras;
+    // Errores.
+    el.finErrores.textContent = partida.errores;
+    // Mejor resultado hasta ahora.
+    el.finRecord.textContent = r.record;
+    // Frases falladas que quedan por repasar en este modo.
+    const pendientes = frasesFallidas(modo).length;
+    // El botón de repasar solo aparece si hay alguna.
+    el.repasar.hidden = pendientes === 0;
+    // Texto del botón, con cuántas hay.
+    el.repasar.textContent = t("fin.repasar", { n: pendientes });
+    // Lista de errores para repasar.
+    pintarRepaso();
+  }
+
+  // Nombre del modo en el idioma de la interfaz.
+  function nombreModo() {
+    // Por ejemplo "modo.ingles.nombre" -> "Inglés" o "English".
+    return t(`modo.${modo.id}.nombre`);
+  }
+
+  // Escribe en el marcador el nombre del modo (y si es repaso o práctica).
+  function pintarEtiquetaModo() {
+    // Partes de la etiqueta.
+    const partes = [nombreModo()];
+    // Si es un repaso, lo indicamos.
+    if (partida.repaso) {
+      // "Repaso".
+      partes.push(t("juego.repaso"));
+    }
+    // Si es práctica, también.
+    if (partida.practica) {
+      // "Práctica".
+      partes.push(t("juego.practica"));
+    }
+    // Las unimos con un punto medio.
+    el.modo.textContent = partes.join(" · ");
+  }
+
+  // Escribe el nivel de dificultad que toca (frases cortas, medianas o largas).
+  function pintarNivel() {
+    // Nivel 1, 2 o 3.
+    const nivel = nivelSegunProgreso(partida.completadas);
+    // Por ejemplo "Nivel 2 · frases medianas".
+    el.nivel.textContent = `${t("juego.nivel", { n: nivel })} · ${t(`juego.nivel.${nivel}`)}`;
   }
 
   // Dibuja la frase actual, cada carácter en su propia caja.
@@ -495,7 +770,7 @@ const Motor = (() => {
     marcarProgreso();
   }
 
-  // Colorea las letras ya escritas y marca dónde va el cursor.
+  // Colorea las letras ya escritas, marca dónde va el cursor y mueve la barra de avance.
   function marcarProgreso() {
     // Lista de cajas de letras.
     const letras = el.fraseVisible.children;
@@ -506,41 +781,84 @@ const Motor = (() => {
       // La del progreso es la que toca escribir ahora (si la frase ya está entera, ninguna).
       letras[i].classList.toggle("actual", i === partida.progreso && !partida.esperando);
     }
+    // Ancho de la barra: lo escrito entre el largo de la frase.
+    el.avance.style.width = `${(partida.progreso / Math.max(1, letras.length)) * 100}%`;
+  }
+
+  // Crea el dibujo de un corazón.
+  function crearCorazon() {
+    // Dibujo SVG.
+    const dibujo = document.createElementNS(SVG, "svg");
+    // Zona de dibujo de 24 × 24.
+    dibujo.setAttribute("viewBox", "0 0 24 24");
+    // Reutiliza el corazón definido en index.html.
+    const uso = document.createElementNS(SVG, "use");
+    // Enlace al dibujo.
+    uso.setAttribute("href", "#i-corazon");
+    // Lo metemos en el dibujo.
+    dibujo.append(uso);
+    // Devolvemos el dibujo.
+    return dibujo;
   }
 
   // Dibuja los corazones de vidas.
-  function pintarVidas(animarPerdida) {
+  //   animacion: "rota" (se pierde una), "ganada" (se recupera una) o null
+  function pintarVidas(animacion) {
     // Quitamos los corazones anteriores.
     el.vidas.replaceChildren();
-    // Creamos uno por cada vida inicial.
-    for (let i = 0; i < VIDAS_INICIALES; i++) {
-      // Caja del corazón.
-      const corazon = document.createElement("span");
-      // Clase base.
-      corazon.className = "vida";
+    // En práctica no hay corazones: mostramos el símbolo de infinito.
+    if (partida.practica) {
+      // Caja del símbolo.
+      const infinito = document.createElement("span");
+      // Clase para el estilo.
+      infinito.className = "vidas-infinitas";
+      // Símbolo.
+      infinito.textContent = "∞";
+      // Lo ponemos.
+      el.vidas.append(infinito);
+      // Texto para lectores de pantalla.
+      el.vidas.setAttribute("aria-label", t("juego.vidasInfinitas"));
+      // No hay más que dibujar.
+      return;
+    }
+    // Creamos uno por cada vida máxima.
+    for (let i = 0; i < partida.vidasMaximas; i++) {
       // Dibujo del corazón.
-      corazon.textContent = "♥";
+      const corazon = crearCorazon();
+      // Clase base.
+      corazon.classList.add("vida");
       // Los que pasan del número de vidas que quedan están perdidos.
       if (i >= partida.vidas) {
         // Corazón apagado.
         corazon.classList.add("perdida");
       }
       // El que se acaba de perder se anima.
-      if (animarPerdida && i === partida.vidas) {
+      if (animacion === "rota" && i === partida.vidas) {
         // Animación de corazón roto.
         corazon.classList.add("rota");
+      }
+      // El que se acaba de recuperar, también.
+      if (animacion === "ganada" && i === partida.vidas - 1) {
+        // Animación de corazón que vuelve.
+        corazon.classList.add("ganada");
       }
       // Lo añadimos a la fila.
       el.vidas.append(corazon);
     }
     // Texto para lectores de pantalla.
-    el.vidas.setAttribute("aria-label", `Vidas: ${partida.vidas} de ${VIDAS_INICIALES}`);
+    el.vidas.setAttribute("aria-label", t("juego.vidas", { n: partida.vidas, total: partida.vidasMaximas }));
   }
 
-  // Actualiza los contadores de frases y errores.
+  // Actualiza los contadores de frases, racha, velocidad y errores.
   function pintarMarcador() {
     // Frases superadas.
     el.completadas.textContent = partida.completadas;
+    // Racha.
+    el.racha.textContent = partida.racha;
+    // La llama se enciende con dos o más frases perfectas seguidas.
+    el.rachaCaja.classList.toggle("encendida", partida.racha >= 2);
+    // Velocidad (una raya hasta terminar la primera frase).
+    el.ppm.textContent = partida.msEscribiendo > 0 ? palabrasPorMinuto(partida.letras, partida.msEscribiendo) : "–";
     // Errores.
     el.errores.textContent = partida.errores;
   }
@@ -549,7 +867,7 @@ const Motor = (() => {
   function pintarFuente() {
     // Vaciamos el párrafo.
     el.fuente.replaceChildren();
-    // Recorremos los créditos que da el modo (en inglés son dos: la frase y su traducción).
+    // Recorremos los créditos que da el modo (en inglés y español son dos: la frase y su traducción).
     modo.creditos(partida.frase).forEach(([etiqueta, numero, autor], posicion) => {
       // A partir del segundo, los separamos con un punto medio.
       if (posicion > 0) {
@@ -558,16 +876,16 @@ const Motor = (() => {
       }
       // Creamos el enlace.
       const enlace = document.createElement("a");
-      // Dirección de la frase en Tatoeba.
-      enlace.href = `https://tatoeba.org/es/sentences/show/${numero}`;
+      // Dirección de la frase en Tatoeba, en el idioma de la interfaz.
+      enlace.href = `https://tatoeba.org/${idiomaActual()}/sentences/show/${numero}`;
       // Se abre en otra pestaña para no perder la partida.
       enlace.target = "_blank";
       // Por seguridad, la otra pestaña no puede controlar esta.
       enlace.rel = "noopener noreferrer";
       // Texto del enlace.
-      enlace.textContent = `${etiqueta} n.º ${numero} de Tatoeba`;
+      enlace.textContent = t("fuente.enlace", { etiqueta: t(etiqueta), numero });
       // Ponemos el enlace y, si hay autor, su nombre.
-      el.fuente.append(enlace, autor ? `, por ${autor}` : "");
+      el.fuente.append(enlace, autor ? t("fuente.autor", { autor }) : "");
     });
   }
 
@@ -581,13 +899,45 @@ const Motor = (() => {
   }
 
   // Vuelve a lanzar una animación CSS aunque ya se hubiera usado.
-  function reiniciarAnimacion(elemento, clase) {
+  function reiniciarAnimacion(elemento, claseAnimacion) {
     // Quitamos la clase.
-    elemento.classList.remove(clase);
-    // Pedimos el ancho para obligar al navegador a aplicar el cambio antes de seguir.
-    void elemento.offsetWidth;
+    elemento.classList.remove(claseAnimacion);
+    // Pedimos el tamaño para obligar al navegador a aplicar el cambio antes de seguir.
+    void elemento.getBoundingClientRect();
     // Volvemos a poner la clase: la animación empieza de nuevo.
-    elemento.classList.add(clase);
+    elemento.classList.add(claseAnimacion);
+  }
+
+  // Crea un botón pequeño para escuchar una frase del repaso.
+  function botonEscuchar(texto, idioma) {
+    // Botón.
+    const boton = document.createElement("button");
+    // Botón normal, no de formulario.
+    boton.type = "button";
+    // Clases para el estilo.
+    boton.className = "boton-icono boton-pequeno";
+    // Ayuda al pasar el ratón.
+    boton.title = t("fin.escuchar");
+    // Texto para lectores de pantalla.
+    boton.setAttribute("aria-label", t("fin.escuchar"));
+    // Dibujo del altavoz.
+    const dibujo = document.createElementNS(SVG, "svg");
+    // Zona de dibujo.
+    dibujo.setAttribute("viewBox", "0 0 24 24");
+    // Los lectores de pantalla lo ignoran.
+    dibujo.setAttribute("aria-hidden", "true");
+    // Reutiliza el altavoz de index.html.
+    const uso = document.createElementNS(SVG, "use");
+    // Enlace al dibujo.
+    uso.setAttribute("href", "#i-altavoz");
+    // Lo metemos en el dibujo.
+    dibujo.append(uso);
+    // Y el dibujo en el botón.
+    boton.append(dibujo);
+    // Al pulsarlo, leemos la frase.
+    boton.addEventListener("click", () => Voz.decir(texto, idioma));
+    // Devolvemos el botón.
+    return boton;
   }
 
   // Dibuja la lista de errores para repasar en la pantalla final.
@@ -617,7 +967,7 @@ const Motor = (() => {
       // Clase para darle color verde.
       item.className = "repaso-vacio";
       // Texto de felicitación.
-      item.textContent = "Ningún error. ¡Muy bien!";
+      item.textContent = t("fin.sinErrores");
       // Lo añadimos.
       el.finRepaso.append(item);
       // No hay nada más que listar.
@@ -631,6 +981,8 @@ const Motor = (() => {
       const palabra = document.createElement("span");
       // Clase para la letra de máquina.
       palabra.className = "repaso-palabra";
+      // Idioma de la palabra.
+      palabra.lang = fallo.idioma;
       // Si el error no tiene posición (por ejemplo, un error de significado)...
       if (fallo.marca < 0) {
         // ...mostramos el texto tal cual.
@@ -668,6 +1020,11 @@ const Motor = (() => {
       explicacion.textContent = fallo.explicacion;
       // Juntamos palabra y explicación.
       item.append(palabra, explicacion);
+      // Si se puede leer en voz alta, añadimos el botón para escuchar la frase entera.
+      if (Voz.disponible()) {
+        // Botón de escuchar.
+        item.append(botonEscuchar(fallo.frase, fallo.idioma));
+      }
       // Añadimos el elemento a la lista.
       el.finRepaso.append(item);
     }
@@ -678,7 +1035,7 @@ const Motor = (() => {
       // Clase para un estilo más discreto.
       item.className = "repaso-mas";
       // Cuántos quedan sin mostrar.
-      item.textContent = `Y ${unicos.length - MAXIMO_EN_REPASO} errores más.`;
+      item.textContent = t("fin.masErrores", { n: unicos.length - MAXIMO_EN_REPASO });
       // Lo añadimos.
       el.finRepaso.append(item);
     }
@@ -703,6 +1060,12 @@ const Motor = (() => {
     const fin = el.entrada.value.length;
     // Ponemos el cursor ahí, sin nada seleccionado.
     el.entrada.setSelectionRange(fin, fin);
+  }
+
+  // ¿Hay una partida en marcha en la que se puede escribir?
+  function sePuedeEscribir() {
+    // Hace falta partida, que no haya terminado, que no estemos en pausa y que se vea la pantalla de juego.
+    return Boolean(partida) && !partida.terminada && !partida.esperando && document.body.dataset.pantalla === "pantalla-juego";
   }
 
   // --- Eventos: se conectan una sola vez al cargar la página ---
@@ -734,7 +1097,7 @@ const Motor = (() => {
       // Anulamos el pegado.
       evento.preventDefault();
       // Explicamos por qué.
-      mostrarMensaje("Aquí no se puede pegar texto: escríbelo a mano.", "aviso");
+      mostrarMensaje(t("juego.noPegar"), "aviso");
     });
   }
   // Al pulsar un botón de la fila de teclas, no queremos que la caja pierda el foco.
@@ -771,13 +1134,68 @@ const Motor = (() => {
     // Devolvemos el foco a la caja para seguir escribiendo.
     el.entrada.focus();
   });
+  // El botón de escuchar no debe quitar el foco a la caja de texto.
+  el.escuchar.addEventListener("mousedown", (evento) => evento.preventDefault());
+  // Botón de escuchar: lee la frase actual en voz alta.
+  el.escuchar.addEventListener("click", () => {
+    // Solo si hay una frase a la vista.
+    if (partida && partida.frase) {
+      // La leemos en su idioma.
+      Voz.decir(partida.frase[1], modo.idioma);
+    }
+  });
   // Botón "Terminar partida": acaba ya y muestra el resultado.
   el.terminar.addEventListener("click", () => terminarPartida(0));
-  // Botón "Jugar otra vez": nueva partida del mismo modo.
+  // Botón "Jugar otra vez": nueva partida normal del mismo modo.
   el.otraVez.addEventListener("click", () => jugar(modo));
+  // Botón "Repasar errores": partida solo con las frases falladas.
+  el.repasar.addEventListener("click", () => jugar(modo, { repaso: true }));
   // Botón "Volver al menú" (mostrarMenu está en principal.js).
   el.volver.addEventListener("click", () => mostrarMenu());
+  // Al cerrar el panel de ajustes en mitad de una partida, el cursor vuelve a la caja de texto.
+  document.addEventListener("frase-exacta:ajustes-cerrados", () => {
+    // Solo si se puede escribir.
+    if (sePuedeEscribir()) {
+      // Foco en la caja.
+      el.entrada.focus();
+    }
+  });
+  // Si se borra el progreso, olvidamos lo que teníamos leído del navegador.
+  document.addEventListener("frase-exacta:progreso-borrado", () => {
+    // Recorremos los dos almacenes.
+    for (const cache of [usadasPorModo, fallidasPorModo]) {
+      // Borramos cada modo.
+      for (const id of Object.keys(cache)) {
+        // Lo olvidamos: se volverá a leer (vacío) la próxima vez.
+        delete cache[id];
+      }
+    }
+  });
+  // Al cambiar de idioma, repintamos los textos de la partida o del resultado.
+  alCambiarIdioma(() => {
+    // Si no hay partida, no hay nada que repintar.
+    if (!partida) {
+      // Salimos.
+      return;
+    }
+    // Nombre del modo.
+    pintarEtiquetaModo();
+    // Vidas (texto para lectores de pantalla).
+    pintarVidas(null);
+    // Si hay frase, su nivel y su origen.
+    if (partida.frase) {
+      // Nivel.
+      pintarNivel();
+      // Origen.
+      pintarFuente();
+    }
+    // Si la partida ya tiene resultado, la pantalla final.
+    if (partida.resultado) {
+      // Resultado.
+      pintarResultado();
+    }
+  });
 
   // Lo que el motor ofrece al resto del juego.
-  return { jugar, leerRecord, frasesSinVer };
+  return { jugar, leerRecord, frasesSinVer, frasesFallidas };
 })();

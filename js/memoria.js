@@ -30,4 +30,33 @@ const Memoria = {
       // ...lo ignoramos: el juego sigue, solo que sin recordar este dato.
     }
   },
+
+  // Borra todos los datos cuya clave empieza por un prefijo, salvo los que se indiquen.
+  //   prefijo: por ejemplo "frase-exacta:"
+  //   excepto: lista de claves que no se borran (por ejemplo, los ajustes)
+  borrarConPrefijo(prefijo, excepto = []) {
+    // Intentamos borrar del almacenamiento del navegador.
+    try {
+      // Primero apuntamos las claves (borrar mientras se recorre cambia las posiciones).
+      const claves = [];
+      // Recorremos todas las claves guardadas.
+      for (let i = 0; i < localStorage.length; i++) {
+        // Clave de esta posición.
+        const clave = localStorage.key(i);
+        // Si empieza por el prefijo y no es una excepción, la apuntamos.
+        if (clave && clave.startsWith(prefijo) && !excepto.includes(clave)) {
+          // La añadimos a la lista.
+          claves.push(clave);
+        }
+      }
+      // Borramos las claves apuntadas.
+      for (const clave of claves) {
+        // Borramos esta.
+        localStorage.removeItem(clave);
+      }
+      // Si falla (almacenamiento bloqueado)...
+    } catch (error) {
+      // ...no hay nada que borrar.
+    }
+  },
 };

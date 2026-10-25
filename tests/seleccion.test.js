@@ -5,7 +5,7 @@ const { test } = require("node:test");
 // Comprobaciones estrictas.
 const assert = require("node:assert/strict");
 // Funciones que vamos a probar.
-const { tramoSegunProgreso, elegirFrase } = require("../js/seleccion.js");
+const { tramoSegunProgreso, nivelSegunProgreso, elegirFrase } = require("../js/seleccion.js");
 
 // Lista pequeña de frases de ejemplo, con distintos largos.
 const FRASES = [
@@ -76,4 +76,16 @@ test("sin frases del tramo, elige otra libre", () => {
   const frase = elegirFrase(FRASES, usadas, 0, () => 0);
   // Debe ser una de las que quedan.
   assert.ok([4, 5].includes(frase[0]));
+});
+
+// El nivel que se ve en pantalla va de 1 a 3, igual que los tramos.
+test("el nivel sube con las frases completadas", () => {
+  // Al empezar, nivel 1.
+  assert.equal(nivelSegunProgreso(0), 1);
+  // Tras 5, nivel 2.
+  assert.equal(nivelSegunProgreso(5), 2);
+  // Tras 15, nivel 3.
+  assert.equal(nivelSegunProgreso(15), 3);
+  // Y se queda en 3.
+  assert.equal(nivelSegunProgreso(500), 3);
 });

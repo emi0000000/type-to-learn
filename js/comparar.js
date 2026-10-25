@@ -70,74 +70,122 @@ function palabraEn(texto, posicion) {
   return { palabra: texto.slice(inicio, fin), inicio };
 }
 
+// Mensajes de error en cada idioma de la interfaz. {detalle} es "se esperaba «á» y escribiste «a»".
+const MENSAJES_DE_ERROR = {
+  // Español.
+  es: {
+    espacio: "un espacio", // cómo se nombra el espacio
+    comillas: ["«", "»"], // comillas para citar un carácter
+    detalle: "se esperaba {esperado} y escribiste {recibido}", // parte común de casi todos los mensajes
+    sobra: "La frase ya terminó: sobra {recibido}.", // texto de más al final
+    apertura: "Falta el signo de apertura: {detalle}.", // faltan ¿ o ¡
+    apostrofo: "Falta el apóstrofo: {detalle}.", // falta el ' de don't, I'm...
+    mayuscula: "Ojo con la mayúscula: {detalle}.", // tocaba mayúscula
+    minuscula: "Ojo con la minúscula: {detalle}.", // tocaba minúscula
+    faltaTilde: "Falta la tilde: {detalle}.", // tocaba tilde
+    sobraTilde: "Sobra la tilde: {detalle}.", // no tocaba tilde
+    letra: "Revisa la letra: {detalle}.", // ñ por n, ü por u...
+    general: "Error: {detalle}.", // cualquier otro error
+  },
+  // Inglés (mismas claves que en español).
+  en: {
+    espacio: "a space", // cómo se nombra el espacio
+    comillas: ["“", "”"], // comillas para citar un carácter
+    detalle: "expected {esperado} but you typed {recibido}", // parte común
+    sobra: "The sentence already ended: {recibido} is extra.", // texto de más al final
+    apertura: "Missing the opening mark: {detalle}.", // faltan ¿ o ¡
+    apostrofo: "Missing the apostrophe: {detalle}.", // falta el apóstrofo
+    mayuscula: "Watch the capital letter: {detalle}.", // tocaba mayúscula
+    minuscula: "Watch the lowercase letter: {detalle}.", // tocaba minúscula
+    faltaTilde: "Missing the accent: {detalle}.", // tocaba tilde
+    sobraTilde: "No accent here: {detalle}.", // no tocaba tilde
+    letra: "Check the letter: {detalle}.", // ñ por n, ü por u...
+    general: "Mistake: {detalle}.", // cualquier otro error
+  },
+};
+
 // Convierte un carácter en un texto fácil de leer para los mensajes.
-function nombrarCaracter(caracter) {
+//   idioma: idioma de la interfaz ("es" o "en"); por defecto, español
+function nombrarCaracter(caracter, idioma = "es") {
+  // Mensajes del idioma pedido (o en español si no existe).
+  const mensajes = MENSAJES_DE_ERROR[idioma] || MENSAJES_DE_ERROR.es;
   // Un espacio no se ve, así que lo nombramos con palabras.
   if (caracter === " ") {
     // Texto para el espacio.
-    return "un espacio";
+    return mensajes.espacio;
   }
-  // Cualquier otro carácter va entre comillas latinas.
-  return `«${caracter}»`;
+  // Cualquier otro carácter va entre comillas.
+  return `${mensajes.comillas[0]}${caracter}${mensajes.comillas[1]}`;
 }
 
 // Quita tildes, diéresis y virgulillas: "á" -> "a", "ü" -> "u", "ñ" -> "n".
 function quitarMarcas(caracter) {
   // Separamos la letra de sus marcas (NFD) y borramos las marcas (rango Unicode 0300-036F).
-  return caracter.normalize("NFD").replace(/[̀-ͯ]/g, "");
+  return caracter.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
 // Explica con palabras sencillas en qué consiste un error.
-function explicarError(esperado, recibido) {
+//   idioma: idioma de la interfaz ("es" o "en"); por defecto, español
+function explicarError(esperado, recibido, idioma = "es") {
+  // Mensajes del idioma pedido (o en español si no existe).
+  const mensajes = MENSAJES_DE_ERROR[idioma] || MENSAJES_DE_ERROR.es;
+  // Rellena los huecos de un mensaje con los caracteres nombrados.
+  const rellenar = (plantilla, detalle = "") =>
+    // Cambiamos cada hueco por su valor.
+    plantilla
+      // El detalle común (con una función, para que un "$" escrito no se tome como código especial).
+      .replace("{detalle}", () => detalle)
+      // El carácter esperado.
+      .replace("{esperado}", () => nombrarCaracter(esperado, idioma))
+      // El carácter escrito.
+      .replace("{recibido}", () => nombrarCaracter(recibido, idioma));
   // Mensaje base que usan casi todos los casos.
-  const detalle = `se esperaba ${nombrarCaracter(esperado)} y escribiste ${nombrarCaracter(recibido)}`;
+  const detalle = rellenar(mensajes.detalle);
   // Caso 1: la frase ya había terminado y se escribió algo de más.
   if (esperado === "") {
     // Explicamos que sobra texto.
-    return `La frase ya terminó: sobra ${nombrarCaracter(recibido)}.`;
+    return rellenar(mensajes.sobra);
   }
   // Caso 2: faltan los signos de apertura, que en inglés no existen y se olvidan mucho.
   if (esperado === "¿" || esperado === "¡") {
     // Recordamos que en español se abren las preguntas y exclamaciones.
-    return `Falta el signo de apertura: ${detalle}.`;
+    return rellenar(mensajes.apertura, detalle);
   }
   // Caso 2 bis: falta el apóstrofo de las contracciones inglesas (don't, I'm).
   if (esperado === "'") {
     // Recordamos el apóstrofo.
-    return `Falta el apóstrofo: ${detalle}.`;
+    return rellenar(mensajes.apostrofo, detalle);
   }
   // Caso 3: es la misma letra, pero cambia mayúscula por minúscula o al revés.
   if (esperado !== recibido && esperado.toLowerCase() === recibido.toLowerCase()) {
     // Indicamos si tocaba mayúscula o minúscula.
-    const tipo = esperado === esperado.toUpperCase() ? "la mayúscula" : "la minúscula";
-    // Devolvemos el mensaje.
-    return `Ojo con ${tipo}: ${detalle}.`;
+    return rellenar(esperado === esperado.toUpperCase() ? mensajes.mayuscula : mensajes.minuscula, detalle);
   }
   // Caso 4: es la misma letra, pero con o sin tilde, diéresis o virgulilla.
   if (quitarMarcas(esperado).toLowerCase() === quitarMarcas(recibido).toLowerCase()) {
     // ¿La letra esperada lleva tilde (el acento agudo, código 0301)?
-    const esperadoConTilde = esperado.normalize("NFD").includes("́");
+    const esperadoConTilde = esperado.normalize("NFD").includes("\u0301");
     // ¿La letra escrita lleva tilde?
-    const recibidoConTilde = recibido.normalize("NFD").includes("́");
+    const recibidoConTilde = recibido.normalize("NFD").includes("\u0301");
     // Si tocaba tilde y no se puso, falta.
     if (esperadoConTilde && !recibidoConTilde) {
       // Mensaje de tilde que falta.
-      return `Falta la tilde: ${detalle}.`;
+      return rellenar(mensajes.faltaTilde, detalle);
     }
     // Si se puso tilde y no tocaba, sobra.
     if (!esperadoConTilde && recibidoConTilde) {
       // Mensaje de tilde que sobra.
-      return `Sobra la tilde: ${detalle}.`;
+      return rellenar(mensajes.sobraTilde, detalle);
     }
     // Otros casos (ñ por n, ü por u...): mensaje general sobre la letra.
-    return `Revisa la letra: ${detalle}.`;
+    return rellenar(mensajes.letra, detalle);
   }
   // Caso general: cualquier otro carácter equivocado.
-  return `Error: ${detalle}.`;
+  return rellenar(mensajes.general, detalle);
 }
 
 // Si este archivo se carga desde Node (en las pruebas), exportamos las funciones.
 if (typeof module !== "undefined" && module.exports) {
   // Lista de funciones que pueden usar las pruebas.
-  module.exports = { revisarEscritura, palabraEn, nombrarCaracter, quitarMarcas, explicarError };
+  module.exports = { revisarEscritura, palabraEn, nombrarCaracter, quitarMarcas, explicarError, MENSAJES_DE_ERROR };
 }

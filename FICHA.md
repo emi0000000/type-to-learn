@@ -10,7 +10,8 @@ Cada modo va separado: no se mezclan.
 | Modo | Qué hace | Regla | Estado |
 |---|---|---|---|
 | Ortografía | Muestra una frase en español | La escribes exacta; cada error resta una vida | ✅ Versión 1 |
-| Inglés | Muestra una frase y su traducción | La escribes bien y confirmas que entiendes el significado | ✅ Versión 1 |
+| Inglés | Muestra una frase en inglés y su traducción al español | La escribes bien y confirmas que entiendes el significado | ✅ Versión 1 |
+| Español | Al revés: una frase en español y su traducción al inglés | La escribes bien y confirmas que entiendes el significado | ✅ Versión 1 |
 | Código | Muestra comandos y sintaxis | Los escribes correctamente | Versión 2 |
 
 ## Lo que NO debe hacer
@@ -24,7 +25,8 @@ Cada modo va separado: no se mezclan.
 1. Ficha y README. ✅
 2. Modo ortografía, probado y funcionando. ✅
 3. Modo inglés. ✅
-4. Más adelante: modo código, módulo de voz y lecturas.
+4. Modo español, interfaz en dos idiomas, voz, repaso y versión como aplicación. ✅
+5. Más adelante: modo código y lecturas.
 
 ## Norma del código
 
@@ -69,3 +71,24 @@ Cada modo va separado: no se mezclan.
 - **Sin botones de tildes:** el inglés no los necesita; el apóstrofo (*don't*, *I'm*) está en cualquier teclado.
 - **Código compartido:** lo común a todos los modos (vidas, errores, resultado) está en `js/motor.js`.
   Cada modo solo describe sus reglas en `js/modos/`, y tiene sus propias frases, récord y frases vistas.
+
+## Decisiones tomadas para la versión «aplicación» y el modo español
+
+- **Aprender en las dos direcciones:** el modo español usa las mismas parejas de Tatoeba que el inglés, dadas la vuelta.
+  Se copia la frase en español (con los botones de tildes, ñ, ¿ y ¡) y se elige su significado en inglés.
+  Tiene sus propias frases vistas, récord y errores. Las opciones equivocadas nunca son una traducción equivalente
+  (ni con contracciones, ni la misma frase en masculino o femenino).
+- **Interfaz en dos idiomas:** todos los textos están en `js/textos.js`, en español e inglés. Al abrir el juego
+  se elige el idioma del navegador; se cambia con el botón ES/EN. Las explicaciones de los errores también se traducen.
+- **Web y aplicación con el mismo código:** sigue sin librerías ni instalación. Para ser una aplicación usa lo que
+  ya traen los navegadores: una ficha (`manifest.webmanifest`) para poder instalarla con su icono y abrirla a
+  pantalla completa, y un *service worker* (`sw.js`) para jugar sin conexión. Desde la carpeta descargada,
+  `abrir-app.bat` y `abrir-app.sh` la abren como app a pantalla completa con Edge o Chrome.
+  Se descartó empaquetarla con Electron porque obligaría a instalar dependencias de cientos de megas.
+- **Voz:** usa la síntesis de voz del sistema (sin descargas). Se oye con el botón del altavoz o en cada frase si se activa.
+- **Recuperar vidas:** cada 5 frases perfectas seguidas se recupera una vida (sin pasar del máximo), para premiar la precisión.
+- **Repaso:** las frases con algún error se guardan (hasta 300 por modo). El repaso solo usa esas frases y no
+  cuenta para el récord. Escribir una perfecta la quita de la lista.
+- **Dificultad:** normal (5 vidas), difícil (3) y práctica (ilimitadas, sin récord).
+- **Velocidad:** palabras por minuto con el convenio habitual de 5 caracteres por palabra, contando solo el tiempo
+  desde la primera tecla de cada frase hasta terminarla.

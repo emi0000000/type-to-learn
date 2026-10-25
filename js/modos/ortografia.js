@@ -6,9 +6,8 @@
 // Descripción del modo para el motor.
 const ModoOrtografia = {
   // Nombre interno: se usa para guardar en el navegador las frases vistas y el récord.
+  // Sus textos en pantalla son "modo.ortografia.nombre"... (en js/textos.js).
   id: "ortografia",
-  // Nombre que se ve en pantalla.
-  nombre: "Ortografía",
   // Idioma de las frases que se copian.
   idioma: "es",
   // Se muestran los botones á, é, í, ó, ú, ü, ñ, ¿ y ¡ para teclados que no los tienen.
@@ -20,9 +19,9 @@ const ModoOrtografia = {
     return typeof FRASES_ES === "undefined" ? [] : FRASES_ES;
   },
 
-  // Créditos de la frase para Tatoeba: [etiqueta, número, autor].
+  // Créditos de la frase para Tatoeba: [clave de la etiqueta, número, autor].
   creditos(frase) {
     // Cada frase es [número, texto, autor].
-    return [["Frase", frase[0], frase[2]]];
+    return [["fuente.frase", frase[0], frase[2]]];
   },
 };

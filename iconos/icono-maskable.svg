@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Versión "maskable" del icono: fondo hasta los bordes y dibujo dentro de la zona segura (el sistema recorta la forma). -->
+  <defs>
+    <!-- Fondo oscuro con un degradado suave. -->
+    <linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#262a3a"/>
+      <stop offset="1" stop-color="#101117"/>
+    </linearGradient>
+    <!-- Corazón de coral a rojo. -->
+    <linearGradient id="corazon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff9370"/>
+      <stop offset="1" stop-color="#ff5848"/>
+    </linearGradient>
+  </defs>
+  <!-- Fondo completo. -->
+  <rect width="512" height="512" fill="url(#fondo)"/>
+  <!-- Corazón, más pequeño. -->
+  <path transform="translate(136 108) scale(10)" fill="url(#corazon)" d="M12 21s-7.4-4.5-9.6-9.1C.8 8.4 3 4.5 6.8 4.5c2.1 0 3.6 1.1 5.2 3 1.6-1.9 3.1-3 5.2-3 3.8 0 6 3.9 4.4 7.4C19.4 16.5 12 21 12 21z"/>
+  <!-- Cursor ámbar. -->
+  <rect x="196" y="336" width="120" height="22" rx="11" fill="#f7bd4f"/>
+</svg>

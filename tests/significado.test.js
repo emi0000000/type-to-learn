@@ -5,7 +5,17 @@ const { test } = require("node:test");
 // Comprobaciones estrictas.
 const assert = require("node:assert/strict");
 // Funciones que vamos a probar.
-const { palabrasLargas, simplificarIngles, mezclar, traduccionesParecidas, elegirOpciones } = require("../js/significado.js");
+const {
+  palabrasLargas, // palabras de 4 letras o más
+  simplificarIngles, // comparar frases en inglés
+  simplificarEspanol, // comparar frases en español
+  firmaEspanol, // comparar frases en español sin género
+  mezclar, // mezclar listas
+  traduccionesParecidas, // candidatas a opción equivocada
+  elegirOpciones, // opciones de la pregunta
+  invertirParejas, // parejas para el modo español
+  ESPANOL_A_INGLES, // dirección del modo español
+} = require("../js/significado.js");
 
 // Frase de la pregunta: [número, inglés, autor, número, traducción, autor].
 const CORRECTA = [1, "Tom is very tired.", "a", 2, "Tom está muy cansado.", "b"];
@@ -106,4 +116,80 @@ test("la opción correcta cambia de posición", () => {
   }
   // Ha salido en las tres posiciones.
   assert.equal(posiciones.size, 3);
+});
+
+// Dos frases en español que solo cambian de género dicen lo mismo en inglés.
+test("firmaEspanol ignora el género", () => {
+  // Cansado y cansada.
+  assert.equal(firmaEspanol("Estoy cansada."), firmaEspanol("Estoy cansado."));
+  // Artículos y adjetivos.
+  assert.equal(firmaEspanol("La niña es alta."), firmaEspanol("El niño es alto."));
+  // Pero frases distintas siguen siendo distintas.
+  assert.notEqual(firmaEspanol("Estoy cansado."), firmaEspanol("Estoy contento."));
+});
+
+// simplificarEspanol solo deja letras en minúscula.
+test("simplificarEspanol quita signos y mayúsculas", () => {
+  // Signos de apertura, cierre y espacios fuera.
+  assert.equal(simplificarEspanol("¿Está bien?"), "estábien");
+});
+
+// En el modo inglés, una traducción que solo cambia de género no sale como «equivocada».
+test("no se ofrece como equivocada una traducción que solo cambia de género", () => {
+  // Pregunta: "I'm tired." con traducción en masculino.
+  const correcta = [1, "I'm tired.", "a", 2, "Estoy cansado.", "b"];
+  // Lista: la misma idea en femenino (otra frase en inglés), y relleno.
+  const frases = [correcta, [3, "I am so tired.", "a", 4, "Estoy cansada.", "b"]];
+  // Relleno sin nada en común.
+  for (let i = 0; i < 10; i++) {
+    // Frase de relleno.
+    frases.push([100 + i * 2, `Filler number ${i}.`, "a", 101 + i * 2, `Relleno ${i}.`, "b"]);
+  }
+  // La femenina no aparece entre las candidatas.
+  assert.ok(!traduccionesParecidas(frases, correcta).includes("Estoy cansada."));
+});
+
+// invertirParejas da la vuelta a las parejas y no repite frases en español.
+test("invertirParejas pone el español primero y sin repetir", () => {
+  // Dos frases en inglés con la misma traducción, y otra distinta.
+  const parejas = [
+    [1, "I'll be back soon.", "a", 10, "Volveré pronto.", "b"],
+    [2, "I will be back soon.", "c", 10, "Volveré pronto.", "b"],
+    [3, "The bill, please.", "d", 11, "La cuenta, por favor.", "e"],
+  ];
+  // Las damos la vuelta.
+  const invertidas = invertirParejas(parejas);
+  // Solo dos: la repetida se queda una vez.
+  assert.equal(invertidas.length, 2);
+  // Formato [número, español, autor, número, inglés, autor].
+  assert.deepEqual(invertidas[0], [10, "Volveré pronto.", "b", 1, "I'll be back soon.", "a"]);
+});
+
+// En el modo español, las opciones son en inglés y nunca una equivalente con contracción.
+test("modo español: opciones en inglés sin equivalentes", () => {
+  // Pregunta en español.
+  const correcta = [1, "Tom está muy cansado.", "a", 2, "Tom is very tired.", "b"];
+  // Lista del modo español.
+  const frases = [
+    correcta, // la propia pregunta
+    [3, "Tom está cansadísimo.", "a", 4, "Tom's very tired.", "b"], // dice lo mismo en inglés
+    [5, "Mary está cansada.", "a", 6, "Mary is tired.", "b"], // parecida
+    [7, "Tom estaba cansado ayer.", "a", 8, "Tom was tired yesterday.", "b"], // parecida
+  ];
+  // Relleno sin nada en común.
+  for (let i = 0; i < 10; i++) {
+    // Frase de relleno.
+    frases.push([100 + i * 2, `Relleno ${i}.`, "a", 101 + i * 2, `Filler number ${i}.`, "b"]);
+  }
+  // Probamos con varias semillas.
+  for (let semilla = 1; semilla <= 30; semilla++) {
+    // Elegimos opciones en la dirección del modo español.
+    const opciones = elegirOpciones(frases, correcta, 3, azarFijo(semilla), ESPANOL_A_INGLES);
+    // Tres, distintas y con la correcta.
+    assert.equal(new Set(opciones).size, 3);
+    // Incluye la correcta.
+    assert.ok(opciones.includes("Tom is very tired."));
+    // Nunca la equivalente con contracción.
+    assert.ok(!opciones.includes("Tom's very tired."));
+  }
 });
