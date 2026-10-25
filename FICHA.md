@@ -12,7 +12,11 @@ Cada modo va separado: no se mezclan.
 | Ortografía | Muestra una frase en español | La escribes exacta; cada error resta una vida | ✅ Versión 1 |
 | Inglés | Muestra una frase en inglés y su traducción al español | La escribes bien y confirmas que entiendes el significado | ✅ Versión 1 |
 | Español | Al revés: una frase en español y su traducción al inglés | La escribes bien y confirmas que entiendes el significado | ✅ Versión 1 |
-| Código | Muestra comandos y sintaxis | Los escribes correctamente | Versión 2 |
+| Vocabulario | Palabras por temas en inglés o en español | Escribes la palabra y eliges su significado | ✅ |
+| Abecedario | Una palabra deletreada (se ve y se oye) | Escribes la palabra | ✅ |
+| Matemáticas | El nombre de una fórmula | Eliges la correcta entre tres y la escribes | ✅ |
+| Código | Comandos y sintaxis (Python, JavaScript, HTML/CSS, SQL, terminal y Git) | Escribes, detectas el error o eliges el código para una tarea | ✅ |
+| Teclado | El teclado en pantalla con la siguiente tecla señalada | Aprendes dónde está cada tecla según tu tipo de teclado | ✅ |
 
 ## Lo que NO debe hacer
 
@@ -26,7 +30,8 @@ Cada modo va separado: no se mezclan.
 2. Modo ortografía, probado y funcionando. ✅
 3. Modo inglés. ✅
 4. Modo español, interfaz en dos idiomas, voz, repaso y versión como aplicación. ✅
-5. Más adelante: modo código y lecturas.
+5. Vocabulario, abecedario, matemáticas, código y teclado. ✅
+6. Más adelante: lecturas.
 
 ## Norma del código
 
@@ -92,3 +97,22 @@ Cada modo va separado: no se mezclan.
 - **Dificultad:** normal (5 vidas), difícil (3) y práctica (ilimitadas, sin récord).
 - **Velocidad:** palabras por minuto con el convenio habitual de 5 caracteres por palabra, contando solo el tiempo
   desde la primera tecla de cada frase hasta terminarla.
+
+## Decisiones tomadas para las secciones nuevas
+
+- **Menú por secciones:** Idiomas, Matemáticas, Código y Teclado. Cada modo sigue separado, con sus frases, récord y repaso.
+- **Contenidos propios:** el vocabulario, las fórmulas y el código están escritos para el proyecto (MIT), porque
+  Tatoeba solo tiene frases. Cada palabra es única en los dos idiomas, para que cada pregunta tenga una sola respuesta;
+  las variantes de otros países van en una nota.
+- **Vocabulario:** las opciones equivocadas son del mismo tema, para que haya que conocer la palabra.
+  Los sustantivos en español llevan artículo para aprender el género.
+- **Abecedario:** se practica entender un deletreo (lo que pasa al dictar un nombre o un correo). La palabra se oculta
+  con rayas y se descubre al escribirla. Con la interfaz en español, las letras inglesas se escriben como suenan (*di, ou, yi*).
+- **Matemáticas y código, «elegir y luego escribir»:** primero se elige la versión correcta entre tres (las otras tienen
+  un error típico: olvidar el doble producto, un signo cambiado, falta un paréntesis...) y después se escribe la correcta.
+  Así se aprende a reconocer qué fórmula «va» y cuál no, y a escribirla con el teclado.
+- **Cómo se escriben las fórmulas:** con lo que hay en el teclado (^ para potencias, / para fracciones) y botones para
+  √ π ± ≤ ≥ ≠ → ∞ ∫ Δ θ °. En español, el seno se escribe *sen*.
+- **Teclado:** tres tipos (España, Latinoamérica, EE. UU.), dedos con colores, Mayús y Alt Gr señalados y teclas muertas
+  explicadas. El tipo se adivina por el idioma del navegador y, en Chrome y Edge, por el propio teclado.
+- **Móviles:** se aceptan las comillas curvas que ponen solos los teclados de los móviles (’ “ ”).

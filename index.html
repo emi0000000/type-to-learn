@@ -10,7 +10,7 @@
   <!-- Título de la pestaña del navegador. -->
   <title>Frase Exacta</title>
   <!-- Descripción para buscadores y para cuando se comparte el enlace. -->
-  <meta name="description" content="Aprende inglés y español escribiendo: copia frases exactas, elige su significado y no pierdas tus vidas.">
+  <meta name="description" content="Aprende escribiendo: inglés y español, vocabulario, abecedario, fórmulas de matemáticas, código y dónde está cada tecla del teclado.">
   <!-- Color de la barra del navegador en móviles (tema oscuro y claro). -->
   <meta name="theme-color" content="#101117" media="(prefers-color-scheme: dark)">
   <!-- Color de la barra del navegador con el sistema en modo claro. -->
@@ -44,9 +44,12 @@
     }
   </script>
   <!-- Scripts: "defer" los ejecuta en este orden cuando la página ya está construida. -->
-  <!-- 1. Las frases (generadas por herramientas/preparar_frases.py). -->
+  <!-- 1. Los contenidos: frases de Tatoeba (generadas por herramientas/preparar_frases.py) y listas propias. -->
   <script defer src="datos/frases-es.js"></script>
   <script defer src="datos/frases-en.js"></script>
+  <script defer src="datos/vocabulario.js"></script>
+  <script defer src="datos/matematicas.js"></script>
+  <script defer src="datos/codigo.js"></script>
   <!-- 2. Textos de la interfaz en español e inglés. -->
   <script defer src="js/textos.js"></script>
   <!-- 3. Guardar datos en el navegador. -->
@@ -59,6 +62,9 @@
   <script defer src="js/significado.js"></script>
   <!-- 7. Estadísticas: días seguidos, velocidad, tiempo. -->
   <script defer src="js/estadisticas.js"></script>
+  <!-- 7 bis. Teclados (dónde está cada tecla) y abecedario (nombres de las letras). -->
+  <script defer src="js/teclado.js"></script>
+  <script defer src="js/letras.js"></script>
   <!-- 8. Cambiar de pantalla. -->
   <script defer src="js/pantallas.js"></script>
   <!-- 9. Ajustes: idioma, tema, dificultad, sonido, voz. -->
@@ -69,13 +75,22 @@
   <script defer src="js/voz.js"></script>
   <!-- 12. Aplicación: instalar, pantalla completa y uso sin conexión. -->
   <script defer src="js/app.js"></script>
+  <!-- 12 bis. Teclado dibujado en la pantalla y buscador de teclas. -->
+  <script defer src="js/tecladoVisual.js"></script>
   <!-- 13. El motor común de las partidas. -->
   <script defer src="js/motor.js"></script>
-  <!-- 14. Los modos de juego. -->
-  <script defer src="js/modos/ortografia.js"></script>
+  <!-- 14. Los modos de juego: primero las partes comunes (preguntas) y después cada modo. -->
+  <script defer src="js/modos/pregunta.js"></script>
   <script defer src="js/modos/traduccion.js"></script>
+  <script defer src="js/modos/eleccion.js"></script>
+  <script defer src="js/modos/ortografia.js"></script>
   <script defer src="js/modos/ingles.js"></script>
   <script defer src="js/modos/espanol.js"></script>
+  <script defer src="js/modos/vocabulario.js"></script>
+  <script defer src="js/modos/abecedario.js"></script>
+  <script defer src="js/modos/matematicas.js"></script>
+  <script defer src="js/modos/codigo.js"></script>
+  <script defer src="js/modos/teclado.js"></script>
   <!-- 15. Arranque y menú: siempre el último. -->
   <script defer src="js/principal.js"></script>
 </head>
@@ -173,100 +188,12 @@
         </ul>
       </div>
 
-      <!-- Tarjetas de los modos: cada modo va por separado. -->
-      <div class="modos">
-        <!-- Modo ortografía. -->
-        <article class="modo" data-modo="ortografia">
-          <!-- Cabecera: insignia e idioma. -->
-          <div class="modo-cabecera">
-            <!-- Insignia del modo. -->
-            <span class="modo-insignia" aria-hidden="true">Ñ</span>
-            <!-- Idioma del modo. -->
-            <span class="modo-direccion" data-t="modo.ortografia.direccion">Español</span>
-            <!-- Tecla de atajo. -->
-            <kbd class="modo-tecla" aria-hidden="true">1</kbd>
-          </div>
-          <!-- Nombre del modo. -->
-          <h2 class="modo-nombre" data-t="modo.ortografia.nombre">Ortografía</h2>
-          <!-- Qué se hace en él. -->
-          <p class="modo-detalle" data-t="modo.ortografia.detalle"></p>
-          <!-- Frases, sin ver y récord (lo rellena principal.js). -->
-          <p id="estado-ortografia" class="modo-estado"></p>
-          <!-- Botones del modo. -->
-          <div class="modo-acciones">
-            <!-- Jugar. -->
-            <button id="jugar-ortografia" class="boton-principal" type="button" data-t="menu.jugar">Jugar</button>
-            <!-- Repasar las frases falladas (solo si hay alguna). -->
-            <button id="repasar-ortografia" class="boton-secundario" type="button" data-t-title="menu.repasarTitulo" hidden></button>
-          </div>
-        </article>
-        <!-- Modo inglés. -->
-        <article class="modo" data-modo="ingles">
-          <!-- Cabecera: insignia y dirección. -->
-          <div class="modo-cabecera">
-            <!-- Insignia del modo. -->
-            <span class="modo-insignia" aria-hidden="true">EN</span>
-            <!-- Dirección del modo. -->
-            <span class="modo-direccion" data-t="modo.ingles.direccion">Inglés → Español</span>
-            <!-- Tecla de atajo. -->
-            <kbd class="modo-tecla" aria-hidden="true">2</kbd>
-          </div>
-          <!-- Nombre del modo. -->
-          <h2 class="modo-nombre" data-t="modo.ingles.nombre">Inglés</h2>
-          <!-- Qué se hace en él. -->
-          <p class="modo-detalle" data-t="modo.ingles.detalle"></p>
-          <!-- Frases, sin ver y récord (lo rellena principal.js). -->
-          <p id="estado-ingles" class="modo-estado"></p>
-          <!-- Botones del modo. -->
-          <div class="modo-acciones">
-            <!-- Jugar. -->
-            <button id="jugar-ingles" class="boton-principal" type="button" data-t="menu.jugar">Jugar</button>
-            <!-- Repasar las frases falladas. -->
-            <button id="repasar-ingles" class="boton-secundario" type="button" data-t-title="menu.repasarTitulo" hidden></button>
-          </div>
-        </article>
-        <!-- Modo español (al revés que el inglés). -->
-        <article class="modo" data-modo="espanol">
-          <!-- Cabecera: insignia y dirección. -->
-          <div class="modo-cabecera">
-            <!-- Insignia del modo. -->
-            <span class="modo-insignia" aria-hidden="true">ES</span>
-            <!-- Dirección del modo. -->
-            <span class="modo-direccion" data-t="modo.espanol.direccion">Español → Inglés</span>
-            <!-- Tecla de atajo. -->
-            <kbd class="modo-tecla" aria-hidden="true">3</kbd>
-          </div>
-          <!-- Nombre del modo. -->
-          <h2 class="modo-nombre" data-t="modo.espanol.nombre">Español</h2>
-          <!-- Qué se hace en él. -->
-          <p class="modo-detalle" data-t="modo.espanol.detalle"></p>
-          <!-- Frases, sin ver y récord (lo rellena principal.js). -->
-          <p id="estado-espanol" class="modo-estado"></p>
-          <!-- Botones del modo. -->
-          <div class="modo-acciones">
-            <!-- Jugar. -->
-            <button id="jugar-espanol" class="boton-principal" type="button" data-t="menu.jugar">Jugar</button>
-            <!-- Repasar las frases falladas. -->
-            <button id="repasar-espanol" class="boton-secundario" type="button" data-t-title="menu.repasarTitulo" hidden></button>
-          </div>
-        </article>
-        <!-- Modo código: previsto para la versión 2. -->
-        <article class="modo modo-pronto" data-modo="codigo" aria-disabled="true">
-          <!-- Cabecera: insignia y tema. -->
-          <div class="modo-cabecera">
-            <!-- Insignia del modo. -->
-            <span class="modo-insignia" aria-hidden="true">&lt;/&gt;</span>
-            <!-- Tema del modo. -->
-            <span class="modo-direccion" data-t="modo.codigo.direccion">Programación</span>
-          </div>
-          <!-- Nombre del modo. -->
-          <h2 class="modo-nombre" data-t="modo.codigo.nombre">Código</h2>
-          <!-- Qué se hará en él. -->
-          <p class="modo-detalle" data-t="modo.codigo.detalle"></p>
-          <!-- Cuándo llega. -->
-          <p class="modo-estado" data-t="modo.codigo.pronto"></p>
-        </article>
-      </div>
+      <!-- Pestañas de las secciones: Idiomas, Matemáticas, Código y Teclado (las crea principal.js). -->
+      <nav id="menu-secciones" class="secciones" role="tablist" data-t-aria-label="menu.secciones"></nav>
+      <!-- Opciones de la sección (lenguaje de programación, tipo de teclado...). -->
+      <div id="menu-opciones" class="seccion-opciones"></div>
+      <!-- Tarjetas de los modos de la sección: cada modo va por separado (las crea principal.js). -->
+      <div id="menu-modos" class="modos" role="tabpanel"></div>
 
       <!-- Reglas, plegadas para no ocupar espacio. -->
       <details class="reglas">
@@ -280,6 +207,8 @@
           <li data-t="reglas.2"></li>
           <!-- Pregunta de significado. -->
           <li data-t="reglas.3"></li>
+          <!-- Matemáticas y código: elegir y escribir. -->
+          <li data-t="reglas.8"></li>
           <!-- Recuperar vidas. -->
           <li data-t="reglas.4"></li>
           <!-- Dificultad creciente. -->
@@ -324,25 +253,34 @@
       <div class="hoja">
         <!-- Cabecera de la hoja: idioma de la frase y botón de escuchar. -->
         <div class="hoja-cabecera">
-          <!-- Idioma de la frase (ES o EN). -->
-          <span id="juego-idioma" class="chip-idioma">ES</span>
+          <!-- Idioma de la frase (ES o EN) y tema o lenguaje (los rellena motor.js). -->
+          <span class="hoja-chips">
+            <!-- Idioma. -->
+            <span id="juego-idioma" class="chip-idioma">ES</span>
+            <!-- Tema, lenguaje de programación o tipo de teclado. -->
+            <span id="juego-etiqueta" class="chip-etiqueta" hidden></span>
+          </span>
           <!-- Escuchar la frase en voz alta (lo maneja motor.js). -->
           <button id="juego-escuchar" class="boton-icono boton-pequeno" type="button" data-t-title="juego.escuchar" data-t-aria-label="juego.escuchar">
             <!-- Icono. -->
             <svg aria-hidden="true"><use href="#i-altavoz"/></svg>
           </button>
         </div>
+        <!-- Texto de encima de la frase: nombre de la fórmula, tarea, deletreo... (lo rellena motor.js). -->
+        <p id="juego-consigna" class="consigna" hidden></p>
         <!-- La frase completa, solo para lectores de pantalla. -->
         <p id="juego-frase-lectores" class="solo-lectores"></p>
         <!-- La frase letra por letra, con colores (los lectores de pantalla la ignoran). -->
         <p id="juego-frase" class="frase" aria-hidden="true"></p>
         <!-- Traducción de la frase (solo en los modos inglés y español; la maneja traduccion.js). -->
         <p id="traduccion" class="traduccion" hidden>
-          <!-- Etiqueta. -->
-          <span class="traduccion-etiqueta" data-t="juego.traduccion">Traducción</span>
+          <!-- Etiqueta ("Traducción" o "Qué hace"; la cambia traduccion.js). -->
+          <span id="traduccion-etiqueta" class="traduccion-etiqueta" data-t="juego.traduccion">Traducción</span>
           <!-- Texto de la traducción. -->
           <span id="traduccion-texto"></span>
         </p>
+        <!-- Nota: otras formas de decirlo en otros países (la rellena motor.js). -->
+        <p id="juego-nota" class="nota-frase" hidden></p>
         <!-- Barra de avance dentro de la frase. -->
         <div class="avance" aria-hidden="true"><div id="juego-avance" class="avance-barra"></div></div>
       </div>
@@ -356,31 +294,22 @@
       <!-- Mensajes de error o de ánimo; los lectores de pantalla los leen al cambiar. -->
       <p id="juego-mensaje" class="mensaje" role="status" aria-live="polite"></p>
 
-      <!-- Pregunta de significado (solo en los modos inglés y español; la maneja traduccion.js). -->
+      <!-- Pregunta de opción múltiple (en los modos con traducción, matemáticas y código; la maneja pregunta.js). -->
       <div id="pregunta" class="pregunta" role="group" aria-labelledby="pregunta-titulo" hidden>
-        <!-- Título de la pregunta, con una pista de las teclas. -->
-        <p id="pregunta-titulo" class="pregunta-titulo"><span data-t="juego.pregunta">¿Qué significa?</span> <span class="pista" data-t="juego.pista">Pulsa 1, 2 o 3</span></p>
-        <!-- Botones de las opciones (los crea traduccion.js). -->
+        <!-- Título de la pregunta (lo pone pregunta.js), con una pista de las teclas. -->
+        <p id="pregunta-titulo" class="pregunta-titulo"><span id="pregunta-texto">¿Qué significa?</span> <span class="pista" data-t="juego.pista">Pulsa 1, 2 o 3</span></p>
+        <!-- Botones de las opciones (los crea pregunta.js). -->
         <div id="opciones" class="opciones"></div>
       </div>
 
-      <!-- Botones para caracteres que no todos los teclados tienen (en los modos que escriben en español). -->
+      <!-- Botones para caracteres que no todos los teclados tienen (los crea motor.js según el modo). -->
       <div id="juego-teclas" class="teclas" role="group" data-t-aria-label="juego.teclas" aria-label="Caracteres especiales">
-        <!-- Vocales con tilde. -->
-        <button type="button" data-caracter="á">á</button>
-        <button type="button" data-caracter="é">é</button>
-        <button type="button" data-caracter="í">í</button>
-        <button type="button" data-caracter="ó">ó</button>
-        <button type="button" data-caracter="ú">ú</button>
-        <!-- U con diéresis y eñe. -->
-        <button type="button" data-caracter="ü">ü</button>
-        <button type="button" data-caracter="ñ">ñ</button>
-        <!-- Signos de apertura. -->
-        <button type="button" data-caracter="¿">¿</button>
-        <button type="button" data-caracter="¡">¡</button>
-        <!-- Mayúscula para el siguiente botón pulsado. -->
+        <!-- Mayúscula para el siguiente botón pulsado (motor.js lo pone al final de la fila cuando hace falta). -->
         <button id="juego-mayus" class="tecla-mayus" type="button" aria-pressed="false" data-t="juego.mayus" data-t-title="juego.mayusTitulo">⇧ Mayús</button>
       </div>
+
+      <!-- Teclado dibujado con la siguiente tecla señalada (lecciones de teclado o si se activa en los ajustes). -->
+      <div id="juego-teclado" class="teclado-caja" hidden></div>
 
       <!-- Pie de la partida: origen de la frase y botón para terminar. -->
       <footer class="pie-juego">
@@ -521,6 +450,25 @@
             <option value="practica" data-t="ajustes.dificultad.practica">Práctica</option>
           </select>
         </label>
+        <!-- Tipo de teclado. -->
+        <label class="ajuste">
+          <!-- Nombre del ajuste. -->
+          <span data-t="ajustes.teclado">Tipo de teclado</span>
+          <!-- Opciones. -->
+          <select name="teclado">
+            <option value="auto" data-t="teclado.auto">Automático</option>
+            <option value="es" data-t="teclado.nombre.es">Español (España)</option>
+            <option value="la" data-t="teclado.nombre.la">Latinoamericano</option>
+            <option value="us" data-t="teclado.nombre.us">Inglés (EE. UU.)</option>
+          </select>
+        </label>
+        <!-- Teclado en pantalla en todos los modos. -->
+        <label class="ajuste ajuste-casilla">
+          <!-- Nombre del ajuste. -->
+          <span data-t="ajustes.tecladoEnPantalla">Mostrar el teclado en pantalla en todos los modos</span>
+          <!-- Interruptor. -->
+          <input type="checkbox" name="tecladoEnPantalla" class="interruptor">
+        </label>
         <!-- Pantalla completa al jugar. -->
         <label class="ajuste ajuste-casilla">
           <!-- Nombre del ajuste. -->
@@ -593,6 +541,82 @@
           <span id="ajustes-borrado" class="nota" role="status" aria-live="polite"></span>
         </div>
       </fieldset>
+    </form>
+  </dialog>
+
+  <!-- ===== Buscador «¿Dónde está?»: enseña dónde está cada carácter en tu teclado (lo maneja tecladoVisual.js) ===== -->
+  <dialog id="buscador" class="dialogo dialogo-ancho" aria-labelledby="buscador-titulo">
+    <!-- Formulario para que el botón de cerrar cierre la ventana. -->
+    <form method="dialog">
+      <!-- Cabecera. -->
+      <header class="dialogo-cabecera">
+        <!-- Título. -->
+        <h2 id="buscador-titulo" data-t="buscador.titulo">¿Dónde está cada tecla?</h2>
+        <!-- Cerrar. -->
+        <button class="boton-icono" value="cerrar" data-t-title="ajustes.cerrar" data-t-aria-label="ajustes.cerrar">
+          <!-- Icono. -->
+          <svg aria-hidden="true"><use href="#i-cerrar"/></svg>
+        </button>
+      </header>
+      <!-- Tipo de teclado y caja para escribir un carácter. -->
+      <div class="buscador-controles">
+        <!-- Tipo de teclado. -->
+        <label class="ajuste">
+          <!-- Nombre. -->
+          <span data-t="ajustes.teclado">Tipo de teclado</span>
+          <!-- Opciones. -->
+          <select id="buscador-tipo">
+            <option value="auto" data-t="teclado.auto">Automático</option>
+            <option value="es" data-t="teclado.nombre.es">Español (España)</option>
+            <option value="la" data-t="teclado.nombre.la">Latinoamericano</option>
+            <option value="us" data-t="teclado.nombre.us">Inglés (EE. UU.)</option>
+          </select>
+        </label>
+        <!-- Caja: aquí sí se puede pegar, para buscar cualquier carácter. -->
+        <label class="ajuste">
+          <!-- Nombre. -->
+          <span data-t="buscador.escribe">Escribe o pega un carácter</span>
+          <!-- Caja. -->
+          <input id="buscador-entrada" class="buscador-entrada" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="4">
+        </label>
+      </div>
+      <!-- Botones de los caracteres que más cuesta encontrar. -->
+      <p class="nota" data-t="buscador.dificiles">Los que más se buscan:</p>
+      <div id="buscador-botones" class="teclas buscador-botones"></div>
+      <!-- Dibujo del teclado con el carácter señalado. -->
+      <div id="buscador-teclado" class="teclado-caja"></div>
+    </form>
+  </dialog>
+
+  <!-- ===== Tabla del abecedario en inglés y en español (la maneja abecedario.js) ===== -->
+  <dialog id="abecedario" class="dialogo dialogo-ancho" aria-labelledby="abecedario-titulo">
+    <!-- Formulario para que el botón de cerrar cierre la ventana. -->
+    <form method="dialog">
+      <!-- Cabecera. -->
+      <header class="dialogo-cabecera">
+        <!-- Título. -->
+        <h2 id="abecedario-titulo" data-t="abc.titulo">El abecedario</h2>
+        <!-- Cerrar. -->
+        <button class="boton-icono" value="cerrar" data-t-title="ajustes.cerrar" data-t-aria-label="ajustes.cerrar">
+          <!-- Icono. -->
+          <svg aria-hidden="true"><use href="#i-cerrar"/></svg>
+        </button>
+      </header>
+      <!-- Explicación. -->
+      <p class="nota" data-t="abc.explicacion"></p>
+      <!-- Tabla de letras. -->
+      <table class="tabla-abc">
+        <!-- Cabecera de la tabla. -->
+        <thead>
+          <tr>
+            <th data-t="abc.letra">Letra</th>
+            <th data-t="abc.ingles">Inglés</th>
+            <th data-t="abc.espanol">Español</th>
+          </tr>
+        </thead>
+        <!-- Filas (las crea abecedario.js). -->
+        <tbody id="abecedario-filas"></tbody>
+      </table>
     </form>
   </dialog>
 </body>

@@ -12,8 +12,7 @@ const ModoIngles = Traduccion.crear({
   idioma: "en",
   // Las opciones de la pregunta están en español.
   idiomaTraduccion: "es",
-  // En inglés no hacen falta los botones de tildes ni de ¿ ¡.
-  teclasEspeciales: false,
+  // En inglés no hacen falta los botones de tildes ni de ¿ ¡ (sin la propiedad teclas, no hay botones).
   // Frases: [número, inglés, autor, número, español, autor]. FRASES_EN la crea datos/frases-en.js.
   frases: () => (typeof FRASES_EN === "undefined" ? [] : FRASES_EN),
   // Cómo se comparan las frases para elegir opciones equivocadas (en significado.js).

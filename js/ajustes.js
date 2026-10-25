@@ -12,6 +12,9 @@ const Ajustes = (() => {
     tema: ["oscuro", "claro", "auto"], // tema de colores
     tamano: ["normal", "grande", "enorme"], // tamaño de la frase
     dificultad: ["normal", "dificil", "practica"], // vidas por partida
+    teclado: ["auto", "es", "la", "us"], // tipo de teclado (automático, España, Latinoamérica, EE. UU.)
+    lenguajeCodigo: ["todos", "python", "javascript", "web", "sql", "terminal"], // lenguaje de los modos de código
+    seccion: ["idiomas", "matematicas", "codigo", "teclado"], // sección del menú que se ve
   };
   // Vidas de cada dificultad (Infinity: no se pierden nunca).
   const VIDAS = { normal: 5, dificil: 3, practica: Infinity };
@@ -26,6 +29,10 @@ const Ajustes = (() => {
     teclas: false, // sin sonido al teclear (puede cansar)
     voz: false, // no lee cada frase por su cuenta
     vozLenta: false, // voz a velocidad normal
+    teclado: "auto", // tipo de teclado: se intenta adivinar
+    tecladoEnPantalla: false, // el teclado en pantalla solo sale en las lecciones de teclado
+    lenguajeCodigo: "todos", // todos los lenguajes de programación
+    seccion: "idiomas", // el menú empieza en los idiomas
   };
 
   // Atajo para no escribir document.getElementById cada vez.
@@ -86,6 +93,8 @@ const Ajustes = (() => {
     Memoria.guardar(CLAVE, valores);
     // Lo aplicamos a la página.
     aplicar(nombre);
+    // Avisamos al resto del juego (el menú, el teclado en pantalla...).
+    document.dispatchEvent(new CustomEvent("frase-exacta:ajuste", { detail: { nombre, valor: nuevo } }));
   }
 
   // Vidas por partida según la dificultad elegida.

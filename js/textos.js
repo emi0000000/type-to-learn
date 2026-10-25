@@ -18,7 +18,7 @@ const TEXTOS = {
     "barra.ajustes": "Ajustes", // botón de ajustes
 
     // --- Menú ---
-    "menu.lema": "Aprende inglés y español escribiendo. Copia la frase tal cual: cada error te cuesta una vida.", // frase bajo el título
+    "menu.lema": "Aprende escribiendo: inglés y español, fórmulas de matemáticas, código y el teclado. Copia exacto: cada error te cuesta una vida.", // frase bajo el título
     "menu.diasSeguidos": (d) => (d.n === 1 ? "1 día seguido" : `${d.n} días seguidos`), // racha de días
     "menu.frasesEscritas": (d) => (d.n === 1 ? "1 frase escrita" : `${d.n} frases escritas`), // frases totales
     "menu.tiempo": "{t} practicando", // tiempo total
@@ -29,7 +29,8 @@ const TEXTOS = {
     "menu.estadoPpm": " · Mejor: {ppm} ppm", // añadido si hay mejor velocidad
     "menu.sinFrases": "No se pudieron cargar las frases ({archivo}).", // si falta el archivo de frases
     "menu.reglas": "Cómo se juega", // título de las reglas
-    "menu.atajos": "Atajo: pulsa 1, 2 o 3 para empezar un modo.", // pista de teclado
+    "menu.atajos": "Atajo: pulsa 1, 2, 3... para empezar un modo de la sección.", // pista de teclado
+    "menu.secciones": "Secciones", // nombre de las pestañas para lectores de pantalla
     "reglas.1": "Escribe la frase exactamente igual: letras, tildes, mayúsculas, signos y espacios.", // regla 1
     "reglas.2": "Empiezas con 5 vidas (3 en difícil). Cada carácter equivocado resta una.", // regla 2
     "reglas.3": "En Inglés y Español, al terminar de escribir se oculta la traducción y eliges qué significa la frase (teclas 1, 2 o 3). Equivocarte también resta una vida.", // regla 3
@@ -37,6 +38,7 @@ const TEXTOS = {
     "reglas.5": "Las frases empiezan cortas y se van alargando.", // regla 5
     "reglas.6": "No se repiten frases. Las que fallas se guardan para que puedas repasarlas.", // regla 6
     "reglas.7": "Pulsa el altavoz para escuchar la frase. No se puede pegar texto; si te faltan teclas (ñ, tildes, ¿ ¡), usa los botones de la pantalla.", // regla 7
+    "reglas.8": "En Matemáticas y Código, primero eliges la opción correcta (las otras tienen errores típicos) y después la escribes.", // regla 8
 
     // --- Modos ---
     "modo.ortografia.nombre": "Ortografía", // nombre del modo ortografía
@@ -48,10 +50,6 @@ const TEXTOS = {
     "modo.espanol.nombre": "Español", // nombre del modo español
     "modo.espanol.direccion": "Español → Inglés", // dirección del modo
     "modo.espanol.detalle": "Al revés: escribe la frase en español y elige su significado en inglés. Ideal si hablas inglés.", // descripción
-    "modo.codigo.nombre": "Código", // nombre del modo código
-    "modo.codigo.direccion": "Programación", // tema del modo
-    "modo.codigo.detalle": "Comandos y sintaxis de programación.", // descripción
-    "modo.codigo.pronto": "En la versión 2", // aviso de que aún no existe
 
     // --- Partida ---
     "juego.frases": "Frases", // contador de frases
@@ -152,6 +150,168 @@ const TEXTOS = {
     "app.archivo": "Estás abriendo el archivo directamente. Para jugar como aplicación a pantalla completa sin instalar nada, usa abrir-app.bat (Windows) o abrir-app.sh (Mac y Linux). Para instalarla, ábrela desde internet.", // si se abre como archivo
     "app.otro": "Si tu navegador lo permite, busca «Instalar» o «Añadir a pantalla de inicio» en su menú. También puedes jugar a pantalla completa con el botón de la barra.", // otros navegadores
 
+    // --- Secciones del menú ---
+    "seccion.idiomas": "Idiomas", // pestaña de idiomas
+    "seccion.matematicas": "Matemáticas", // pestaña de matemáticas
+    "seccion.codigo": "Código", // pestaña de programación
+    "seccion.teclado": "Teclado", // pestaña de teclado
+    "seccion.ajuste.lenguajeCodigo": "Lenguaje:", // desplegable de lenguaje
+    "seccion.ajuste.teclado": "Tu teclado:", // desplegable de teclado
+
+    // --- Modos nuevos: idiomas ---
+    "modo.palabras-ingles.nombre": "Palabras en inglés", // nombre
+    "modo.palabras-ingles.direccion": "Vocabulario · EN → ES", // dirección
+    "modo.palabras-ingles.detalle": "Más de 450 palabras y expresiones por temas. Escribe la palabra en inglés y elige qué significa.", // descripción
+    "modo.palabras-espanol.nombre": "Palabras en español", // nombre
+    "modo.palabras-espanol.direccion": "Vocabulario · ES → EN", // dirección
+    "modo.palabras-espanol.detalle": "Las mismas palabras al revés, con su género (el, la). Escribe en español y elige el significado en inglés.", // descripción
+    "modo.abecedario.nombre": "Abecedario", // nombre
+    "modo.abecedario.direccion": "Deletreo · EN y ES", // dirección
+    "modo.abecedario.detalle": "Oye y lee una palabra deletreada letra por letra, en inglés o en español, y escríbela.", // descripción
+
+    // --- Modos nuevos: matemáticas ---
+    "modo.mates-algebra.nombre": "Álgebra", // nombre
+    "modo.mates-algebra.direccion": "Matemáticas", // tema
+    "modo.mates-algebra.detalle": "Productos notables, potencias, raíces, fracciones, logaritmos, rectas y progresiones. Elige la fórmula correcta y escríbela.", // descripción
+    "modo.mates-trigonometria.nombre": "Trigonometría", // nombre
+    "modo.mates-trigonometria.direccion": "Matemáticas", // tema
+    "modo.mates-trigonometria.detalle": "Identidades, ángulos notables, teoremas del seno y del coseno, círculos y esferas.", // descripción
+    "modo.mates-calculo.nombre": "Cálculo", // nombre
+    "modo.mates-calculo.direccion": "Matemáticas", // tema
+    "modo.mates-calculo.detalle": "Límites, derivadas e integrales: regla del producto, de la cadena, integración por partes y más.", // descripción
+
+    // --- Modos nuevos: código ---
+    "modo.codigo-escribir.nombre": "Escribe código", // nombre
+    "modo.codigo-escribir.direccion": "Programación", // tema
+    "modo.codigo-escribir.detalle": "Copia líneas de código viendo qué hacen y luego elige qué hace cada una.", // descripción
+    "modo.codigo-errores.nombre": "Detecta el error", // nombre
+    "modo.codigo-errores.direccion": "Programación", // tema
+    "modo.codigo-errores.detalle": "Tres versiones de la misma línea y solo una está bien. Encuéntrala y escríbela.", // descripción
+    "modo.codigo-usos.nombre": "Casos de uso", // nombre
+    "modo.codigo-usos.direccion": "Programación", // tema
+    "modo.codigo-usos.detalle": "Te damos una tarea: elige qué código la hace y escríbelo.", // descripción
+
+    // --- Modos nuevos: lecciones de teclado ---
+    "modo.teclado-central.nombre": "Fila central", // nombre
+    "modo.teclado-central.direccion": "Lección 1", // número de lección
+    "modo.teclado-central.detalle": "Donde descansan los dedos: A S D F y J K L Ñ. Empieza aquí.", // descripción
+    "modo.teclado-superior.nombre": "Fila de arriba", // nombre
+    "modo.teclado-superior.direccion": "Lección 2", // número de lección
+    "modo.teclado-superior.detalle": "Q W E R T Y U I O P, junto con la fila central.", // descripción
+    "modo.teclado-inferior.nombre": "Fila de abajo", // nombre
+    "modo.teclado-inferior.direccion": "Lección 3", // número de lección
+    "modo.teclado-inferior.detalle": "Z X C V B N M, junto con la fila central.", // descripción
+    "modo.teclado-letras.nombre": "Todas las letras", // nombre
+    "modo.teclado-letras.direccion": "Lección 4", // número de lección
+    "modo.teclado-letras.detalle": "Palabras con cualquier letra del teclado.", // descripción
+    "modo.teclado-mayusculas.nombre": "Mayúsculas y puntos", // nombre
+    "modo.teclado-mayusculas.direccion": "Lección 5", // número de lección
+    "modo.teclado-mayusculas.detalle": "Frases cortas con Mayús, comas y puntos.", // descripción
+    "modo.teclado-numeros.nombre": "Números", // nombre
+    "modo.teclado-numeros.direccion": "Lección 6", // número de lección
+    "modo.teclado-numeros.detalle": "La fila de los números, con todos los dedos.", // descripción
+    "modo.teclado-tildes.nombre": "Tildes, ñ y ¿ ¡", // nombre
+    "modo.teclado-tildes.direccion": "Lección 7", // número de lección
+    "modo.teclado-tildes.detalle": "Las teclas muertas: primero ´ y después la vocal. Solo en teclados españoles.", // descripción
+    "modo.teclado-simbolos.nombre": "Símbolos", // nombre
+    "modo.teclado-simbolos.direccion": "Lección 8", // número de lección
+    "modo.teclado-simbolos.detalle": "@ # ^ { } [ ] < > y más: lo que hace falta para fórmulas, correos y código.", // descripción
+
+    // --- Temas del vocabulario y de las matemáticas ---
+    "tema.saludos": "Saludos y frases útiles", // tema
+    "tema.numeros": "Números", // tema
+    "tema.colores": "Colores", // tema
+    "tema.dias": "Días y meses", // tema
+    "tema.tiempo": "El tiempo", // tema
+    "tema.familia": "Familia y personas", // tema
+    "tema.cuerpo": "El cuerpo", // tema
+    "tema.comida": "Comida y bebida", // tema
+    "tema.animales": "Animales", // tema
+    "tema.casa": "La casa", // tema
+    "tema.ropa": "La ropa", // tema
+    "tema.escuela": "La escuela", // tema
+    "tema.trabajo": "El trabajo", // tema
+    "tema.ciudad": "La ciudad", // tema
+    "tema.transporte": "Transporte y viajes", // tema
+    "tema.naturaleza": "Clima y naturaleza", // tema
+    "tema.verbos": "Verbos", // tema
+    "tema.adjetivos": "Adjetivos", // tema
+    "tema.preguntas": "Preguntas", // tema
+    "tema.tecnologia": "Tecnología", // tema
+    "tema.emociones": "Emociones y carácter", // tema
+    "tema.algebra": "Álgebra", // tema de matemáticas
+    "tema.trigonometria": "Trigonometría", // tema de matemáticas
+    "tema.calculo": "Cálculo", // tema de matemáticas
+
+    // --- Lenguajes de programación ---
+    "lenguaje.todos": "Todos", // todos los lenguajes
+    "lenguaje.python": "Python", // Python
+    "lenguaje.javascript": "JavaScript", // JavaScript
+    "lenguaje.web": "HTML y CSS", // HTML y CSS
+    "lenguaje.sql": "SQL", // SQL
+    "lenguaje.terminal": "Terminal y Git", // terminal y Git
+
+    // --- Elegir y escribir (matemáticas y código) ---
+    "eleccion.bien": "¡Correcto! Ahora escríbela.", // al acertar la opción
+    "eleccion.fallo": "No es esa.{porque} La correcta está en verde: escríbela.", // al fallar la opción
+    "eleccion.explicacion": "Elegiste {elegida}.", // explicación para el repaso
+    "eleccion.noCuenta": "Escrita. Esta no cuenta porque fallaste la pregunta.", // tras escribir una fallada
+    "eleccion.pregunta.formula": "¿Cuál es la fórmula correcta?", // pregunta de matemáticas
+    "codigo.queHace": "Qué hace", // etiqueta de la explicación
+    "codigo.pregunta.queHace": "¿Qué hace este código?", // pregunta de «Escribe código»
+    "codigo.pregunta.correcta": "¿Cuál está bien escrita?", // pregunta de «Detecta el error»
+    "codigo.pregunta.cual": "¿Qué código lo hace?", // pregunta de «Casos de uso»
+    "codigo.esoHace": "Eso hace otra cosa: {que}", // por qué no era esa opción
+
+    // --- Abecedario ---
+    "abc.titulo": "El abecedario", // título de la tabla
+    "abc.explicacion": "Cómo se llama cada letra en inglés y en español. Pulsa el altavoz para oírla.", // explicación de la tabla
+    "abc.letra": "Letra", // columna
+    "abc.ingles": "Inglés", // columna y etiqueta
+    "abc.espanol": "Español", // columna y etiqueta
+    "abc.suena": "suena", // "suena ei"
+    "abc.tambien": "también", // otros nombres
+    "abc.verTabla": "Ver letras", // botón de la tarjeta
+
+    // --- Teclado ---
+    "teclado.auto": "Automático", // tipo de teclado automático
+    "teclado.nombre.es": "Español (España)", // teclado de España
+    "teclado.nombre.la": "Latinoamericano", // teclado latinoamericano
+    "teclado.nombre.us": "Inglés (EE. UU.)", // teclado de Estados Unidos
+    "teclado.usando": "Usando: {teclado}. Si no es como el tuyo, cámbialo.", // nota de la sección
+    "teclado.noEsta": "El teclado {teclado} no tiene «{c}». Usa los botones de la pantalla.", // carácter que no existe
+    "teclado.muerta": "tecla muerta", // aviso de tecla muerta
+    "teclado.conDedo": "con el {dedo}", // qué dedo usar
+    "teclado.explicaMuerta": "Una tecla muerta no escribe nada hasta que pulsas la siguiente; para que salga sola, pulsa Espacio.", // qué es una tecla muerta
+    "teclado.sinTildes": "El teclado inglés no tiene tildes: elige un teclado español o usa los botones de la sección Idiomas.", // lección no disponible
+    "tecla.borrar": "⌫", // tecla de borrar
+    "tecla.tab": "Tab ⇥", // tabulador
+    "tecla.bloqMayus": "Bloq Mayús", // bloqueo de mayúsculas
+    "tecla.intro": "Intro ↵", // intro
+    "tecla.mayus": "⇧ Mayús", // mayúsculas
+    "tecla.mayusCorta": "Mayús", // mayúsculas en las explicaciones
+    "tecla.ctrl": "Ctrl", // control
+    "tecla.win": "Win", // tecla de Windows
+    "tecla.alt": "Alt", // Alt
+    "tecla.altgr": "Alt Gr", // Alt Gr
+    "tecla.espacio": "Espacio", // barra espaciadora
+    "dedo.menique-izq": "meñique izquierdo", // dedo
+    "dedo.anular-izq": "anular izquierdo", // dedo
+    "dedo.medio-izq": "dedo medio izquierdo", // dedo
+    "dedo.indice-izq": "índice izquierdo", // dedo
+    "dedo.pulgar": "pulgar", // dedo
+    "dedo.indice-der": "índice derecho", // dedo
+    "dedo.medio-der": "dedo medio derecho", // dedo
+    "dedo.anular-der": "anular derecho", // dedo
+    "dedo.menique-der": "meñique derecho", // dedo
+    "buscador.titulo": "¿Dónde está cada tecla?", // título del buscador
+    "buscador.detalle": "Busca cualquier carácter (@, #, ñ, ¿, ^...) y mira qué teclas pulsar en tu tipo de teclado.", // descripción
+    "buscador.abrir": "Buscar una tecla", // botón
+    "buscador.escribe": "Escribe o pega un carácter", // caja del buscador
+    "buscador.dificiles": "Los que más se buscan:", // botones del buscador
+    "ajustes.teclado": "Tipo de teclado", // ajuste
+    "ajustes.tecladoEnPantalla": "Mostrar el teclado en pantalla en todos los modos", // ajuste
+
     // --- Créditos ---
     "creditos.frasesDe": "Frases de", // inicio de los créditos
     "creditos.codigo": "Código abierto con licencia MIT", // licencia del código
@@ -171,7 +331,7 @@ const TEXTOS = {
     "barra.ajustes": "Settings",
 
     // --- Menu ---
-    "menu.lema": "Learn English and Spanish by typing. Copy the sentence exactly: every mistake costs you a life.",
+    "menu.lema": "Learn by typing: English and Spanish, math formulas, code and the keyboard. Copy it exactly: every mistake costs you a life.",
     "menu.diasSeguidos": (d) => `${d.n}-day streak`,
     "menu.frasesEscritas": (d) => (d.n === 1 ? "1 sentence typed" : `${d.n} sentences typed`),
     "menu.tiempo": "{t} of practice",
@@ -182,7 +342,8 @@ const TEXTOS = {
     "menu.estadoPpm": " · Top speed: {ppm} wpm",
     "menu.sinFrases": "Couldn't load the sentences ({archivo}).",
     "menu.reglas": "How to play",
-    "menu.atajos": "Shortcut: press 1, 2 or 3 to start a mode.",
+    "menu.atajos": "Shortcut: press 1, 2, 3... to start a mode in this section.",
+    "menu.secciones": "Sections",
     "reglas.1": "Type the sentence exactly: letters, accents, capitals, punctuation and spaces.",
     "reglas.2": "You start with 5 lives (3 on hard). Each wrong character costs one.",
     "reglas.3": "In English and Spanish, once you finish typing the translation is hidden and you pick what the sentence means (keys 1, 2 or 3). A wrong answer also costs a life.",
@@ -190,6 +351,7 @@ const TEXTOS = {
     "reglas.5": "Sentences start short and get longer.",
     "reglas.6": "Sentences don't repeat. The ones you miss are saved so you can review them.",
     "reglas.7": "Press the speaker to hear the sentence. Pasting is blocked; if your keyboard lacks keys (ñ, accents, ¿ ¡), use the on-screen buttons.",
+    "reglas.8": "In Math and Code, you first pick the correct option (the others have typical mistakes) and then type it.",
 
     // --- Modes ---
     "modo.ortografia.nombre": "Spanish spelling",
@@ -201,10 +363,6 @@ const TEXTOS = {
     "modo.espanol.nombre": "Spanish",
     "modo.espanol.direccion": "Spanish → English",
     "modo.espanol.detalle": "The other way round: type the Spanish sentence and pick its English meaning. Great if you speak English.",
-    "modo.codigo.nombre": "Code",
-    "modo.codigo.direccion": "Programming",
-    "modo.codigo.detalle": "Commands and programming syntax.",
-    "modo.codigo.pronto": "Coming in version 2",
 
     // --- Game ---
     "juego.frases": "Sentences",
@@ -305,6 +463,168 @@ const TEXTOS = {
     "app.ios": "On iPhone or iPad: tap Share, then “Add to Home Screen”.",
     "app.archivo": "You're opening the file directly. To play as a full-screen app without installing anything, use abrir-app.bat (Windows) or abrir-app.sh (Mac and Linux). To install it, open it from the web.",
     "app.otro": "If your browser supports it, look for “Install” or “Add to Home Screen” in its menu. You can also play full screen with the button in the top bar.",
+
+    // --- Menu sections ---
+    "seccion.idiomas": "Languages",
+    "seccion.matematicas": "Math",
+    "seccion.codigo": "Code",
+    "seccion.teclado": "Keyboard",
+    "seccion.ajuste.lenguajeCodigo": "Language:",
+    "seccion.ajuste.teclado": "Your keyboard:",
+
+    // --- New modes: languages ---
+    "modo.palabras-ingles.nombre": "English words",
+    "modo.palabras-ingles.direccion": "Vocabulary · EN → ES",
+    "modo.palabras-ingles.detalle": "Over 450 words and phrases by topic. Type the English word and pick what it means.",
+    "modo.palabras-espanol.nombre": "Spanish words",
+    "modo.palabras-espanol.direccion": "Vocabulary · ES → EN",
+    "modo.palabras-espanol.detalle": "The same words the other way round, with their gender (el, la). Type in Spanish and pick the English meaning.",
+    "modo.abecedario.nombre": "Alphabet",
+    "modo.abecedario.direccion": "Spelling · EN and ES",
+    "modo.abecedario.detalle": "Hear and read a word spelled letter by letter, in English or Spanish, and type it.",
+
+    // --- New modes: math ---
+    "modo.mates-algebra.nombre": "Algebra",
+    "modo.mates-algebra.direccion": "Math",
+    "modo.mates-algebra.detalle": "Special products, powers, roots, fractions, logarithms, lines and sequences. Pick the correct formula and type it.",
+    "modo.mates-trigonometria.nombre": "Trigonometry",
+    "modo.mates-trigonometria.direccion": "Math",
+    "modo.mates-trigonometria.detalle": "Identities, special angles, laws of sines and cosines, circles and spheres.",
+    "modo.mates-calculo.nombre": "Calculus",
+    "modo.mates-calculo.direccion": "Math",
+    "modo.mates-calculo.detalle": "Limits, derivatives and integrals: product rule, chain rule, integration by parts and more.",
+
+    // --- New modes: code ---
+    "modo.codigo-escribir.nombre": "Write code",
+    "modo.codigo-escribir.direccion": "Programming",
+    "modo.codigo-escribir.detalle": "Copy lines of code while seeing what they do, then pick what each one does.",
+    "modo.codigo-errores.nombre": "Spot the bug",
+    "modo.codigo-errores.direccion": "Programming",
+    "modo.codigo-errores.detalle": "Three versions of the same line and only one is right. Find it and type it.",
+    "modo.codigo-usos.nombre": "Use cases",
+    "modo.codigo-usos.direccion": "Programming",
+    "modo.codigo-usos.detalle": "We give you a task: pick the code that does it and type it.",
+
+    // --- New modes: keyboard lessons ---
+    "modo.teclado-central.nombre": "Home row",
+    "modo.teclado-central.direccion": "Lesson 1",
+    "modo.teclado-central.detalle": "Where your fingers rest: A S D F and J K L. Start here.",
+    "modo.teclado-superior.nombre": "Top row",
+    "modo.teclado-superior.direccion": "Lesson 2",
+    "modo.teclado-superior.detalle": "Q W E R T Y U I O P, together with the home row.",
+    "modo.teclado-inferior.nombre": "Bottom row",
+    "modo.teclado-inferior.direccion": "Lesson 3",
+    "modo.teclado-inferior.detalle": "Z X C V B N M, together with the home row.",
+    "modo.teclado-letras.nombre": "All letters",
+    "modo.teclado-letras.direccion": "Lesson 4",
+    "modo.teclado-letras.detalle": "Words with any letter on the keyboard.",
+    "modo.teclado-mayusculas.nombre": "Capitals and periods",
+    "modo.teclado-mayusculas.direccion": "Lesson 5",
+    "modo.teclado-mayusculas.detalle": "Short sentences with Shift, commas and periods.",
+    "modo.teclado-numeros.nombre": "Numbers",
+    "modo.teclado-numeros.direccion": "Lesson 6",
+    "modo.teclado-numeros.detalle": "The number row, using every finger.",
+    "modo.teclado-tildes.nombre": "Accents, ñ and ¿ ¡",
+    "modo.teclado-tildes.direccion": "Lesson 7",
+    "modo.teclado-tildes.detalle": "Dead keys: first ´ and then the vowel. Spanish keyboards only.",
+    "modo.teclado-simbolos.nombre": "Symbols",
+    "modo.teclado-simbolos.direccion": "Lesson 8",
+    "modo.teclado-simbolos.detalle": "@ # ^ { } [ ] < > and more: what you need for formulas, emails and code.",
+
+    // --- Vocabulary and math topics ---
+    "tema.saludos": "Greetings and useful phrases",
+    "tema.numeros": "Numbers",
+    "tema.colores": "Colors",
+    "tema.dias": "Days and months",
+    "tema.tiempo": "Time",
+    "tema.familia": "Family and people",
+    "tema.cuerpo": "The body",
+    "tema.comida": "Food and drink",
+    "tema.animales": "Animals",
+    "tema.casa": "The house",
+    "tema.ropa": "Clothes",
+    "tema.escuela": "School",
+    "tema.trabajo": "Work",
+    "tema.ciudad": "The city",
+    "tema.transporte": "Transport and travel",
+    "tema.naturaleza": "Weather and nature",
+    "tema.verbos": "Verbs",
+    "tema.adjetivos": "Adjectives",
+    "tema.preguntas": "Questions",
+    "tema.tecnologia": "Technology",
+    "tema.emociones": "Feelings and personality",
+    "tema.algebra": "Algebra",
+    "tema.trigonometria": "Trigonometry",
+    "tema.calculo": "Calculus",
+
+    // --- Programming languages ---
+    "lenguaje.todos": "All",
+    "lenguaje.python": "Python",
+    "lenguaje.javascript": "JavaScript",
+    "lenguaje.web": "HTML and CSS",
+    "lenguaje.sql": "SQL",
+    "lenguaje.terminal": "Terminal and Git",
+
+    // --- Pick and type (math and code) ---
+    "eleccion.bien": "Correct! Now type it.",
+    "eleccion.fallo": "Not that one.{porque} The correct one is in green: type it.",
+    "eleccion.explicacion": "You chose {elegida}.",
+    "eleccion.noCuenta": "Typed. This one doesn't count because you missed the question.",
+    "eleccion.pregunta.formula": "Which formula is correct?",
+    "codigo.queHace": "What it does",
+    "codigo.pregunta.queHace": "What does this code do?",
+    "codigo.pregunta.correcta": "Which one is written correctly?",
+    "codigo.pregunta.cual": "Which code does it?",
+    "codigo.esoHace": "That does something else: {que}",
+
+    // --- Alphabet ---
+    "abc.titulo": "The alphabet",
+    "abc.explicacion": "The name of each letter in English and Spanish. Press the speaker to hear it.",
+    "abc.letra": "Letter",
+    "abc.ingles": "English",
+    "abc.espanol": "Spanish",
+    "abc.suena": "sounds like",
+    "abc.tambien": "also",
+    "abc.verTabla": "See letters",
+
+    // --- Keyboard ---
+    "teclado.auto": "Automatic",
+    "teclado.nombre.es": "Spanish (Spain)",
+    "teclado.nombre.la": "Latin American",
+    "teclado.nombre.us": "English (US)",
+    "teclado.usando": "Using: {teclado}. If it doesn't match yours, change it.",
+    "teclado.noEsta": "The {teclado} keyboard doesn't have “{c}”. Use the on-screen buttons.",
+    "teclado.muerta": "dead key",
+    "teclado.conDedo": "with your {dedo}",
+    "teclado.explicaMuerta": "A dead key types nothing until you press the next key; to get it on its own, press Space.",
+    "teclado.sinTildes": "The English keyboard has no accents: pick a Spanish keyboard or use the buttons in the Languages section.",
+    "tecla.borrar": "⌫",
+    "tecla.tab": "Tab ⇥",
+    "tecla.bloqMayus": "Caps Lock",
+    "tecla.intro": "Enter ↵",
+    "tecla.mayus": "⇧ Shift",
+    "tecla.mayusCorta": "Shift",
+    "tecla.ctrl": "Ctrl",
+    "tecla.win": "Win",
+    "tecla.alt": "Alt",
+    "tecla.altgr": "Alt Gr",
+    "tecla.espacio": "Space",
+    "dedo.menique-izq": "left pinky",
+    "dedo.anular-izq": "left ring finger",
+    "dedo.medio-izq": "left middle finger",
+    "dedo.indice-izq": "left index finger",
+    "dedo.pulgar": "thumb",
+    "dedo.indice-der": "right index finger",
+    "dedo.medio-der": "right middle finger",
+    "dedo.anular-der": "right ring finger",
+    "dedo.menique-der": "right pinky",
+    "buscador.titulo": "Where is each key?",
+    "buscador.detalle": "Look up any character (@, #, ñ, ¿, ^...) and see which keys to press on your keyboard type.",
+    "buscador.abrir": "Find a key",
+    "buscador.escribe": "Type or paste a character",
+    "buscador.dificiles": "Most searched:",
+    "ajustes.teclado": "Keyboard type",
+    "ajustes.tecladoEnPantalla": "Show the on-screen keyboard in every mode",
 
     // --- Credits ---
     "creditos.frasesDe": "Sentences from",

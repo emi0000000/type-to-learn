@@ -5,7 +5,7 @@
 // Solo funciona cuando el juego se abre desde internet o desde un servidor local, no como archivo.
 
 // Nombre de la copia guardada. Cambia el número al cambiar la lista de archivos, para empezar una copia nueva.
-const VERSION = "frase-exacta-v2";
+const VERSION = "frase-exacta-v3";
 
 // Archivos que forman el juego (tests/app.test.js comprueba que la lista está completa).
 const ARCHIVOS = [
@@ -15,22 +15,35 @@ const ARCHIVOS = [
   "css/estilos.css", // estilos
   "datos/frases-es.js", // frases en español
   "datos/frases-en.js", // parejas inglés-español
+  "datos/vocabulario.js", // vocabulario por temas
+  "datos/matematicas.js", // fórmulas
+  "datos/codigo.js", // líneas de código
   "js/textos.js", // textos en español e inglés
   "js/memoria.js", // guardar datos
   "js/comparar.js", // comparar lo escrito
   "js/seleccion.js", // elegir frases
   "js/significado.js", // pregunta de significado
   "js/estadisticas.js", // estadísticas
+  "js/teclado.js", // tipos de teclado y lecciones
+  "js/letras.js", // abecedario
   "js/pantallas.js", // cambiar de pantalla
   "js/ajustes.js", // ajustes
   "js/sonidos.js", // efectos de sonido
   "js/voz.js", // leer en voz alta
   "js/app.js", // aplicación y pantalla completa
+  "js/tecladoVisual.js", // teclado en pantalla y buscador
   "js/motor.js", // motor de las partidas
+  "js/modos/pregunta.js", // preguntas de opción múltiple
+  "js/modos/traduccion.js", // escribir y elegir el significado
+  "js/modos/eleccion.js", // elegir la correcta y escribirla
   "js/modos/ortografia.js", // modo ortografía
-  "js/modos/traduccion.js", // parte común de inglés y español
   "js/modos/ingles.js", // modo inglés
   "js/modos/espanol.js", // modo español
+  "js/modos/vocabulario.js", // modos de vocabulario
+  "js/modos/abecedario.js", // modo abecedario
+  "js/modos/matematicas.js", // modos de matemáticas
+  "js/modos/codigo.js", // modos de código
+  "js/modos/teclado.js", // lecciones de teclado
   "js/principal.js", // arranque y menú
   "iconos/icono.svg", // icono
   "iconos/icono-192.png", // icono pequeño

@@ -30,7 +30,7 @@ const ModoEspanol = (() => {
     // Las opciones de la pregunta están en inglés.
     idiomaTraduccion: "en",
     // Se muestran los botones á, é, ñ, ¿, ¡... para teclados en inglés que no los tienen.
-    teclasEspeciales: true,
+    teclas: "es",
     // Lista de frases.
     frases,
     // Cómo se comparan las frases para elegir opciones equivocadas (en significado.js).

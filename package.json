@@ -1,7 +1,7 @@
 {
   "name": "frase-exacta",
-  "version": "0.2.0",
-  "description": "Juego para aprender inglés y español (en las dos direcciones) copiando frases exactas. Funciona como web y como aplicación a pantalla completa.",
+  "version": "0.3.0",
+  "description": "Juego para aprender escribiendo: inglés y español, vocabulario, abecedario, matemáticas, código y el teclado. Funciona como web y como aplicación a pantalla completa.",
   "private": true,
   "license": "MIT",
   "scripts": {

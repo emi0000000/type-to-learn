@@ -2,17 +2,29 @@
 // Hace lo que comparten todos los modos: mostrar la frase, revisar lo que se escribe,
 // quitar (y devolver) vidas, contar frases, racha y velocidad, guardar los errores y mostrar el resultado final.
 // Cada modo se describe en js/modos/ con un objeto que tiene:
-//   id                    nombre interno ("ortografia", "ingles", "espanol"); sus textos son "modo.<id>.nombre"...
+//   id                    nombre interno ("ortografia", "ingles"...); sus textos son "modo.<id>.nombre"...
 //   idioma                idioma de la frase que se copia ("es", "en")
-//   teclasEspeciales      true si se muestran los botones á, é, ñ, ¿...
 //   frases()              lista de frases; cada una empieza por [número, texto que se copia, ...]
-//   creditos(frase)       lista de [clave de la etiqueta, número, autor] para citar a Tatoeba
-//   alMostrarFrase(frase)             (opcional) se llama al mostrar cada frase nueva
-//   alTerminarDeEscribir(frase, api)  (opcional) se llama al copiar la frase entera;
+//   creditos(frase)       lista de [clave de la etiqueta, número, autor] para citar a Tatoeba ([] si no hace falta)
+// Y, si los necesita (todo opcional):
+//   idiomaDe(frase)       idioma de una frase concreta, si cambia de una a otra (abecedario)
+//   teclas                botones de caracteres especiales: "es" (á, é, ñ, ¿...), una lista de caracteres,
+//                         o una función (frase) que devuelve una de las dos cosas
+//   consigna(frase)       texto que se muestra encima de la frase (el nombre de una fórmula, una tarea...)
+//   etiqueta(frase)       texto corto en la cabecera de la frase (el tema, el lenguaje de programación...)
+//   nota(frase)           aclaración pequeña debajo de la frase
+//   sinIdioma             true si no se muestra el idioma de la frase (fórmulas, código, teclado)
+//   ocultarFrase          true si la frase se oculta (con _) y se descubre al escribirla (deletreo)
+//   leerSiempre           true si cada frase se lee en voz alta aunque esté apagado en los ajustes
+//   textoParaLeer(frase)  lo que se lee en voz alta, si no es la frase
+//   sinVoz                true si no tiene sentido leer en voz alta (fórmulas, código)
+//   mostrarTeclado        true si se dibuja siempre el teclado en pantalla (lecciones de teclado)
+//   alMostrarFrase(frase, api)        se llama al mostrar cada frase nueva
+//   alTerminarDeEscribir(frase, api)  se llama al copiar la frase entera;
 //                                     si no existe, la frase cuenta como superada sin más
-//   alTerminarPartida()               (opcional) se llama al mostrar el resultado final
+//   alTerminarPartida()               se llama al mostrar el resultado final
 // Usa funciones de textos.js, memoria.js, comparar.js, seleccion.js, estadisticas.js, pantallas.js,
-// ajustes.js, sonidos.js y voz.js, que se cargan antes.
+// ajustes.js, sonidos.js, voz.js y tecladoVisual.js, que se cargan antes.
 
 // Todo el motor va dentro de una función que se ejecuta al momento, para no llenar el espacio global.
 const Motor = (() => {
@@ -32,6 +44,8 @@ const Motor = (() => {
   const ATAJOS_BLOQUEADOS = ["a", "z", "y"];
   // Espacio de nombres de los dibujos SVG (para crear los corazones).
   const SVG = "http://www.w3.org/2000/svg";
+  // Botones de caracteres para escribir en español con cualquier teclado.
+  const TECLAS_ESPANOL = ["á", "é", "í", "ó", "ú", "ü", "ñ", "¿", "¡"];
 
   // Atajo para no escribir document.getElementById cada vez.
   const $ = (id) => document.getElementById(id);
@@ -46,6 +60,10 @@ const Motor = (() => {
     ppm: $("juego-ppm"), // palabras por minuto
     errores: $("juego-errores"), // contador de errores
     idioma: $("juego-idioma"), // idioma de la frase
+    etiqueta: $("juego-etiqueta"), // tema o lenguaje de la frase
+    consigna: $("juego-consigna"), // texto encima de la frase (nombre de la fórmula, tarea...)
+    nota: $("juego-nota"), // aclaración debajo de la frase
+    teclado: $("juego-teclado"), // teclado dibujado en pantalla
     escuchar: $("juego-escuchar"), // botón de escuchar
     fraseVisible: $("juego-frase"), // la frase, letra por letra
     fraseLectores: $("juego-frase-lectores"), // la frase entera para lectores de pantalla
@@ -81,6 +99,8 @@ const Motor = (() => {
   const usadasPorModo = {};
   // Frases falladas de cada modo, para repasar: {id del modo: conjunto de números}.
   const fallidasPorModo = {};
+  // Teclado dibujado en la pantalla de juego.
+  const tecladoJuego = TecladoVisual.crear(el.teclado);
 
   // Crea el estado de una partida nueva.
   //   repaso: true si la partida es solo de frases falladas
@@ -215,18 +235,16 @@ const Motor = (() => {
     modo = modoElegido;
     // Creamos el estado de la nueva partida.
     partida = estadoInicial(Boolean(opciones.repaso));
-    // Indicamos el idioma de la frase (ayuda a los lectores de pantalla y a los teclados del móvil).
-    el.fraseVisible.lang = modo.idioma;
-    // Lo mismo para la copia para lectores de pantalla.
-    el.fraseLectores.lang = modo.idioma;
-    // Y para la caja de texto.
-    el.entrada.lang = modo.idioma;
-    // Etiqueta del idioma de la frase (ES o EN).
-    el.idioma.textContent = modo.idioma.toUpperCase();
-    // Mostramos u ocultamos la fila de caracteres especiales.
-    el.teclas.hidden = !modo.teclasEspeciales;
-    // El botón de escuchar solo aparece si el navegador sabe leer en voz alta.
-    el.escuchar.hidden = !Voz.disponible();
+    // El botón de escuchar solo aparece si el navegador sabe leer en voz alta y el modo lo usa.
+    el.escuchar.hidden = !Voz.disponible() || Boolean(modo.sinVoz);
+    // El idioma de la frase solo se muestra en los modos de idiomas.
+    el.idioma.hidden = Boolean(modo.sinIdioma);
+    // Mostramos u ocultamos el teclado en pantalla.
+    el.teclado.hidden = !tecladoVisible();
+    // Quitamos las animaciones de error de la partida anterior (si no, se repetirían al volver a mostrarse).
+    el.entrada.classList.remove("con-error");
+    // Lo mismo con la sacudida de la frase.
+    el.fraseVisible.classList.remove("sacudida");
     // Dejamos el botón de mayúsculas apagado.
     ponerMayusculas(false);
     // Nombre del modo en el marcador.
@@ -329,26 +347,120 @@ const Motor = (() => {
     el.entrada.value = "";
     // Dejamos escribir en ella.
     el.entrada.readOnly = false;
+    // Idioma de esta frase.
+    aplicarIdioma();
+    // Texto de encima, etiqueta y nota.
+    pintarConsigna();
+    // Botones de caracteres especiales que necesita esta frase.
+    pintarTeclas();
     // Dibujamos la frase.
     pintarFrase();
     // Mostramos de dónde viene.
     pintarFuente();
     // Mostramos el nivel de dificultad.
     pintarNivel();
-    // Si el modo quiere mostrar algo más (por ejemplo, la traducción), se lo pedimos.
-    if (modo.alMostrarFrase) {
-      // Llamamos al modo con la frase nueva.
-      modo.alMostrarFrase(partida.frase);
-    }
     // Mostramos el aviso, si lo hay.
     mostrarMensaje(eleccion.aviso, eleccion.aviso ? "aviso" : "");
     // Ponemos el cursor en la caja de texto.
     el.entrada.focus();
-    // Si está activado, leemos la frase en voz alta.
-    if (Ajustes.valor("voz")) {
+    // Si está activado (o el modo lo pide siempre), leemos la frase en voz alta.
+    if ((Ajustes.valor("voz") || modo.leerSiempre) && !modo.sinVoz) {
       // La leemos en su idioma.
-      Voz.decir(partida.frase[1], modo.idioma);
+      leerFrase();
     }
+    // Si el modo quiere hacer algo más (mostrar la traducción, hacer una pregunta...), se lo pedimos.
+    if (modo.alMostrarFrase) {
+      // Llamamos al modo con la frase nueva y las herramientas para seguir la partida.
+      modo.alMostrarFrase(partida.frase, crearApi());
+    }
+  }
+
+  // Idioma de la frase actual (algunos modos cambian de idioma en cada frase).
+  function idiomaFrase() {
+    // Si el modo lo da por frase, ese; si no, el del modo.
+    return modo.idiomaDe ? modo.idiomaDe(partida.frase) : modo.idioma;
+  }
+
+  // Indica el idioma de la frase (ayuda a los lectores de pantalla, a la voz y a los teclados del móvil).
+  function aplicarIdioma() {
+    // Idioma de la frase.
+    const idioma = idiomaFrase();
+    // En la frase visible.
+    el.fraseVisible.lang = idioma;
+    // En la copia para lectores de pantalla.
+    el.fraseLectores.lang = idioma;
+    // En la caja de texto.
+    el.entrada.lang = idioma;
+    // Etiqueta del idioma (ES o EN).
+    el.idioma.textContent = idioma.toUpperCase();
+  }
+
+  // Lee en voz alta la frase actual (o lo que el modo diga que hay que leer).
+  function leerFrase() {
+    // Texto que se lee.
+    const texto = modo.textoParaLeer ? modo.textoParaLeer(partida.frase) : partida.frase[1];
+    // Lo leemos en el idioma de la frase.
+    Voz.decir(texto, idiomaFrase());
+  }
+
+  // Escribe el texto de encima de la frase, la etiqueta y la nota (si el modo los tiene).
+  function pintarConsigna() {
+    // Texto de encima (por ejemplo, el nombre de una fórmula).
+    const consigna = modo.consigna ? modo.consigna(partida.frase) : "";
+    // Lo ponemos.
+    el.consigna.textContent = consigna;
+    // Solo se ve si hay texto.
+    el.consigna.hidden = !consigna;
+    // Etiqueta (por ejemplo, el tema o el lenguaje).
+    const etiqueta = modo.etiqueta ? modo.etiqueta(partida.frase) : "";
+    // La ponemos.
+    el.etiqueta.textContent = etiqueta;
+    // Solo se ve si hay texto.
+    el.etiqueta.hidden = !etiqueta;
+    // Nota (por ejemplo, cómo se dice en otros países).
+    const nota = modo.nota ? modo.nota(partida.frase) : "";
+    // La ponemos.
+    el.nota.textContent = nota;
+    // Solo se ve si hay texto.
+    el.nota.hidden = !nota;
+  }
+
+  // Crea los botones de caracteres especiales que necesita la frase actual.
+  function pintarTeclas() {
+    // Lo que pide el modo (puede depender de la frase).
+    const pedidas = typeof modo.teclas === "function" ? modo.teclas(partida.frase) : modo.teclas;
+    // "es" son los caracteres del español; una lista, esos caracteres; nada, ningún botón.
+    const caracteres = pedidas === "es" ? TECLAS_ESPANOL : Array.isArray(pedidas) ? pedidas : [];
+    // Botones nuevos.
+    const botones = caracteres.map((caracter) => {
+      // Botón.
+      const boton = document.createElement("button");
+      // Botón normal, no de formulario.
+      boton.type = "button";
+      // Carácter que escribe.
+      boton.dataset.caracter = caracter;
+      // Lo que se ve.
+      boton.textContent = caracter;
+      // Devolvemos el botón.
+      return boton;
+    });
+    // Con las letras del español (que pueden ir en mayúscula), añadimos el botón de mayúsculas.
+    if (pedidas === "es") {
+      // El botón de mayúsculas va al final.
+      botones.push(el.mayus);
+    }
+    // Ponemos los botones en la fila.
+    el.teclas.replaceChildren(...botones);
+    // La fila se oculta si no hay botones.
+    el.teclas.hidden = botones.length === 0;
+    // Mayúsculas apagadas.
+    ponerMayusculas(false);
+  }
+
+  // ¿Se dibuja el teclado en pantalla? (Siempre en las lecciones; en el resto, si se pide en los ajustes).
+  function tecladoVisible() {
+    // Lo pide el modo o los ajustes.
+    return Boolean(modo && modo.mostrarTeclado) || Ajustes.valor("tecladoEnPantalla");
   }
 
   // Se ejecuta cada vez que cambia el texto de la caja.
@@ -450,7 +562,7 @@ const Motor = (() => {
     // La racha de frases perfectas se rompe.
     partida.racha = 0;
     // Guardamos el detalle del error, con la frase entera y su idioma (para escucharla en el repaso).
-    partida.fallos.push({ ...fallo, frase: partida.frase[1], idioma: modo.idioma });
+    partida.fallos.push({ ...fallo, frase: partida.frase[1], idioma: idiomaFrase(), voz: !modo.sinVoz });
     // Anotamos la frase para repasarla otro día.
     anotarFallida();
     // Suena el error.
@@ -498,7 +610,7 @@ const Motor = (() => {
     // Si el modo tiene un paso más (por ejemplo, la pregunta de significado)...
     if (modo.alTerminarDeEscribir) {
       // ...se lo pasamos, con las herramientas para seguir la partida.
-      modo.alTerminarDeEscribir(partida.frase, crearApi(sinErrores));
+      modo.alTerminarDeEscribir(partida.frase, crearApi());
       // Si no...
     } else {
       // ...la frase cuenta como superada.
@@ -555,17 +667,56 @@ const Motor = (() => {
     programarSiguiente(PAUSA_ENTRE_FRASES);
   }
 
-  // Herramientas que reciben los modos en alTerminarDeEscribir para seguir la partida.
+  // Herramientas que reciben los modos (en alMostrarFrase y alTerminarDeEscribir) para seguir la partida.
   // Solo funcionan mientras siga la misma partida (si ya terminó, no hacen nada).
-  function crearApi(sinErrores) {
+  function crearApi() {
     // Partida a la que pertenecen estas herramientas.
     const estaPartida = partida;
-    // Comprueba que la partida sigue siendo esta y no ha terminado.
-    const vigente = () => partida === estaPartida && !estaPartida.terminada;
+    // Frase a la que pertenecen.
+    const estaFrase = partida.frase;
+    // Comprueba que la partida y la frase siguen siendo estas y la partida no ha terminado.
+    const vigente = () => partida === estaPartida && partida.frase === estaFrase && !estaPartida.terminada;
     // Devolvemos las herramientas.
     return {
-      // Si la frase se escribió sin errores.
-      sinErrores,
+      // Si la frase va sin ningún error (se mira en el momento de preguntarlo).
+      get sinErrores() {
+        // Sin errores en la frase.
+        return estaPartida.erroresEnFrase === 0;
+      },
+      // Tapa la frase y bloquea la escritura (para preguntar antes de escribir).
+      tapar() {
+        // Solo si la partida sigue.
+        if (vigente()) {
+          // No se puede escribir.
+          partida.esperando = true;
+          // La caja queda de solo lectura.
+          el.entrada.readOnly = true;
+          // La frase se ve borrosa.
+          el.fraseVisible.classList.add("tapada");
+          // Los lectores de pantalla leen el texto de encima, no la respuesta.
+          el.fraseLectores.textContent = el.consigna.textContent;
+          // Quitamos el cursor y la señal del teclado.
+          marcarProgreso();
+        }
+      },
+      // Destapa la frase y deja escribir.
+      destapar() {
+        // Solo si la partida sigue.
+        if (vigente()) {
+          // Ya se puede escribir.
+          partida.esperando = false;
+          // La caja deja de ser de solo lectura.
+          el.entrada.readOnly = false;
+          // La frase se ve nítida.
+          el.fraseVisible.classList.remove("tapada");
+          // Los lectores de pantalla leen la frase.
+          el.fraseLectores.textContent = partida.frase[1];
+          // Cursor al principio y señal del teclado.
+          marcarProgreso();
+          // El cursor vuelve a la caja.
+          el.entrada.focus();
+        }
+      },
       // Cuenta la frase como superada y pasa a la siguiente.
       superar(mensaje) {
         // Solo si la partida sigue.
@@ -749,21 +900,29 @@ const Motor = (() => {
   function pintarFrase() {
     // Texto de la frase.
     const texto = partida.frase[1];
-    // Copia completa para lectores de pantalla (la versión letra a letra se lee mal).
-    el.fraseLectores.textContent = texto;
+    // ¿La frase se oculta hasta escribirla? (deletreo)
+    const oculta = Boolean(modo.ocultarFrase);
+    // Copia completa para lectores de pantalla (si está oculta, la pista de encima).
+    el.fraseLectores.textContent = oculta ? el.consigna.textContent : texto;
     // Fragmento donde vamos montando las letras antes de ponerlas en la página.
     const fragmento = document.createDocumentFragment();
     // Recorremos la frase carácter por carácter.
     for (const caracter of texto) {
       // Creamos una caja para el carácter.
       const letra = document.createElement("span");
-      // Le ponemos el carácter.
-      letra.textContent = caracter;
+      // Guardamos el carácter de verdad (para descubrirlo si está oculto).
+      letra.dataset.c = caracter;
+      // Si está oculta, se ve una raya baja (los espacios se ven como espacios).
+      letra.textContent = oculta && caracter !== " " ? "_" : caracter;
+      // Marcamos las ocultas para el estilo.
+      letra.classList.toggle("oculta", oculta && caracter !== " ");
       // Añadimos la caja al fragmento.
       fragmento.append(letra);
     }
-    // Quitamos de la frase anterior la animación de "lograda".
-    el.fraseVisible.classList.remove("lograda");
+    // Quitamos de la frase anterior las animaciones y el tapado.
+    el.fraseVisible.classList.remove("lograda", "tapada");
+    // Marcamos si la frase está oculta (para separar las rayas).
+    el.fraseVisible.classList.toggle("frase-oculta", oculta);
     // Cambiamos la frase anterior por la nueva.
     el.fraseVisible.replaceChildren(fragmento);
     // Marcamos el cursor al principio.
@@ -780,9 +939,21 @@ const Motor = (() => {
       letras[i].classList.toggle("hecha", i < partida.progreso);
       // La del progreso es la que toca escribir ahora (si la frase ya está entera, ninguna).
       letras[i].classList.toggle("actual", i === partida.progreso && !partida.esperando);
+      // Las letras ocultas ya escritas se descubren.
+      if (i < partida.progreso && letras[i].classList.contains("oculta")) {
+        // Ponemos el carácter de verdad.
+        letras[i].textContent = letras[i].dataset.c;
+        // Ya no está oculta.
+        letras[i].classList.remove("oculta");
+      }
     }
     // Ancho de la barra: lo escrito entre el largo de la frase.
     el.avance.style.width = `${(partida.progreso / Math.max(1, letras.length)) * 100}%`;
+    // Si se ve el teclado, señalamos la siguiente tecla (nada si no se puede escribir ahora).
+    if (!el.teclado.hidden) {
+      // Siguiente carácter de la frase.
+      tecladoJuego.resaltar(partida.esperando ? null : [...partida.frase[1]][partida.progreso] || null);
+    }
   }
 
   // Crea el dibujo de un corazón.
@@ -867,7 +1038,8 @@ const Motor = (() => {
   function pintarFuente() {
     // Vaciamos el párrafo.
     el.fuente.replaceChildren();
-    // Recorremos los créditos que da el modo (en inglés y español son dos: la frase y su traducción).
+    // Recorremos los créditos que da el modo (en inglés y español son dos: la frase y su traducción;
+    // en los contenidos propios del proyecto, ninguno).
     modo.creditos(partida.frase).forEach(([etiqueta, numero, autor], posicion) => {
       // A partir del segundo, los separamos con un punto medio.
       if (posicion > 0) {
@@ -1020,8 +1192,8 @@ const Motor = (() => {
       explicacion.textContent = fallo.explicacion;
       // Juntamos palabra y explicación.
       item.append(palabra, explicacion);
-      // Si se puede leer en voz alta, añadimos el botón para escuchar la frase entera.
-      if (Voz.disponible()) {
+      // Si se puede leer en voz alta (y tiene sentido), añadimos el botón para escuchar la frase entera.
+      if (Voz.disponible() && fallo.voz) {
         // Botón de escuchar.
         item.append(botonEscuchar(fallo.frase, fallo.idioma));
       }
@@ -1141,7 +1313,17 @@ const Motor = (() => {
     // Solo si hay una frase a la vista.
     if (partida && partida.frase) {
       // La leemos en su idioma.
-      Voz.decir(partida.frase[1], modo.idioma);
+      leerFrase();
+    }
+  });
+  // Si se activa o desactiva el teclado en pantalla en mitad de una partida, lo mostramos u ocultamos.
+  document.addEventListener("frase-exacta:ajuste", (evento) => {
+    // Solo nos interesa ese ajuste, y solo si hay partida.
+    if (evento.detail.nombre === "tecladoEnPantalla" && partida && modo) {
+      // Lo mostramos u ocultamos.
+      el.teclado.hidden = !tecladoVisible();
+      // Señalamos la tecla que toca.
+      marcarProgreso();
     }
   });
   // Botón "Terminar partida": acaba ya y muestra el resultado.
@@ -1182,12 +1364,14 @@ const Motor = (() => {
     pintarEtiquetaModo();
     // Vidas (texto para lectores de pantalla).
     pintarVidas(null);
-    // Si hay frase, su nivel y su origen.
+    // Si hay frase, su nivel, su origen y los textos de encima y debajo.
     if (partida.frase) {
       // Nivel.
       pintarNivel();
       // Origen.
       pintarFuente();
+      // Texto de encima, etiqueta y nota (sin tocar la frase, que puede estar tapada).
+      pintarConsigna();
     }
     // Si la partida ya tiene resultado, la pantalla final.
     if (partida.resultado) {

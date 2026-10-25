@@ -11,7 +11,7 @@ const ModoOrtografia = {
   // Idioma de las frases que se copian.
   idioma: "es",
   // Se muestran los botones á, é, í, ó, ú, ü, ñ, ¿ y ¡ para teclados que no los tienen.
-  teclasEspeciales: true,
+  teclas: "es",
 
   // Lista de frases del modo; vacía si el archivo de frases no se pudo cargar.
   frases() {

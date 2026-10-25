@@ -11,7 +11,9 @@ function revisarEscritura(objetivo, escrito) {
   // Normalizamos la frase para que "á" sea siempre un único carácter.
   const meta = objetivo.normalize("NFC");
   // Hacemos lo mismo con lo escrito (algunos teclados escriben la tilde como un carácter aparte).
-  const texto = escrito.normalize("NFC");
+  // Además, los teclados de los móviles cambian solos las comillas rectas por curvas (' por ’, " por “):
+  // las volvemos rectas, que son las que llevan las frases y el código.
+  const texto = escrito.normalize("NFC").replace(/[‘’ʼ]/g, "'").replace(/[“”]/g, '"');
   // Contador de caracteres que coinciden desde el principio.
   let aciertos = 0;
   // Avanzamos mientras queden caracteres en los dos textos y sean iguales.

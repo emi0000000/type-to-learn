@@ -124,3 +124,11 @@ test("explicarError muestra bien el signo $", () => {
   // El dólar aparece tal cual.
   assert.equal(explicarError("a", "$"), "Error: se esperaba «a» y escribiste «$».");
 });
+
+// Los teclados de los móviles cambian las comillas rectas por curvas: se aceptan igual.
+test("las comillas curvas de los móviles cuentan como rectas", () => {
+  // Apóstrofo curvo en "don’t".
+  assert.equal(revisarEscritura("I don't know.", "I don’t").estado, "incompleta");
+  // Comillas curvas en código.
+  assert.equal(revisarEscritura('print("Hola")', "print(“Hola”)").estado, "completa");
+});

@@ -22,6 +22,8 @@
   --acento-fuerte: #f7bd4f; /* ámbar para textos y bordes sobre fondo */
   --sobre-acento: #1b1408; /* texto encima del ámbar */
   --azul: #7fa8ff; /* color del modo inglés */
+  --violeta: #b79bff; /* color de matemáticas */
+  --cian: #5fd0d8; /* color del teclado */
   --sombra: 0 22px 50px -24px rgba(0, 0, 0, 0.75); /* sombra de las tarjetas */
   --letra-maquina: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace; /* letra de máquina de escribir */
   --letra-general: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; /* letra del resto de textos */
@@ -50,6 +52,8 @@
   --acento-fuerte: #8a5a00; /* ámbar oscuro para textos */
   --sobre-acento: #1b1408; /* texto sobre ámbar */
   --azul: #3b62c8; /* azul oscuro */
+  --violeta: #6a48c9; /* violeta oscuro */
+  --cian: #11818a; /* cian oscuro */
   --sombra: 0 22px 50px -28px rgba(70, 45, 10, 0.35); /* sombra suave */
   color-scheme: light; /* controles del navegador en modo claro */
 }
@@ -74,6 +78,8 @@
     --acento-fuerte: #8a5a00; /* ámbar oscuro para textos */
     --sobre-acento: #1b1408; /* texto sobre ámbar */
     --azul: #3b62c8; /* azul oscuro */
+  --violeta: #6a48c9; /* violeta oscuro */
+  --cian: #11818a; /* cian oscuro */
     --sombra: 0 22px 50px -28px rgba(70, 45, 10, 0.35); /* sombra suave */
     color-scheme: light; /* controles del navegador en modo claro */
   }
@@ -433,16 +439,28 @@ body[data-pantalla="pantalla-menu"] .marca {
   background: var(--color-modo); /* del color del modo */
 }
 
-.modo[data-modo="ingles"] {
-  --color-modo: var(--azul); /* inglés: azul */
+.modo[data-color="azul"] {
+  --color-modo: var(--azul); /* tarjetas azules (inglés) */
 }
 
-.modo[data-modo="espanol"] {
-  --color-modo: var(--peligro); /* español: coral */
+.modo[data-color="coral"] {
+  --color-modo: var(--peligro); /* tarjetas coral (español) */
 }
 
-.modo[data-modo="codigo"] {
-  --color-modo: var(--texto-suave); /* código: gris */
+.modo[data-color="verde"] {
+  --color-modo: var(--hecho); /* tarjetas verdes */
+}
+
+.modo[data-color="violeta"] {
+  --color-modo: var(--violeta); /* tarjetas violeta (matemáticas) */
+}
+
+.modo[data-color="cian"] {
+  --color-modo: var(--cian); /* tarjetas cian (teclado) */
+}
+
+.modo-destacado {
+  border-style: dashed; /* el buscador se distingue de las lecciones con un borde discontinuo */
 }
 
 .modo:hover:not(.modo-pronto) {
@@ -519,6 +537,72 @@ body[data-pantalla="pantalla-menu"] .marca {
 
 .modo-acciones .boton-principal {
   flex: 1; /* "Jugar" ocupa el espacio que sobra */
+}
+
+/* ===== Pestañas de las secciones del menú ===== */
+.secciones {
+  display: flex; /* pestañas en fila */
+  flex-wrap: wrap; /* si no caben, en dos líneas */
+  justify-content: center; /* centradas */
+  gap: 6px; /* separación */
+  margin: 0 auto 14px; /* espacio debajo */
+  padding: 5px; /* relleno alrededor de las pestañas */
+  width: fit-content; /* tan ancha como las pestañas */
+  max-width: 100%; /* sin salirse de la pantalla */
+  background: var(--superficie); /* fondo de tarjeta */
+  border: 1px solid var(--borde); /* borde */
+  border-radius: 999px; /* forma de píldora */
+}
+
+.pestana {
+  padding: 8px 18px; /* relleno */
+  background: transparent; /* sin fondo */
+  border: 0; /* sin borde */
+  border-radius: 999px; /* forma de píldora */
+  color: var(--texto-suave); /* texto secundario */
+  font-weight: 700; /* negrita */
+  cursor: pointer; /* manita */
+  transition: background-color 0.15s, color 0.15s; /* cambio suave */
+}
+
+.pestana:hover {
+  color: var(--texto); /* texto más visible al pasar por encima */
+}
+
+.pestana[aria-selected="true"] {
+  background: var(--acento); /* pestaña elegida: fondo ámbar */
+  color: var(--sobre-acento); /* y texto oscuro */
+}
+
+.seccion-opciones {
+  display: flex; /* desplegable y nota en fila */
+  flex-wrap: wrap; /* si no caben, en dos líneas */
+  justify-content: center; /* centrados */
+  align-items: center; /* centrados en vertical */
+  gap: 8px 16px; /* separación */
+  margin-bottom: 14px; /* espacio debajo */
+}
+
+.seccion-opciones:empty {
+  display: none; /* sin opciones, no ocupa espacio */
+}
+
+.seccion-ajuste {
+  display: inline-flex; /* etiqueta y desplegable en fila */
+  align-items: center; /* centrados */
+  gap: 10px; /* separación */
+  font-weight: 600; /* seminegrita */
+}
+
+.seccion-ajuste select {
+  padding: 8px 10px; /* relleno */
+  background: var(--superficie-2); /* fondo */
+  border: 1px solid var(--borde-fuerte); /* borde */
+  border-radius: 10px; /* esquinas redondeadas */
+}
+
+.seccion-opciones .nota {
+  margin: 0; /* sin márgenes */
 }
 
 .reglas {
@@ -691,6 +775,35 @@ body[data-pantalla="pantalla-menu"] .marca {
   margin-bottom: 6px; /* espacio debajo */
 }
 
+.hoja-chips {
+  display: flex; /* idioma y etiqueta en fila */
+  flex-wrap: wrap; /* si no caben, en dos líneas */
+  gap: 6px; /* separación */
+}
+
+.chip-etiqueta {
+  padding: 2px 9px; /* relleno */
+  background: color-mix(in srgb, var(--acento) 14%, transparent); /* fondo ámbar suave */
+  border-radius: 6px; /* esquinas redondeadas */
+  color: var(--acento-fuerte); /* texto ámbar */
+  font-size: 0.75rem; /* pequeña */
+  font-weight: 700; /* negrita */
+}
+
+.consigna {
+  margin: 4px 0 10px; /* espacio arriba y abajo */
+  font-size: calc(clamp(1.05rem, 1.6vw + 0.6rem, 1.35rem) * min(var(--escala-frase), 1.25)); /* algo grande */
+  font-weight: 700; /* negrita */
+  color: var(--texto); /* texto principal */
+}
+
+.nota-frase {
+  margin: 8px 0 0; /* separada de lo de arriba */
+  color: var(--texto-suave); /* texto secundario */
+  font-size: 0.9rem; /* pequeña */
+  font-style: italic; /* cursiva, como una aclaración */
+}
+
 .chip-idioma {
   padding: 2px 9px; /* relleno */
   border: 1px solid var(--borde-fuerte); /* borde */
@@ -733,6 +846,19 @@ body[data-pantalla="pantalla-menu"] .marca {
 
 .frase .actual.fallo {
   animation: destello 0.6s ease, parpadeo 1.1s steps(1) infinite; /* destello rojo sin perder el cursor */
+}
+
+.frase .oculta {
+  color: var(--texto-suave); /* las rayas de las letras ocultas, más suaves */
+}
+
+.frase.frase-oculta span {
+  margin: 0 0.06em; /* en el deletreo, cada raya se ve separada de la siguiente */
+}
+
+.frase.tapada {
+  filter: blur(9px); /* la respuesta se ve borrosa hasta elegir la opción */
+  user-select: none; /* y no se puede seleccionar para copiarla */
 }
 
 .frase.sacudida {
@@ -861,6 +987,12 @@ body[data-pantalla="pantalla-menu"] .marca {
   transition: border-color 0.15s, background-color 0.15s, transform 0.12s; /* cambios suaves */
 }
 
+.opcion-codigo .opcion-texto {
+  font-family: var(--letra-maquina); /* fórmulas y código con letra de máquina */
+  white-space: pre-wrap; /* respeta los espacios */
+  overflow-wrap: anywhere; /* las líneas largas no se salen */
+}
+
 .opcion:hover:not(:disabled) {
   border-color: var(--acento); /* borde ámbar al pasar por encima */
   transform: translateX(3px); /* se desplaza un poco */
@@ -951,6 +1083,232 @@ body[data-pantalla="pantalla-menu"] .marca {
   background: var(--acento); /* Mayús activado: fondo ámbar */
   color: var(--sobre-acento); /* y texto oscuro */
   border-color: var(--acento); /* borde ámbar */
+}
+
+/* ===== Teclado dibujado en la pantalla ===== */
+.teclado-caja {
+  margin: 0 0 24px; /* espacio debajo */
+}
+
+.teclado-visual {
+  --u: min(46px, calc((min(100vw, 920px) - 40px) / 15.3)); /* tamaño de una tecla: se adapta al ancho */
+  display: flex; /* filas una debajo de otra */
+  flex-direction: column; /* en columna */
+  gap: calc(var(--u) * 0.09); /* separación entre filas */
+  width: fit-content; /* tan ancho como las teclas */
+  max-width: 100%; /* sin salirse */
+  margin: 0 auto; /* centrado */
+  padding: calc(var(--u) * 0.2); /* relleno */
+  background: var(--superficie); /* fondo de tarjeta */
+  border: 1px solid var(--borde); /* borde */
+  border-radius: var(--radio); /* esquinas redondeadas */
+  user-select: none; /* no se selecciona el texto de las teclas */
+}
+
+.teclado-fila {
+  display: flex; /* teclas en fila */
+  gap: calc(var(--u) * 0.09); /* separación entre teclas */
+}
+
+.tecla-visual {
+  --dedo: var(--borde-fuerte); /* color del dedo (lo cambia cada clase de dedo) */
+  position: relative; /* para colocar los caracteres pequeños */
+  display: grid; /* contenido centrado */
+  place-items: center; /* en el centro */
+  flex: none; /* no se estira */
+  width: calc(var(--u) * var(--ancho) - var(--u) * 0.09); /* ancho según las unidades de la tecla */
+  height: var(--u); /* alto de una tecla */
+  background: var(--superficie-2); /* fondo de tecla */
+  border: 1px solid var(--borde); /* borde */
+  border-bottom: 3px solid color-mix(in srgb, var(--dedo) 70%, var(--borde)); /* borde inferior del color del dedo */
+  border-radius: calc(var(--u) * 0.16); /* esquinas redondeadas */
+  color: var(--texto); /* texto */
+  font-family: var(--letra-maquina); /* letra de máquina */
+  font-size: calc(var(--u) * 0.36); /* tamaño proporcional a la tecla */
+  line-height: 1; /* sin espacio extra */
+  transition: background-color 0.12s, transform 0.12s; /* cambio suave */
+}
+
+.tv-principal {
+  font-weight: 700; /* el carácter principal en negrita */
+  line-height: 1.3; /* alto suficiente para que se vea la tilde de la Ñ */
+  white-space: nowrap; /* "Bloq Mayús" en una línea */
+}
+
+.tecla-visual:not([data-codigo^="Key"]):not([data-codigo^="Digit"]) .tv-principal {
+  font-size: calc(var(--u) * 0.26); /* nombres de teclas especiales más pequeños */
+  font-family: var(--letra-general); /* con la letra general */
+}
+
+.tv-mayus,
+.tv-altgr {
+  position: absolute; /* en una esquina */
+  font-size: calc(var(--u) * 0.24); /* pequeño */
+  color: var(--texto-suave); /* secundario */
+}
+
+.tv-mayus {
+  top: calc(var(--u) * 0.06); /* arriba */
+  left: calc(var(--u) * 0.1); /* a la izquierda */
+}
+
+.tv-altgr {
+  bottom: calc(var(--u) * 0.06); /* abajo */
+  right: calc(var(--u) * 0.1); /* a la derecha */
+  color: var(--acento-fuerte); /* en ámbar, para distinguirlo */
+}
+
+.tecla-visual.guia::after {
+  content: ""; /* marca de las teclas F y J */
+  position: absolute; /* abajo */
+  bottom: calc(var(--u) * 0.12); /* separada del borde */
+  width: 30%; /* rayita */
+  height: 2px; /* fina */
+  background: var(--texto-suave); /* gris */
+  border-radius: 2px; /* redondeada */
+}
+
+.tecla-visual.objetivo {
+  background: var(--acento); /* tecla que hay que pulsar: ámbar */
+  border-color: var(--acento); /* borde ámbar */
+  color: var(--sobre-acento); /* texto oscuro */
+  transform: translateY(-2px); /* sube un poco */
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--acento) 35%, transparent); /* halo */
+}
+
+.tecla-visual.objetivo .tv-mayus,
+.tecla-visual.objetivo .tv-altgr {
+  color: var(--sobre-acento); /* caracteres pequeños también oscuros */
+}
+
+.tecla-visual.modificador {
+  background: color-mix(in srgb, var(--azul) 35%, var(--superficie-2)); /* Mayús o Alt Gr que hay que mantener: azul */
+  border-color: var(--azul); /* borde azul */
+}
+
+.tecla-visual.paso2 {
+  background: color-mix(in srgb, var(--hecho) 30%, var(--superficie-2)); /* tecla del segundo paso: verde */
+  border-color: var(--hecho); /* borde verde */
+}
+
+.tecla-visual[data-paso]::before {
+  content: attr(data-paso); /* número de paso */
+  position: absolute; /* en la esquina */
+  top: calc(var(--u) * -0.22); /* por encima de la tecla */
+  right: calc(var(--u) * -0.12); /* a la derecha */
+  display: grid; /* número centrado */
+  place-items: center; /* en el centro */
+  width: calc(var(--u) * 0.38); /* tamaño del círculo */
+  height: calc(var(--u) * 0.38); /* tamaño del círculo */
+  background: var(--texto); /* círculo oscuro (claro en el tema oscuro) */
+  color: var(--fondo); /* número del color del fondo */
+  border-radius: 50%; /* redondo */
+  font-family: var(--letra-general); /* letra general */
+  font-size: calc(var(--u) * 0.22); /* pequeño */
+  font-weight: 700; /* negrita */
+}
+
+.dedo-menique-izq,
+.dedo-menique-der {
+  --dedo: #e06c9f; /* meñiques: rosa */
+}
+
+.dedo-anular-izq,
+.dedo-anular-der {
+  --dedo: #b48cff; /* anulares: violeta */
+}
+
+.dedo-medio-izq,
+.dedo-medio-der {
+  --dedo: #5aa9ff; /* corazones: azul */
+}
+
+.dedo-indice-izq {
+  --dedo: #4ccf8c; /* índice izquierdo: verde */
+}
+
+.dedo-indice-der {
+  --dedo: #f2b33d; /* índice derecho: ámbar */
+}
+
+.dedo-pulgar {
+  --dedo: #9aa1b5; /* pulgares: gris */
+}
+
+.teclado-ayuda {
+  min-height: 1.5em; /* reserva su línea */
+  margin: 10px 0 0; /* separada del teclado */
+  color: var(--texto-suave); /* texto secundario */
+  font-size: 0.92rem; /* algo pequeña */
+  text-align: center; /* centrada */
+}
+
+/* ===== Ventanas anchas: buscador de teclas y abecedario ===== */
+.dialogo.dialogo-ancho {
+  width: min(900px, calc(100% - 24px)); /* más ancha que la de ajustes */
+}
+
+.dialogo .teclado-visual {
+  --u: min(46px, calc((min(100vw, 900px) - 110px) / 15.3)); /* dentro de una ventana, las teclas caben en su ancho */
+}
+
+.buscador-controles {
+  display: grid; /* controles en rejilla */
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); /* dos columnas si caben */
+  gap: 0 24px; /* separación */
+  margin-top: 8px; /* separada de la cabecera */
+}
+
+.buscador-entrada {
+  width: 4.5em; /* caja pequeña: es para un carácter */
+  padding: 8px 10px; /* relleno */
+  background: var(--superficie-2); /* fondo */
+  border: 1px solid var(--borde-fuerte); /* borde */
+  border-radius: 10px; /* esquinas redondeadas */
+  font-family: var(--letra-maquina); /* letra de máquina */
+  font-size: 1.3rem; /* grande */
+  text-align: center; /* centrado */
+}
+
+.buscador-botones {
+  margin: 8px 0 16px; /* espacio arriba y abajo */
+}
+
+.tabla-abc {
+  width: 100%; /* todo el ancho */
+  margin-top: 12px; /* separada de la explicación */
+  border-collapse: collapse; /* bordes de celda juntos */
+}
+
+.tabla-abc th {
+  padding: 8px; /* relleno */
+  color: var(--acento-fuerte); /* ámbar */
+  font-size: 0.8rem; /* pequeña */
+  text-align: left; /* a la izquierda */
+  text-transform: uppercase; /* en mayúsculas */
+  letter-spacing: 0.06em; /* letras separadas */
+}
+
+.tabla-abc td {
+  padding: 4px 8px; /* relleno */
+  border-top: 1px solid var(--borde); /* línea entre filas */
+  vertical-align: middle; /* centrado en vertical */
+}
+
+.tabla-abc td > span {
+  vertical-align: middle; /* texto centrado con el botón */
+}
+
+.tabla-abc td .boton-icono {
+  margin-left: 4px; /* separado del texto */
+  vertical-align: middle; /* centrado */
+}
+
+.abc-letra {
+  font-family: var(--letra-maquina); /* letra de máquina */
+  font-size: 1.3rem; /* grande */
+  font-weight: 700; /* negrita */
+  white-space: nowrap; /* en una línea */
 }
 
 .pie-juego {
