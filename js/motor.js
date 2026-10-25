@@ -19,6 +19,13 @@
 //   textoParaLeer(frase)  lo que se lee en voz alta, si no es la frase
 //   sinVoz                true si no tiene sentido leer en voz alta (fórmulas, código)
 //   mostrarTeclado        true si se dibuja siempre el teclado en pantalla (lecciones de teclado)
+//   respuesta             true si no se copia la frase: se escribe una respuesta y se comprueba con Intro
+//                         (matemáticas, números, verbos). Entonces se usan también:
+//     enunciado(frase)    lo que se muestra (por ejemplo "37 + 48")
+//     comprobar(escrito, frase)  true si la respuesta es correcta (por defecto, igual a frase[1])
+//     solucion(frase)     la respuesta correcta que se enseña al fallar (por defecto, frase[1])
+//   sinEscribir           true si no se escribe nada (pronunciación: se habla al micrófono)
+//   largo(frase)          «largo» de la frase para la dificultad (por defecto, sus caracteres)
 //   alMostrarFrase(frase, api)        se llama al mostrar cada frase nueva
 //   alTerminarDeEscribir(frase, api)  se llama al copiar la frase entera;
 //                                     si no existe, la frase cuenta como superada sin más
@@ -30,6 +37,8 @@
 const Motor = (() => {
   // Milisegundos de pausa entre una frase superada y la siguiente.
   const PAUSA_ENTRE_FRASES = 800;
+  // Milisegundos de pausa tras fallar una respuesta, para leer la correcta.
+  const PAUSA_TRAS_RESPUESTA = 2500;
   // Milisegundos de pausa entre perder la última vida y ver el resultado.
   const PAUSA_AL_PERDER = 1400;
   // Máximo de errores que se listan en el repaso final.
@@ -69,6 +78,7 @@ const Motor = (() => {
     fraseLectores: $("juego-frase-lectores"), // la frase entera para lectores de pantalla
     avance: $("juego-avance"), // barra de avance dentro de la frase
     entrada: $("juego-entrada"), // caja donde se escribe
+    comprobar: $("juego-comprobar"), // botón de comprobar la respuesta (modos de respuesta)
     mensaje: $("juego-mensaje"), // mensajes de error o de ánimo
     teclas: $("juego-teclas"), // botones de caracteres especiales
     mayus: $("juego-mayus"), // botón de mayúsculas en pantalla
@@ -231,6 +241,11 @@ const Motor = (() => {
     cancelarPausa();
     // Si se estaba leyendo una frase en voz alta, la cortamos.
     Voz.callar();
+    // Si el modo anterior dejó algo a la vista (una pregunta, el micrófono), que lo recoja.
+    if (modo && modo.alTerminarPartida) {
+      // Llamamos al modo anterior.
+      modo.alTerminarPartida();
+    }
     // Guardamos el modo elegido.
     modo = modoElegido;
     // Creamos el estado de la nueva partida.
@@ -241,6 +256,14 @@ const Motor = (() => {
     el.idioma.hidden = Boolean(modo.sinIdioma);
     // Mostramos u ocultamos el teclado en pantalla.
     el.teclado.hidden = !tecladoVisible();
+    // En los modos de respuesta se ve el botón de comprobar.
+    el.comprobar.hidden = !modo.respuesta;
+    // En los modos sin escribir (pronunciación) no hay caja de texto.
+    el.entrada.hidden = Boolean(modo.sinEscribir);
+    // Texto de ayuda de la caja: copiar la frase o escribir la respuesta.
+    el.entrada.dataset.tPlaceholder = modo.respuesta ? "respuesta.placeholder" : "juego.placeholder";
+    // Lo aplicamos ya.
+    el.entrada.placeholder = t(el.entrada.dataset.tPlaceholder);
     // Quitamos las animaciones de error de la partida anterior (si no, se repetirían al volver a mostrarse).
     el.entrada.classList.remove("con-error");
     // Lo mismo con la sacudida de la frase.
@@ -276,13 +299,19 @@ const Motor = (() => {
     partida.temporizador = setTimeout(siguienteFrase, pausa);
   }
 
+  // Cómo se mide la dificultad de una frase en el modo actual (por defecto, sus caracteres).
+  function medidaDe() {
+    // La del modo, o el largo del texto.
+    return modo.largo || ((frase) => frase[1].length);
+  }
+
   // Elige la siguiente frase: de las falladas en un repaso, o una nueva sin repetir.
   // Devuelve { frase, aviso }, o null si un repaso ya no tiene más frases.
   function elegirSiguiente() {
     // En un repaso...
     if (partida.repaso) {
       // ...elegimos entre las falladas que no hayan salido en esta partida.
-      const frase = elegirFrase(frasesFallidas(modo), partida.vistasRepaso, partida.completadas);
+      const frase = elegirFrase(frasesFallidas(modo), partida.vistasRepaso, partida.completadas, Math.random, medidaDe());
       // Si no queda ninguna, el repaso terminó.
       if (frase === null) {
         // Avisamos con null.
@@ -298,7 +327,7 @@ const Motor = (() => {
     // Conjunto de frases ya vistas de este modo.
     const vistas = cargarUsadas(modo);
     // Elegimos una frase nueva del largo que toca.
-    let frase = elegirFrase(lista, vistas, partida.completadas);
+    let frase = elegirFrase(lista, vistas, partida.completadas, Math.random, medidaDe());
     // Mensaje opcional para la persona (vacío normalmente).
     let aviso = "";
     // Si ya salieron todas las frases...
@@ -306,7 +335,7 @@ const Motor = (() => {
       // ...olvidamos las vistas para empezar la lista otra vez...
       vistas.clear();
       // ...elegimos de nuevo...
-      frase = elegirFrase(lista, vistas, partida.completadas);
+      frase = elegirFrase(lista, vistas, partida.completadas, Math.random, medidaDe());
       // ...y lo avisamos.
       aviso = t("juego.listaReiniciada");
     }
@@ -361,8 +390,11 @@ const Motor = (() => {
     pintarNivel();
     // Mostramos el aviso, si lo hay.
     mostrarMensaje(eleccion.aviso, eleccion.aviso ? "aviso" : "");
-    // Ponemos el cursor en la caja de texto.
-    el.entrada.focus();
+    // Ponemos el cursor en la caja de texto (si se escribe en este modo).
+    if (!modo.sinEscribir) {
+      // Foco en la caja.
+      el.entrada.focus();
+    }
     // Si está activado (o el modo lo pide siempre), leemos la frase en voz alta.
     if ((Ajustes.valor("voz") || modo.leerSiempre) && !modo.sinVoz) {
       // La leemos en su idioma.
@@ -480,6 +512,16 @@ const Motor = (() => {
       // Momento actual, en milisegundos.
       partida.inicioFrase = performance.now();
     }
+    // En los modos de respuesta no se revisa letra a letra: se comprueba al pulsar Intro.
+    if (modo.respuesta) {
+      // Borramos el aviso anterior, si lo había.
+      if (el.mensaje.dataset.tipo === "aviso") {
+        // Vaciamos el mensaje.
+        mostrarMensaje("", "");
+      }
+      // Nada más.
+      return;
+    }
     // Texto de la frase que hay que copiar.
     const texto = partida.frase[1];
     // Comparamos lo escrito con la frase.
@@ -517,6 +559,74 @@ const Motor = (() => {
     if (el.mensaje.dataset.tipo === "error" || el.mensaje.dataset.tipo === "aviso") {
       // Vaciamos el mensaje.
       mostrarMensaje("", "");
+    }
+  }
+
+  // Compara dos respuestas sin tener en cuenta mayúsculas ni espacios de más.
+  function normalizarRespuesta(texto) {
+    // Minúsculas, espacios simples y sin espacios al principio ni al final.
+    return texto.normalize("NFC").toLowerCase().replace(/\s+/g, " ").trim();
+  }
+
+  // Comprueba la respuesta escrita (modos de respuesta), al pulsar Intro o el botón de comprobar.
+  function enviarRespuesta() {
+    // Solo si se puede escribir ahora y es un modo de respuesta.
+    if (!partida || partida.esperando || !modo.respuesta) {
+      // Salimos.
+      return;
+    }
+    // Lo escrito (con las comillas curvas del móvil cambiadas por rectas).
+    const escrito = el.entrada.value.replace(/[‘’ʼ]/g, "'").trim();
+    // Sin nada escrito, avisamos y no hacemos nada más.
+    if (!escrito) {
+      // Pista.
+      mostrarMensaje(t("respuesta.vacia"), "aviso");
+      // Salimos.
+      return;
+    }
+    // Ya no se puede escribir.
+    partida.esperando = true;
+    // La caja queda de solo lectura.
+    el.entrada.readOnly = true;
+    // Sumamos el tiempo que se tardó.
+    sumarTiempo();
+    // ¿Es correcta?
+    const correcta = modo.comprobar ? modo.comprobar(escrito, partida.frase) : normalizarRespuesta(escrito) === normalizarRespuesta(partida.frase[1]);
+    // Si lo es...
+    if (correcta) {
+      // ...sumamos sus caracteres...
+      partida.letras += escrito.length;
+      // ...iluminamos el enunciado...
+      reiniciarAnimacion(el.fraseVisible, "lograda");
+      // ...y la damos por superada.
+      superarFrase(t("respuesta.bien"));
+      // Terminamos aquí.
+      return;
+    }
+    // Si no, contamos el error de escritura (para la precisión).
+    partida.erroresEscritura++;
+    // Respuesta correcta para enseñarla.
+    const solucion = modo.solucion ? modo.solucion(partida.frase) : partida.frase[1];
+    // Sacudimos el enunciado.
+    reiniciarAnimacion(el.fraseVisible, "sacudida");
+    // Borde rojo en la caja.
+    reiniciarAnimacion(el.entrada, "con-error");
+    // Quitamos la vida y guardamos el error para el repaso.
+    const sigue = quitarVida(
+      {
+        palabra: el.fraseVisible.textContent, // el enunciado
+        marca: -1, // sin letra que resaltar
+        espacio: false, // no es un error de espacio
+        explicacion: t("respuesta.explicacion", { escrito, correcta: solucion }), // explicación para el repaso
+      },
+      // Mensaje bajo la caja.
+      t("respuesta.fallo", { correcta: solucion }),
+    );
+    // Si la partida sigue, pasamos a la siguiente tras leer la respuesta correcta
+    // (más tiempo si la solución explicada es larga, como en la fórmula general).
+    if (sigue) {
+      // Siguiente tras una pausa.
+      programarSiguiente(Math.min(7000, PAUSA_TRAS_RESPUESTA + String(solucion).length * 40));
     }
   }
 
@@ -684,17 +794,21 @@ const Motor = (() => {
         return estaPartida.erroresEnFrase === 0;
       },
       // Tapa la frase y bloquea la escritura (para preguntar antes de escribir).
-      tapar() {
+      //   borrosa: false para bloquear sin ocultar la frase (por ejemplo, si la frase es la pista)
+      tapar(borrosa = true) {
         // Solo si la partida sigue.
         if (vigente()) {
           // No se puede escribir.
           partida.esperando = true;
           // La caja queda de solo lectura.
           el.entrada.readOnly = true;
-          // La frase se ve borrosa.
-          el.fraseVisible.classList.add("tapada");
-          // Los lectores de pantalla leen el texto de encima, no la respuesta.
-          el.fraseLectores.textContent = el.consigna.textContent;
+          // Si hay que ocultarla...
+          if (borrosa) {
+            // ...la frase se ve borrosa...
+            el.fraseVisible.classList.add("tapada");
+            // ...y los lectores de pantalla leen el texto de encima, no la respuesta.
+            el.fraseLectores.textContent = el.consigna.textContent;
+          }
           // Quitamos el cursor y la señal del teclado.
           marcarProgreso();
         }
@@ -713,8 +827,11 @@ const Motor = (() => {
           el.fraseLectores.textContent = partida.frase[1];
           // Cursor al principio y señal del teclado.
           marcarProgreso();
-          // El cursor vuelve a la caja.
-          el.entrada.focus();
+          // El cursor vuelve a la caja (si se escribe en este modo).
+          if (!modo.sinEscribir) {
+            // Foco en la caja.
+            el.entrada.focus();
+          }
         }
       },
       // Cuenta la frase como superada y pasa a la siguiente.
@@ -898,6 +1015,30 @@ const Motor = (() => {
 
   // Dibuja la frase actual, cada carácter en su propia caja.
   function pintarFrase() {
+    // En los modos de respuesta se muestra el enunciado entero, sin colorear letras.
+    if (modo.respuesta) {
+      // Enunciado (por ejemplo "37 + 48").
+      const enunciado = modo.enunciado ? modo.enunciado(partida.frase) : partida.frase[1];
+      // Quitamos las animaciones y el tapado de la frase anterior.
+      el.fraseVisible.classList.remove("lograda", "tapada", "frase-oculta");
+      // Marcamos que es un enunciado (para el estilo).
+      el.fraseVisible.classList.add("enunciado");
+      // Ponemos el texto.
+      el.fraseVisible.textContent = enunciado;
+      // Lo mismo para lectores de pantalla.
+      el.fraseLectores.textContent = enunciado;
+      // Barra de avance vacía.
+      el.avance.style.width = "0";
+      // Sin teclas señaladas.
+      if (!el.teclado.hidden) {
+        // Nada que señalar.
+        tecladoJuego.resaltar(null);
+      }
+      // Terminamos aquí.
+      return;
+    }
+    // Ya no es un enunciado.
+    el.fraseVisible.classList.remove("enunciado");
     // Texto de la frase.
     const texto = partida.frase[1];
     // ¿La frase se oculta hasta escribirla? (deletreo)
@@ -931,6 +1072,11 @@ const Motor = (() => {
 
   // Colorea las letras ya escritas, marca dónde va el cursor y mueve la barra de avance.
   function marcarProgreso() {
+    // En los modos de respuesta no hay letras que colorear.
+    if (modo.respuesta) {
+      // Nada que hacer.
+      return;
+    }
     // Lista de cajas de letras.
     const letras = el.fraseVisible.children;
     // Recorremos todas.
@@ -1246,8 +1392,22 @@ const Motor = (() => {
   el.entrada.addEventListener("input", alEscribir);
   // Cuando el teclado termina de componer un carácter (tildes en algunos sistemas), también.
   el.entrada.addEventListener("compositionend", () => alEscribir());
-  // Bloqueamos las teclas de mover el cursor y algunos atajos.
+  // Bloqueamos las teclas de mover el cursor y algunos atajos; en los modos de respuesta, Intro comprueba.
   el.entrada.addEventListener("keydown", (evento) => {
+    // En los modos de respuesta, Intro envía la respuesta.
+    if (modo && modo.respuesta && evento.key === "Enter") {
+      // Evitamos que haga otra cosa.
+      evento.preventDefault();
+      // Comprobamos.
+      enviarRespuesta();
+      // Nada más.
+      return;
+    }
+    // En los modos de respuesta se puede mover el cursor y usar los atajos (es una respuesta libre).
+    if (modo && modo.respuesta) {
+      // Dejamos la tecla.
+      return;
+    }
     // ¿Es un atajo con Ctrl o Cmd? (Sin Alt, para no bloquear AltGr en teclados españoles).
     const conControl = (evento.ctrlKey || evento.metaKey) && !evento.altKey;
     // ¿Es una tecla de cursor o un atajo bloqueado?
@@ -1256,8 +1416,8 @@ const Motor = (() => {
       evento.preventDefault();
     }
   });
-  // Al hacer clic en la caja, el cursor vuelve al final.
-  el.entrada.addEventListener("mouseup", cursorAlFinal);
+  // Al hacer clic en la caja, el cursor vuelve al final (en los modos de respuesta se puede mover libremente).
+  el.entrada.addEventListener("mouseup", () => !(modo && modo.respuesta) && cursorAlFinal());
   // Al tocar la caja en una pantalla táctil, también.
   el.entrada.addEventListener("touchend", cursorAlFinal);
   // Al entrar en la caja, también.
@@ -1325,6 +1485,13 @@ const Motor = (() => {
       // Señalamos la tecla que toca.
       marcarProgreso();
     }
+  });
+  // Botón "Comprobar" (modos de respuesta).
+  el.comprobar.addEventListener("click", () => {
+    // Comprobamos la respuesta.
+    enviarRespuesta();
+    // El foco vuelve a la caja.
+    el.entrada.focus();
   });
   // Botón "Terminar partida": acaba ya y muestra el resultado.
   el.terminar.addEventListener("click", () => terminarPartida(0));

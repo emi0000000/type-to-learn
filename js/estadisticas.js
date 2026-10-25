@@ -138,9 +138,10 @@ const Estadisticas = {
   //   segundos: duración de la partida
   //   ppm:      velocidad media
   //   racha:    mejor racha de la partida
-  registrar({ id, frases, letras, segundos, ppm, racha }) {
-    // Si no se escribió nada, no cuenta como práctica.
-    if (frases === 0 && letras === 0) {
+  //   actividad: true si es una práctica sin frases (por ejemplo, la del ratón), que cuenta el día y el tiempo
+  registrar({ id, frases, letras, segundos, ppm, racha, actividad = false }) {
+    // Si no se escribió nada (y no es otra actividad), no cuenta como práctica.
+    if (frases === 0 && letras === 0 && !actividad) {
       // Salimos sin guardar.
       return;
     }

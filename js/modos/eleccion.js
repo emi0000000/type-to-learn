@@ -14,10 +14,12 @@ const Eleccion = (() => {
   //   tituloPregunta:   clave del título de la pregunta
   //   opciones(frase):  devuelve la lista de { texto, correcta, explicacion } (sin mezclar)
   //   codigo:           true si las opciones son fórmulas o código (letra de máquina)
+  //   tapar:            false si la frase se ve mientras se pregunta (cuando la frase es la pista)
+  //   alAcertar(frase): (opcional) texto extra que se muestra al acertar (por ejemplo, la pista)
   //   Y cualquier otra propiedad del modo (id, frases, consigna, teclas...) se pasa tal cual al motor.
   function crear(config) {
     // Sacamos los datos propios; el resto se pasa al motor.
-    const { tituloPregunta, opciones, codigo = true, ...resto } = config;
+    const { tituloPregunta, opciones, codigo = true, tapar = true, alAcertar, ...resto } = config;
     // ¿Se eligió bien la opción de la frase actual?
     let acerto = false;
 
@@ -25,8 +27,8 @@ const Eleccion = (() => {
     function alMostrarFrase(frase, api) {
       // Todavía no se ha respondido.
       acerto = false;
-      // Tapamos la frase y bloqueamos la escritura.
-      api.tapar();
+      // Bloqueamos la escritura y, si toca, tapamos la frase.
+      api.tapar(tapar);
       // Hacemos la pregunta con las opciones mezcladas.
       Pregunta.hacer({
         titulo: t(tituloPregunta), // título
@@ -37,8 +39,8 @@ const Eleccion = (() => {
           if (acierto_) {
             // ...lo anotamos...
             acerto = true;
-            // ...y le pedimos que la escriba.
-            api.mensaje(t("eleccion.bien"), "bien");
+            // ...y le pedimos que la escriba (con la pista, si el modo la da).
+            api.mensaje(t("eleccion.bien") + (alAcertar ? ` ${alAcertar(frase)}` : ""), "bien");
             // Si no...
           } else {
             // Explicación: por qué está mal la elegida (si la hay).

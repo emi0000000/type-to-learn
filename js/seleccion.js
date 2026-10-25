@@ -38,8 +38,10 @@ function nivelSegunProgreso(completadas) {
 //   usadas:      conjunto (Set) con los números de las frases ya vistas
 //   completadas: frases completadas en la partida actual
 //   azar:        función que da un número entre 0 y 1 (se puede cambiar en las pruebas)
+//   medida:      función que da el «largo» de una frase para saber su dificultad
+//                (por defecto, su número de caracteres; los problemas de matemáticas usan su nivel)
 // Devuelve la frase elegida, o null si ya se usaron todas.
-function elegirFrase(frases, usadas, completadas, azar = Math.random) {
+function elegirFrase(frases, usadas, completadas, azar = Math.random, medida = (frase) => frase[1].length) {
   // Nos quedamos con las frases que todavía no se han visto.
   const libres = frases.filter((frase) => !usadas.has(frase[0]));
   // Si no queda ninguna, avisamos devolviendo null.
@@ -50,7 +52,7 @@ function elegirFrase(frases, usadas, completadas, azar = Math.random) {
   // Calculamos qué tramo de dificultad toca.
   const tramo = tramoSegunProgreso(completadas);
   // Entre las libres, buscamos las que tienen el largo de ese tramo.
-  const delTramo = libres.filter((frase) => frase[1].length >= tramo.largoMinimo && frase[1].length <= tramo.largoMaximo);
+  const delTramo = libres.filter((frase) => medida(frase) >= tramo.largoMinimo && medida(frase) <= tramo.largoMaximo);
   // Si quedan frases de ese largo las usamos; si no, aceptamos cualquiera de las libres.
   const opciones = delTramo.length > 0 ? delTramo : libres;
   // Elegimos una posición al azar dentro de las opciones.

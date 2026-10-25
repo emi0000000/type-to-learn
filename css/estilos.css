@@ -1615,6 +1615,224 @@ body[data-pantalla="pantalla-menu"] .marca {
   font-size: calc(clamp(1.5rem, 2.6vw + 0.9rem, 2.6rem) * var(--escala-frase)); /* frase más grande */
 }
 
+/* ===== Modos de respuesta: enunciado y botón de comprobar ===== */
+.fila-entrada {
+  display: flex; /* caja y botón en fila */
+  gap: 10px; /* separación */
+  align-items: stretch; /* el botón tan alto como la caja */
+}
+
+.fila-entrada .entrada {
+  flex: 1; /* la caja ocupa lo que sobra */
+  min-width: 0; /* y puede encogerse */
+}
+
+.boton-comprobar {
+  flex: none; /* el botón no se encoge */
+  padding-inline: 22px; /* relleno lateral */
+}
+
+.frase.enunciado {
+  font-size: calc(clamp(1.7rem, 4.5vw + 0.6rem, 2.8rem) * var(--escala-frase)); /* el enunciado (37 + 48) se ve grande */
+  font-weight: 700; /* negrita */
+  text-align: center; /* centrado */
+  white-space: normal; /* corta las líneas normalmente */
+}
+
+/* ===== Pronunciación ===== */
+.hablar {
+  margin: 0 0 18px; /* espacio debajo */
+  padding: 16px; /* relleno */
+  text-align: center; /* centrado */
+  background: var(--superficie); /* fondo de tarjeta */
+  border: 1px solid var(--borde); /* borde */
+  border-radius: var(--radio); /* esquinas redondeadas */
+  animation: aparecer 0.25s ease; /* aparece suavemente */
+}
+
+.hablar-botones {
+  display: flex; /* botones en fila */
+  flex-wrap: wrap; /* si no caben, en dos líneas */
+  justify-content: center; /* centrados */
+  gap: 10px; /* separación */
+}
+
+.hablar-botones svg {
+  width: 18px; /* icono del altavoz */
+  height: 18px; /* icono del altavoz */
+  vertical-align: -3px; /* alineado con el texto */
+  fill: currentColor; /* del color del texto */
+}
+
+.boton-microfono {
+  min-width: 150px; /* el botón de hablar, más ancho */
+}
+
+.boton-microfono.escuchando {
+  background: var(--peligro); /* rojo mientras escucha, como el piloto de grabar */
+  color: #fff; /* texto blanco */
+  animation: latido 1s ease-in-out infinite; /* late mientras escucha */
+}
+
+.hablar-estado {
+  min-height: 1.5em; /* reserva su línea */
+  margin: 12px 0 2px; /* espacio arriba */
+  font-weight: 600; /* seminegrita */
+}
+
+.hablar-intentos {
+  margin: 0; /* sin márgenes */
+  color: var(--texto-suave); /* texto secundario */
+  font-size: 0.85rem; /* pequeño */
+}
+
+/* ===== Ratón ===== */
+.marcador-raton {
+  grid-template-columns: 1fr auto; /* sin vidas: nombre y cifras */
+}
+
+.raton-instrucciones {
+  min-height: 1.6em; /* reserva su línea */
+  margin: 0 0 12px; /* espacio debajo */
+  font-size: 1.15rem; /* algo grande */
+  font-weight: 700; /* negrita */
+  text-align: center; /* centrado */
+}
+
+.raton-instrucciones[data-tipo="aviso"] {
+  color: var(--acento-fuerte); /* pistas en ámbar */
+}
+
+.raton-zona {
+  position: relative; /* los objetivos se colocan dentro */
+  height: clamp(320px, 58vh, 600px); /* alta, adaptada a la pantalla */
+  margin-bottom: 16px; /* espacio debajo */
+  overflow: hidden; /* nada se sale */
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--borde-fuerte) 55%, transparent) 1px, transparent 1.5px) 0 0 / 28px 28px, /* puntitos de cuadrícula */
+    linear-gradient(170deg, var(--superficie-2), var(--superficie)); /* degradado suave */
+  border: 1px solid var(--borde); /* borde */
+  border-radius: var(--radio-grande); /* esquinas redondeadas */
+  box-shadow: var(--sombra); /* sombra */
+  user-select: none; /* no se selecciona texto al hacer doble clic */
+  -webkit-user-select: none; /* lo mismo en Safari */
+  touch-action: manipulation; /* en pantallas táctiles, sin zoom con doble toque */
+}
+
+.raton-zona-rueda {
+  overflow-y: auto; /* en la lección de la rueda, la zona se desplaza */
+  touch-action: pan-y; /* y se puede deslizar con el dedo */
+}
+
+.raton-pista {
+  background: repeating-linear-gradient(180deg, transparent 0 79px, color-mix(in srgb, var(--borde-fuerte) 60%, transparent) 79px 80px); /* rayas para notar que se mueve */
+}
+
+.raton-objetivo,
+.raton-ficha,
+.raton-caja,
+.raton-estrella {
+  position: absolute; /* colocados por raton.js */
+  display: grid; /* texto centrado */
+  place-items: center; /* texto centrado */
+  transform: translate(-50%, -50%); /* centrados en su punto */
+  font-weight: 800; /* texto muy negrita */
+  font-size: 0.8rem; /* texto pequeño */
+  text-align: center; /* centrado */
+  line-height: 1.1; /* líneas juntas */
+  animation: aparecer-objetivo 0.2s ease; /* aparecen creciendo */
+}
+
+.raton-objetivo {
+  color: var(--sobre-acento); /* texto oscuro */
+  background: radial-gradient(circle, var(--acento) 0 30%, color-mix(in srgb, var(--acento) 70%, #fff) 31% 55%, var(--acento) 56%); /* diana ámbar */
+  border-radius: 50%; /* redondo */
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--acento) 22%, transparent); /* halo */
+  cursor: pointer; /* manita */
+  transition: box-shadow 0.15s, transform 0.15s; /* cambios suaves */
+}
+
+.raton-objetivo.raton-mover {
+  cursor: default; /* en la lección de mover no hay que hacer clic */
+}
+
+.raton-objetivo.raton-dobleclic {
+  background: radial-gradient(circle, var(--violeta) 0 30%, color-mix(in srgb, var(--violeta) 65%, #fff) 31% 55%, var(--violeta) 56%); /* diana violeta */
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--violeta) 22%, transparent); /* halo violeta */
+}
+
+.raton-objetivo.raton-derecho {
+  background: radial-gradient(circle, var(--azul) 0 30%, color-mix(in srgb, var(--azul) 65%, #fff) 31% 55%, var(--azul) 56%); /* diana azul */
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--azul) 22%, transparent); /* halo azul */
+}
+
+.raton-objetivo.encima {
+  transform: translate(-50%, -50%) scale(1.12); /* crece al tenerlo encima (o tras el primer clic) */
+  box-shadow: 0 0 0 10px color-mix(in srgb, var(--hecho) 45%, transparent); /* halo verde */
+}
+
+.raton-ficha {
+  color: var(--sobre-acento); /* texto oscuro */
+  background: var(--hecho); /* cuadrado verde */
+  border-radius: 12px; /* esquinas redondeadas */
+  box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.6); /* sombra, como si se pudiera levantar */
+  cursor: grab; /* mano abierta: se puede agarrar */
+  touch-action: none; /* en pantallas táctiles, arrastrar no desplaza la página */
+}
+
+.raton-ficha.agarrada {
+  z-index: 2; /* encima de la caja */
+  cursor: grabbing; /* mano cerrada */
+  box-shadow: 0 18px 30px -10px rgba(0, 0, 0, 0.7); /* sombra más grande: está levantado */
+}
+
+.raton-caja {
+  color: var(--texto-suave); /* texto secundario */
+  border: 3px dashed var(--borde-fuerte); /* borde discontinuo */
+  border-radius: 16px; /* esquinas redondeadas */
+}
+
+.raton-caja.encima {
+  color: var(--hecho); /* verde cuando el cuadrado está encima */
+  border-color: var(--hecho); /* borde verde */
+  background: color-mix(in srgb, var(--hecho) 12%, transparent); /* fondo verde suave */
+}
+
+.raton-estrella {
+  transform: translateX(-50%); /* centrada en horizontal */
+  color: var(--acento); /* ámbar */
+  font-size: 2.6rem; /* grande */
+  cursor: pointer; /* manita */
+  text-shadow: 0 0 18px color-mix(in srgb, var(--acento) 60%, transparent); /* brillo */
+}
+
+.raton-onda {
+  position: absolute; /* donde se falló */
+  width: 34px; /* tamaño */
+  height: 34px; /* tamaño */
+  margin: -17px 0 0 -17px; /* centrada en el punto */
+  border: 3px solid var(--peligro); /* aro rojo */
+  border-radius: 50%; /* redondo */
+  pointer-events: none; /* no estorba a los clics */
+  animation: onda 0.6s ease-out forwards; /* crece y desaparece */
+}
+
+.raton-fin {
+  padding: 18px 0 26px; /* espacio */
+  text-align: center; /* centrado */
+  animation: aparecer 0.25s ease; /* aparece suavemente */
+}
+
+.raton-fin-texto {
+  margin: 0 0 22px; /* espacio debajo */
+  color: var(--texto-suave); /* texto secundario */
+  font-size: 1.1rem; /* algo grande */
+}
+
+.raton-fin .acciones {
+  justify-content: center; /* botones centrados */
+}
+
 /* ===== Pantallas táctiles: sin pistas de teclado ===== */
 @media (hover: none) {
   .pista,
@@ -1650,6 +1868,14 @@ body[data-pantalla="pantalla-menu"] .marca {
 
   .acciones > * {
     flex: 1 1 100%; /* botones del resultado a lo ancho */
+  }
+
+  .boton-comprobar {
+    padding-inline: 14px; /* botón de comprobar más estrecho */
+  }
+
+  .marcador-raton .cifras {
+    grid-column: auto; /* en el ratón, las cifras caben al lado del nombre */
   }
 
   .estadisticas div,
@@ -1730,6 +1956,26 @@ body[data-pantalla="pantalla-menu"] .marca {
   from {
     opacity: 0; /* empieza invisible... */
     transform: translateY(6px); /* ...y algo más abajo */
+  }
+}
+
+@keyframes latido {
+  50% {
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--peligro) 25%, transparent); /* halo rojo que late */
+  }
+}
+
+@keyframes aparecer-objetivo {
+  from {
+    opacity: 0; /* empieza invisible... */
+    scale: 0.4; /* ...y pequeño */
+  }
+}
+
+@keyframes onda {
+  to {
+    opacity: 0; /* desaparece... */
+    scale: 2.2; /* ...mientras crece */
   }
 }
 

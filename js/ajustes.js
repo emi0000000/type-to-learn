@@ -14,7 +14,9 @@ const Ajustes = (() => {
     dificultad: ["normal", "dificil", "practica"], // vidas por partida
     teclado: ["auto", "es", "la", "us"], // tipo de teclado (automático, España, Latinoamérica, EE. UU.)
     lenguajeCodigo: ["todos", "python", "javascript", "web", "sql", "terminal"], // lenguaje de los modos de código
-    seccion: ["idiomas", "matematicas", "codigo", "teclado"], // sección del menú que se ve
+    herramientaDatos: ["todos", "excel", "pandas", "numpy"], // herramienta de los modos de datos
+    idiomaAprender: ["en", "es", "fr", "pt", "it", "de"], // idioma que se quiere aprender (sección Idiomas)
+    seccion: ["idiomas", "matematicas", "codigo", "datos", "teclado", "raton"], // sección del menú que se ve
   };
   // Vidas de cada dificultad (Infinity: no se pierden nunca).
   const VIDAS = { normal: 5, dificil: 3, practica: Infinity };
@@ -32,8 +34,15 @@ const Ajustes = (() => {
     teclado: "auto", // tipo de teclado: se intenta adivinar
     tecladoEnPantalla: false, // el teclado en pantalla solo sale en las lecciones de teclado
     lenguajeCodigo: "todos", // todos los lenguajes de programación
+    herramientaDatos: "todos", // todas las herramientas de datos
+    idiomaAprender: "en", // se aprende inglés (o español si la interfaz está en inglés: se cambia justo debajo)
     seccion: "idiomas", // el menú empieza en los idiomas
   };
+  // Quien tiene la interfaz en inglés probablemente quiere aprender español.
+  if (POR_DEFECTO.idioma === "en") {
+    // Español.
+    POR_DEFECTO.idiomaAprender = "es";
+  }
 
   // Atajo para no escribir document.getElementById cada vez.
   const $ = (id) => document.getElementById(id);

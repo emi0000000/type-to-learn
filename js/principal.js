@@ -1,33 +1,69 @@
 // principal.js: arranca el juego y maneja el menú principal.
-// El menú está dividido en secciones (Idiomas, Matemáticas, Código y Teclado); cada una tiene sus modos.
+// El menú está dividido en secciones (Idiomas, Matemáticas, Código, Datos, Teclado y Ratón); cada una tiene sus modos.
 // Es el último archivo que se carga, así que todo lo demás ya está disponible.
 
+// Idiomas que se pueden aprender en la sección Idiomas (el desplegable «Quiero aprender»).
+const IDIOMAS_APRENDER = ["en", "es", "fr", "pt", "it", "de"];
+
+// Las tres tarjetas de un idioma «de palabras» (francés, portugués, italiano y alemán).
+function tarjetasDeOtroIdioma(idioma, insignia, color) {
+  // Palabras, dictado y pronunciación.
+  return [
+    { modo: ModosVocabulario[idioma], insignia, color, archivo: "datos/vocabulario-idiomas.js", aprende: [idioma] }, // palabras
+    { modo: ModosDictado[idioma], insignia: "♪", color: "cian", archivo: "datos/vocabulario-idiomas.js", aprende: [idioma] }, // dictado
+    { modo: ModosPronunciacion[idioma], insignia: "/ə/", color: "violeta", archivo: "datos/vocabulario-idiomas.js", aprende: [idioma] }, // pronunciación
+  ];
+}
+
 // Secciones del menú con sus modos.
-// Cada modo: { modo, insignia (texto del cuadrado de color), color, archivo (de dónde salen sus frases) }.
+// Cada modo: { modo, insignia (texto del cuadrado de color), color, archivo (de dónde salen sus frases),
+//              aprende (en Idiomas: para qué idiomas que se aprenden sale la tarjeta) }.
 // Los botones de cada tarjeta y su línea de estado los crea pintarSeccion.
 const SECCIONES = [
-  // Idiomas: inglés y español en las dos direcciones.
+  // Idiomas: se elige qué idioma se quiere aprender y salen sus modos.
   {
     id: "idiomas", // nombre interno
+    ajuste: "idiomaAprender", // desplegable «Quiero aprender» encima de las tarjetas
     modos: [
-      { modo: ModoOrtografia, insignia: "Ñ", color: "ambar", archivo: "datos/frases-es.js" }, // ortografía
-      { modo: ModoIngles, insignia: "EN", color: "azul", archivo: "datos/frases-en.js" }, // frases en inglés
-      { modo: ModoEspanol, insignia: "ES", color: "coral", archivo: "datos/frases-en.js" }, // frases en español
-      { modo: ModosVocabulario.ingles, insignia: "Aa", color: "azul", archivo: "datos/vocabulario.js" }, // palabras en inglés
-      { modo: ModosVocabulario.espanol, insignia: "Ññ", color: "coral", archivo: "datos/vocabulario.js" }, // palabras en español
-      { modo: ModoAbecedario, insignia: "ABC", color: "verde", archivo: "datos/vocabulario.js", extra: { texto: "abc.verTabla", accion: () => TablaAbecedario.abrir() } }, // abecedario
+      // --- Para aprender inglés ---
+      { modo: ModoIngles, insignia: "EN", color: "azul", archivo: "datos/frases-en.js", aprende: ["en"] }, // frases en inglés
+      { modo: ModosVocabulario.ingles, insignia: "Aa", color: "azul", archivo: "datos/vocabulario.js", aprende: ["en"] }, // palabras en inglés
+      { modo: ModosDictado.en, insignia: "♪", color: "cian", archivo: "datos/frases-en.js", aprende: ["en"] }, // dictado en inglés
+      { modo: ModosPronunciacion.en, insignia: "/ə/", color: "violeta", archivo: "datos/vocabulario.js", aprende: ["en"] }, // pronunciación en inglés
+      { modo: ModosNumeros.en, insignia: "47", color: "verde", archivo: "js/numerosEnPalabras.js", aprende: ["en"] }, // números con letras
+      { modo: ModoVerbos, insignia: "go→", color: "ambar", archivo: "datos/verbos.js", aprende: ["en"] }, // verbos irregulares
+      { modo: ModosFalsos.ingles, insignia: "≠", color: "coral", archivo: "datos/falsos-amigos.js", aprende: ["en"] }, // falsos amigos
+      // --- Para aprender español ---
+      { modo: ModoOrtografia, insignia: "Ñ", color: "ambar", archivo: "datos/frases-es.js", aprende: ["es"] }, // ortografía
+      { modo: ModoEspanol, insignia: "ES", color: "coral", archivo: "datos/frases-en.js", aprende: ["es"] }, // frases en español
+      { modo: ModosVocabulario.espanol, insignia: "Ññ", color: "coral", archivo: "datos/vocabulario.js", aprende: ["es"] }, // palabras en español
+      { modo: ModosDictado.es, insignia: "♪", color: "cian", archivo: "datos/frases-es.js", aprende: ["es"] }, // dictado en español
+      { modo: ModosPronunciacion.es, insignia: "/ə/", color: "violeta", archivo: "datos/vocabulario.js", aprende: ["es"] }, // pronunciación en español
+      { modo: ModosNumeros.es, insignia: "47", color: "verde", archivo: "js/numerosEnPalabras.js", aprende: ["es"] }, // números con letras
+      { modo: ModosFalsos.espanol, insignia: "≠", color: "azul", archivo: "datos/falsos-amigos.js", aprende: ["es"] }, // falsos amigos
+      // --- Para los dos ---
+      { modo: ModoAbecedario, insignia: "ABC", color: "verde", archivo: "datos/vocabulario.js", aprende: ["en", "es"], extra: { texto: "abc.verTabla", accion: () => TablaAbecedario.abrir() } }, // abecedario
+      // --- Francés, portugués, italiano y alemán ---
+      ...tarjetasDeOtroIdioma("fr", "Fr", "azul"), // francés
+      ...tarjetasDeOtroIdioma("pt", "Pt", "verde"), // portugués
+      ...tarjetasDeOtroIdioma("it", "It", "coral"), // italiano
+      ...tarjetasDeOtroIdioma("de", "De", "ambar"), // alemán
     ],
   },
-  // Matemáticas: elegir la fórmula correcta y escribirla.
+  // Matemáticas: primero los de dar el resultado y después los de elegir la fórmula.
   {
     id: "matematicas", // nombre interno
     modos: [
+      { modo: ModosCalculo.sumas, insignia: "+−", color: "ambar", archivo: "js/aritmetica.js" }, // sumas y restas
+      { modo: ModosCalculo.operaciones, insignia: "×÷", color: "ambar", archivo: "js/aritmetica.js" }, // multiplicar, dividir y potencias
+      { modo: ModosCalculo.ecuaciones, insignia: "±√", color: "coral", archivo: "js/aritmetica.js" }, // fórmula general
+      { modo: ModosCalculo.mezcla, insignia: "%", color: "verde", archivo: "js/aritmetica.js" }, // de todo un poco
       { modo: ModosMatematicas.algebra, insignia: "x²", color: "violeta", archivo: "datos/matematicas.js" }, // álgebra
       { modo: ModosMatematicas.trigonometria, insignia: "θ", color: "violeta", archivo: "datos/matematicas.js" }, // trigonometría
       { modo: ModosMatematicas.calculo, insignia: "∫", color: "violeta", archivo: "datos/matematicas.js" }, // cálculo
     ],
   },
-  // Código: escribir, detectar errores y casos de uso.
+  // Código: escribir, detectar errores, casos de uso y adivinar el lenguaje.
   {
     id: "codigo", // nombre interno
     ajuste: "lenguajeCodigo", // desplegable de lenguaje encima de las tarjetas
@@ -35,6 +71,18 @@ const SECCIONES = [
       { modo: ModosCodigo.escribir, insignia: "</>", color: "verde", archivo: "datos/codigo.js" }, // escribir código
       { modo: ModosCodigo.errores, insignia: "✓✗", color: "coral", archivo: "datos/codigo.js" }, // detectar el error
       { modo: ModosCodigo.usos, insignia: "$_", color: "azul", archivo: "datos/codigo.js" }, // casos de uso
+      { modo: ModoLenguaje, insignia: "{?}", color: "violeta", archivo: "datos/lenguajes.js" }, // ¿qué lenguaje es?
+    ],
+  },
+  // Datos: fórmulas de hoja de cálculo, pandas y NumPy.
+  {
+    id: "datos", // nombre interno
+    ajuste: "herramientaDatos", // desplegable de herramienta encima de las tarjetas
+    nota: "seccion.nota.datos", // aclaración bajo el desplegable
+    modos: [
+      { modo: ModosDatos.escribir, insignia: "fx", color: "verde", archivo: "datos/analisis.js" }, // escribir fórmulas
+      { modo: ModosDatos.errores, insignia: "✓✗", color: "coral", archivo: "datos/analisis.js" }, // detectar el error
+      { modo: ModosDatos.usos, insignia: "df", color: "azul", archivo: "datos/analisis.js" }, // casos de uso
     ],
   },
   // Teclado: dónde está cada tecla.
@@ -45,12 +93,23 @@ const SECCIONES = [
     // Una tarjeta por lección, con las teclas que enseña como insignia.
     modos: ModosTeclado.map((modo, posicion) => ({ modo, insignia: ["asdf", "qwer", "zxcv", "a–z", "Aa.", "123", "á ñ", "@#"][posicion], color: "cian", archivo: "datos/frases-es.js" })),
   },
+  // Ratón: lecciones para aprender a usarlo.
+  {
+    id: "raton", // nombre interno
+    nota: "seccion.nota.raton", // aclaración encima de las tarjetas
+    // Una tarjeta por lección.
+    modos: Raton.modos.map((modo, posicion) => ({ modo, insignia: ["↖", "1×", "2×", "◑", "⇢", "↕", "✱"][posicion], color: ["cian", "azul", "violeta", "coral", "verde", "ambar", "cian"][posicion] })),
+  },
 ];
 
 // Opciones de los desplegables de las secciones: ajuste -> [valor, clave del texto].
 const OPCIONES_DE_SECCION = {
+  // Idioma que se quiere aprender.
+  idiomaAprender: IDIOMAS_APRENDER.map((valor) => [valor, `idioma.${valor}`]),
   // Lenguajes de programación.
   lenguajeCodigo: ["todos", ...ModosCodigo.LENGUAJES].map((valor) => [valor, `lenguaje.${valor}`]),
+  // Herramientas de análisis de datos.
+  herramientaDatos: ["todos", ...ModosDatos.LENGUAJES].map((valor) => [valor, `lenguaje.${valor}`]),
   // Tipos de teclado.
   teclado: ["auto", "es", "la", "us"].map((valor) => [valor, valor === "auto" ? "teclado.auto" : `teclado.nombre.${valor}`]),
 };
@@ -64,6 +123,25 @@ function seccionActual() {
   return SECCIONES.find((seccion) => seccion.id === Ajustes.valor("seccion")) || SECCIONES[0];
 }
 
+// Tarjetas que se ven en una sección (en Idiomas, solo las del idioma que se aprende).
+function modosVisibles(seccion) {
+  // Idioma que se aprende.
+  const aprende = Ajustes.valor("idiomaAprender");
+  // Las que no dicen idioma, o las de ese idioma.
+  return seccion.modos.filter((tarjeta) => !tarjeta.aprende || tarjeta.aprende.includes(aprende));
+}
+
+// ¿Se puede jugar un modo? Hace falta que tenga frases y, si lo pide, que el navegador sepa hacerlo (voz, micrófono).
+function sePuedeJugar(modo) {
+  // Las lecciones del ratón siempre se pueden.
+  if (modo.empezar) {
+    // Sí.
+    return true;
+  }
+  // Con frases y disponible.
+  return modo.frases().length > 0 && (!modo.disponible || modo.disponible());
+}
+
 // Empieza una partida (y, si se pidió en los ajustes, pasa a pantalla completa).
 //   opciones.repaso: true para jugar solo las frases falladas
 function empezar(modo, opciones = {}) {
@@ -71,6 +149,13 @@ function empezar(modo, opciones = {}) {
   if (Ajustes.valor("pantallaCompleta")) {
     // Pasamos a pantalla completa.
     App.entrarPantallaCompleta();
+  }
+  // Las lecciones del ratón tienen su propia pantalla.
+  if (modo.empezar) {
+    // Empezamos la lección.
+    modo.empezar();
+    // Terminamos aquí.
+    return;
   }
   // Empezamos la partida.
   Motor.jugar(modo, opciones);
@@ -150,16 +235,28 @@ function crearTarjeta({ modo, insignia, color, archivo, extra }, posicion) {
   const estado = crearElemento("p", "modo-estado");
   // Botones.
   const acciones = crearElemento("div", "modo-acciones");
-  // Total de frases del modo.
-  const total = modo.frases().length;
-  // Botón de jugar.
-  const jugar = crearBoton("boton-principal", t("menu.jugar"), () => empezar(modo));
+  // Botón de jugar (en el ratón, «Empezar»).
+  const jugar = crearBoton("boton-principal", t(modo.empezar ? "menu.empezar" : "menu.jugar"), () => empezar(modo));
   // Lo añadimos.
   acciones.append(jugar);
-  // Si no hay frases, el modo no puede funcionar.
-  if (total === 0) {
-    // Explicamos por qué (lección no disponible o archivo que no cargó).
-    estado.textContent = modo.noDisponible ? modo.noDisponible() : t("menu.sinFrases", { archivo });
+  // Las lecciones del ratón tienen su propia línea de estado (objetivos y mejor tiempo).
+  if (modo.empezar) {
+    // Estado.
+    estado.textContent = modo.estado();
+    // Juntamos la tarjeta.
+    tarjeta.append(cabecera, nombre, detalle, estado, acciones);
+    // La devolvemos.
+    return tarjeta;
+  }
+  // Total de frases del modo.
+  const total = modo.frases().length;
+  // Si no hay frases, o el navegador no sabe hacer lo que pide el modo (voz, micrófono), no puede funcionar.
+  if (!sePuedeJugar(modo)) {
+    // Motivo que da el modo: lección que no sirve para este teclado, o falta de voz o de micrófono.
+    // (Si un modo de voz no tiene frases, el problema es el archivo, no la voz).
+    const motivo = total > 0 || !modo.disponible ? modo.noDisponible : null;
+    // Explicamos por qué (o que el archivo de frases no cargó).
+    estado.textContent = motivo ? motivo() : t("menu.sinFrases", { archivo });
     // Desactivamos el botón.
     jugar.disabled = true;
     // Marcamos la tarjeta como apagada.
@@ -296,8 +393,18 @@ function pintarSeccion() {
     // Nota con el teclado que se usa.
     caja.append(crearElemento("p", "nota", t("teclado.usando", { teclado: TecladoVisual.nombreDisposicion() })));
   }
-  // Tarjetas: primero el buscador (si lo hay) y después los modos.
-  const tarjetas = seccion.modos.map(crearTarjeta);
+  // Si la sección tiene una nota, la ponemos.
+  if (seccion.nota) {
+    // Nota.
+    caja.append(crearElemento("p", "nota", t(seccion.nota)));
+  }
+  // En Idiomas, si se aprende francés, portugués, italiano o alemán, explicamos qué hay.
+  if (seccion.id === "idiomas" && !["en", "es"].includes(Ajustes.valor("idiomaAprender"))) {
+    // Nota.
+    caja.append(crearElemento("p", "nota", t("seccion.nota.idiomas")));
+  }
+  // Tarjetas: primero el buscador (si lo hay) y después los modos que se ven.
+  const tarjetas = modosVisibles(seccion).map(crearTarjeta);
   // El buscador va delante.
   if (seccion.buscador) {
     // Lo añadimos al principio.
@@ -334,10 +441,10 @@ document.addEventListener("keydown", (evento) => {
   }
   // Posición del modo según la tecla (1 -> 0).
   const posicion = Number(evento.key) - 1;
-  // Modo de esa posición en la sección actual.
-  const elegido = Number.isInteger(posicion) && posicion >= 0 ? seccionActual().modos[posicion] : null;
+  // Modo de esa posición entre las tarjetas que se ven.
+  const elegido = Number.isInteger(posicion) && posicion >= 0 ? modosVisibles(seccionActual())[posicion] : null;
   // Si existe y se puede jugar...
-  if (elegido && elegido.modo.frases().length > 0) {
+  if (elegido && sePuedeJugar(elegido.modo)) {
     // ...evitamos que la tecla haga otra cosa...
     evento.preventDefault();
     // ...y empezamos.
@@ -346,7 +453,15 @@ document.addEventListener("keydown", (evento) => {
 });
 
 // Al cambiar de idioma, reescribimos el menú.
-alCambiarIdioma(actualizarMenu);
+alCambiarIdioma(() => {
+  // Si ahora se aprende el mismo idioma de la interfaz (inglés con la interfaz en inglés), cambiamos al otro.
+  if (Ajustes.valor("idiomaAprender") === idiomaActual()) {
+    // Inglés <-> español.
+    Ajustes.cambiar("idiomaAprender", idiomaActual() === "en" ? "es" : "en");
+  }
+  // Repintamos.
+  actualizarMenu();
+});
 // Al borrar el progreso, el menú se queda a cero.
 document.addEventListener("frase-exacta:progreso-borrado", actualizarMenu);
 // Si cambia el tipo de teclado (por ejemplo, al detectarlo), repintamos el menú si está a la vista.

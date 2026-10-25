@@ -17,6 +17,13 @@ Cada modo va separado: no se mezclan.
 | Matemáticas | El nombre de una fórmula | Eliges la correcta entre tres y la escribes | ✅ |
 | Código | Comandos y sintaxis (Python, JavaScript, HTML/CSS, SQL, terminal y Git) | Escribes, detectas el error o eliges el código para una tarea | ✅ |
 | Teclado | El teclado en pantalla con la siguiente tecla señalada | Aprendes dónde está cada tecla según tu tipo de teclado | ✅ |
+| Dictado | Una frase o palabra que se oye pero no se ve | La escribes exacta | ✅ |
+| Pronunciación | Una palabra que se ve y se oye | La dices al micrófono (tres intentos) | ✅ |
+| Números, verbos y cálculo | Un número, un verbo o una operación | Escribes solo la respuesta y pulsas Intro | ✅ |
+| Falsos amigos | Una palabra que engaña (*embarrassed*) | Eliges su significado de verdad y la escribes | ✅ |
+| ¿Qué lenguaje es? | Una línea de código | Eliges en qué lenguaje está y la escribes | ✅ |
+| Datos | Fórmulas de Excel / Sheets, pandas y NumPy | Igual que Código | ✅ |
+| Ratón | Objetivos en la pantalla | Mover, clic, doble clic, clic derecho, arrastrar, rueda | ✅ |
 
 ## Lo que NO debe hacer
 
@@ -31,7 +38,8 @@ Cada modo va separado: no se mezclan.
 3. Modo inglés. ✅
 4. Modo español, interfaz en dos idiomas, voz, repaso y versión como aplicación. ✅
 5. Vocabulario, abecedario, matemáticas, código y teclado. ✅
-6. Más adelante: lecturas.
+6. Más idiomas, dictado, pronunciación, modos de resultado, «¿Qué lenguaje es?», Datos y Ratón. ✅
+7. Más adelante: lecturas.
 
 ## Norma del código
 
@@ -116,3 +124,27 @@ Cada modo va separado: no se mezclan.
 - **Teclado:** tres tipos (España, Latinoamérica, EE. UU.), dedos con colores, Mayús y Alt Gr señalados y teclas muertas
   explicadas. El tipo se adivina por el idioma del navegador y, en Chrome y Edge, por el propio teclado.
 - **Móviles:** se aceptan las comillas curvas que ponen solos los teclados de los móviles (’ “ ”).
+
+## Decisiones tomadas para la tercera ronda
+
+- **«Quiero aprender»:** la sección Idiomas solo enseña las tarjetas del idioma elegido, para que no haya 30 tarjetas.
+  Por defecto se aprende inglés (o español, si la interfaz está en inglés).
+- **Francés, portugués, italiano y alemán:** solo palabras (con dictado y pronunciación), porque las frases de Tatoeba
+  necesitarían otro filtrado y revisión. Las palabras usan los mismos números que el vocabulario principal, así que
+  la traducción y el tema salen de allí.
+- **Modos de resultado:** no se copia nada; se escribe la respuesta y se comprueba con Intro. Los números se comparan
+  por valor (2,5 = 2.5 = 5/2; «x = 3» vale) y las soluciones de la fórmula general, en cualquier orden.
+  Si se falla, se enseña la solución explicada y se pierde una vida. En inglés, «forty seven» y «one hundred and five»
+  también valen; en español hay que poner las tildes (dieciséis).
+- **Problemas creados por el juego:** con una semilla fija, siempre los mismos 150 por modo, para que se pueda recordar
+  cuáles ya salieron. Las ecuaciones de segundo grado se fabrican a partir de sus soluciones, así que siempre son exactas.
+- **Dictado:** frases de Tatoeba sin comas (no se oyen) y de 45 caracteres como mucho. La frase se oculta con rayas.
+- **Pronunciación:** usa el reconocimiento de voz del navegador (Chrome, Edge, Safari). Se acepta si lo entendido se
+  parece al menos un 80 % (por letras), con o sin artículo, y los números en cifras. Hay que avisar de que en Chrome
+  y Edge el audio lo procesa un servicio en internet.
+- **Falsos amigos:** una de las opciones equivocadas es siempre la trampa (*embarazada*), con su explicación.
+- **¿Qué lenguaje es?:** las opciones equivocadas son de la misma familia (C, C++, C#, Java...) para que haya que
+  fijarse en los detalles; al acertar o fallar se explica en qué se nota.
+- **Datos:** las fórmulas de Excel salen en el idioma de la interfaz (=SUMA en español, =SUM en inglés), como en Excel.
+- **Ratón:** pantalla propia (no es una partida de escribir). Sin vidas: cuenta el tiempo y los fallos, y guarda el mejor
+  tiempo. Las lecciones también cuentan para los días seguidos y el tiempo practicado.

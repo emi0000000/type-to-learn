@@ -18,7 +18,7 @@ const TEXTOS = {
     "barra.ajustes": "Ajustes", // botón de ajustes
 
     // --- Menú ---
-    "menu.lema": "Aprende escribiendo: inglés y español, fórmulas de matemáticas, código y el teclado. Copia exacto: cada error te cuesta una vida.", // frase bajo el título
+    "menu.lema": "Aprende escribiendo: idiomas, matemáticas, código, análisis de datos, el teclado y el ratón. Copia exacto: cada error te cuesta una vida.", // frase bajo el título
     "menu.diasSeguidos": (d) => (d.n === 1 ? "1 día seguido" : `${d.n} días seguidos`), // racha de días
     "menu.frasesEscritas": (d) => (d.n === 1 ? "1 frase escrita" : `${d.n} frases escritas`), // frases totales
     "menu.tiempo": "{t} practicando", // tiempo total
@@ -312,6 +312,202 @@ const TEXTOS = {
     "ajustes.teclado": "Tipo de teclado", // ajuste
     "ajustes.tecladoEnPantalla": "Mostrar el teclado en pantalla en todos los modos", // ajuste
 
+    // --- Ronda 3: secciones nuevas, idiomas, modos de respuesta, pronunciación, falsos amigos, datos y ratón ---
+    "seccion.datos": "Datos", // pestaña de análisis de datos
+    "seccion.raton": "Ratón", // pestaña del ratón
+    "seccion.ajuste.herramientaDatos": "Herramienta:", // desplegable de herramienta de datos
+    "seccion.ajuste.idiomaAprender": "Quiero aprender:", // desplegable de idioma que se aprende
+    "seccion.nota.idiomas": "En francés, portugués, italiano y alemán practicas las palabras más comunes: escribirlas, oírlas y decirlas.", // nota de la sección Idiomas (otros idiomas)
+    "seccion.nota.datos": "Las fórmulas de Excel y Google Sheets salen en el idioma de la interfaz: en español =SUMA y =SI; en inglés =SUM e =IF.", // nota de la sección Datos
+    "seccion.nota.raton": "Usa el ratón o el panel táctil. Cada lección tiene 10 objetivos: ¡intenta bajar tu mejor tiempo!", // nota de la sección Ratón
+    "idioma.en": "Inglés", // idioma
+    "idioma.es": "Español", // idioma
+    "idioma.fr": "Francés", // idioma
+    "idioma.pt": "Portugués", // idioma
+    "idioma.it": "Italiano", // idioma
+    "idioma.de": "Alemán", // idioma
+    "respuesta.placeholder": "Tu respuesta…", // texto de ayuda de la caja en los modos de respuesta
+    "respuesta.comprobar": "Comprobar", // botón de comprobar la respuesta
+    "respuesta.bien": "¡Correcto!", // al acertar
+    "respuesta.fallo": "No. Respuesta: {correcta}", // al fallar
+    "respuesta.explicacion": "Escribiste «{escrito}». Respuesta: {correcta}", // explicación para el repaso
+    "respuesta.vacia": "Escribe una respuesta y pulsa Intro.", // si se pulsa Intro sin escribir
+    "numeros.consigna": "Escríbelo con letras", // consigna de los números
+    "verbos.consigna": "Escribe el pasado y el participio", // consigna de los verbos
+    "calculo.consigna": "Escribe solo el resultado", // consigna del cálculo
+    "calculo.consigna.ecuacion": "Escribe las soluciones separadas por ; (por ejemplo: 2; −3)", // consigna de la fórmula general
+    "calculo.consigna.mezcla": "Escribe el resultado (puede ser una fracción, como 3/4)", // consigna de la mezcla
+    "dictado.consigna": "Escucha y escribe lo que oyes", // consigna del dictado
+    "dictado.sinVoz": "Tu navegador no tiene una voz para leer en este idioma, así que el dictado no funciona aquí.", // si no hay voz
+    "hablar.consigna": "Escúchala y dila en voz alta", // consigna de la pronunciación
+    "hablar.escuchar": "Escuchar", // botón de oír la palabra
+    "hablar.despacio": "Despacio", // botón de oírla despacio
+    "hablar.hablar": "Hablar", // botón de hablar
+    "hablar.escuchando": "Escuchando…", // botón mientras escucha
+    "hablar.saltar": "Saltar", // botón de saltar
+    "hablar.instrucciones": "Pulsa «Hablar» (o Intro) y di la palabra.", // instrucciones
+    "hablar.diloAhora": "Dilo ahora…", // mientras escucha
+    "hablar.intentos": (d) => (d.n === 1 ? "Queda 1 intento" : `Quedan ${d.n} intentos`), // intentos que quedan
+    "hablar.entendido": "Se entendió: «{oido}»", // lo que se oyó al acertar
+    "hablar.bien": "¡Bien dicho!", // al acertar
+    "hablar.otraVez": "Se oyó «{oido}». Prueba otra vez.", // lo que se oyó al fallar
+    "hablar.fallo": "Sin intentos. Escúchala otra vez y sigue con la siguiente.", // al gastar los intentos
+    "hablar.explicacion": "Se oyó «{oido}».", // explicación para el repaso
+    "hablar.saltada": "Saltada: esta no cuenta.", // al saltar
+    "hablar.sinPermiso": "No hay permiso para usar el micrófono. Actívalo desde el candado de la barra de direcciones.", // sin permiso del micrófono
+    "hablar.nadaOido": "No se oyó nada. Acércate al micrófono y pulsa «Hablar» otra vez.", // si no se oye nada
+    "hablar.error": "No se pudo usar el reconocimiento de voz. En Chrome hace falta conexión a internet.", // otro error
+    "hablar.noDisponible": "Tu navegador no reconoce la voz. Prueba con Chrome, Edge o Safari.", // si no hay reconocimiento de voz
+    "hablar.grupo": "Pronunciación", // nombre del bloque para lectores de pantalla
+    "falsos.consigna.en": "¿Qué significa en español?", // consigna (palabra inglesa)
+    "falsos.consigna.es": "¿Qué significa en inglés?", // consigna (palabra española)
+    "falsos.pregunta.en": "Elige su significado", // pregunta (palabra inglesa)
+    "falsos.pregunta.es": "Elige su significado", // pregunta (palabra española)
+    "falsos.trampa": "Ojo: «{trampa}» significa «{significa}».", // explicación de la trampa
+    "falsos.esOtra": "«{significa}» se dice «{palabra}».", // explicación de la otra opción
+    "lenguaje.consigna": "¿En qué lenguaje está escrito?", // consigna de «¿Qué lenguaje es?»
+    "lenguaje.pregunta": "Elige el lenguaje", // pregunta de «¿Qué lenguaje es?»
+    "lenguaje.excel": "Excel / Sheets", // hojas de cálculo
+    "lenguaje.pandas": "pandas", // pandas
+    "lenguaje.numpy": "NumPy", // NumPy
+    "raton.objetivos": "Objetivos", // contador de objetivos
+    "raton.fallos": "Fallos", // contador de fallos
+    "raton.zona": "Zona de práctica del ratón", // nombre de la zona para lectores de pantalla
+    "raton.haz.mover": "Pasa el puntero por encima del círculo y déjalo un momento (sin hacer clic).", // instrucción
+    "raton.haz.clic": "Haz clic en el círculo.", // instrucción
+    "raton.haz.dobleclic": "Haz doble clic en el círculo: dos clics rápidos.", // instrucción
+    "raton.haz.derecho": "Haz clic con el botón derecho en el círculo.", // instrucción
+    "raton.haz.arrastrar": "Arrastra el cuadrado hasta la caja y suéltalo dentro.", // instrucción
+    "raton.haz.rueda": "Usa la rueda para encontrar la estrella.", // instrucción
+    "raton.haz.ruedaAbajo": "Gira la rueda hacia abajo ↓ hasta ver la estrella y haz clic en ella.", // instrucción
+    "raton.haz.ruedaArriba": "Ahora gira la rueda hacia arriba ↑ hasta ver la estrella y haz clic en ella.", // instrucción
+    "raton.icono.clic": "Clic", // texto del objetivo en la mezcla
+    "raton.icono.dobleclic": "2 clics", // texto del objetivo en la mezcla
+    "raton.icono.derecho": "Derecho", // texto del objetivo en la mezcla
+    "raton.icono.arrastrar": "Arrastra", // texto del cuadrado en la mezcla
+    "raton.icono.caja": "Aquí", // texto de la caja
+    "raton.pista.dobleclic": "Casi: haz los dos clics más rápido y sin mover el ratón.", // pista
+    "raton.pista.derecho": "Ese es el botón izquierdo. Usa el derecho (en un panel táctil, toca con dos dedos).", // pista
+    "raton.pista.arrastrar": "No sueltes el botón hasta que el cuadrado esté dentro de la caja.", // pista
+    "raton.pista.fuera": "¡Fuera! Apunta al centro del objetivo.", // pista
+    "raton.record": "¡Nuevo récord!", // título del resultado
+    "raton.hecho": "¡Lección completada!", // título del resultado
+    "raton.terminada": "Lección terminada", // título del resultado
+    "raton.resumen": (d) => `${d.hechos} de ${d.total} objetivos en ${d.tiempo} · ${d.fallos === 1 ? "1 fallo" : `${d.fallos} fallos`} · Mejor tiempo: ${d.mejor}`, // resumen del resultado
+    "raton.estado": "{n} objetivos · Mejor tiempo: {mejor}", // estado de la tarjeta
+    "raton.estadoNuevo": "{n} objetivos · Aún sin récord", // estado de la tarjeta sin récord
+    "menu.empezar": "Empezar", // botón de las tarjetas del ratón
+    "reglas.9": "En los modos de resultado (cálculo, números con letras, verbos) escribes la respuesta y pulsas Intro.", // regla 9
+    "reglas.10": "En Dictado la frase no se ve: escúchala y escríbela. En Pronunciación la dices al micrófono (en Chrome y Edge, el navegador usa su servicio en internet para reconocer la voz).", // regla 10
+    "modo.dictado-en.nombre": "Dictado en inglés", // nombre
+    "modo.dictado-en.direccion": "Escucha · EN", // tema
+    "modo.dictado-en.detalle": "Oye una frase corta en inglés y escríbela sin verla. Pulsa el altavoz para volver a oírla.", // descripción
+    "modo.dictado-es.nombre": "Dictado en español", // nombre
+    "modo.dictado-es.direccion": "Escucha · ES", // tema
+    "modo.dictado-es.detalle": "Oye una frase en español y escríbela sin verla, con sus tildes y sus signos.", // descripción
+    "modo.dictado-fr.nombre": "Dictado en francés", // nombre
+    "modo.dictado-fr.direccion": "Escucha · FR", // tema
+    "modo.dictado-fr.detalle": "Oye una palabra en francés y escríbela. Ves su traducción como pista.", // descripción
+    "modo.dictado-pt.nombre": "Dictado en portugués", // nombre
+    "modo.dictado-pt.direccion": "Escucha · PT", // tema
+    "modo.dictado-pt.detalle": "Oye una palabra en portugués y escríbela. Ves su traducción como pista.", // descripción
+    "modo.dictado-it.nombre": "Dictado en italiano", // nombre
+    "modo.dictado-it.direccion": "Escucha · IT", // tema
+    "modo.dictado-it.detalle": "Oye una palabra en italiano y escríbela. Ves su traducción como pista.", // descripción
+    "modo.dictado-de.nombre": "Dictado en alemán", // nombre
+    "modo.dictado-de.direccion": "Escucha · DE", // tema
+    "modo.dictado-de.detalle": "Oye una palabra en alemán y escríbela. Ves su traducción como pista.", // descripción
+    "modo.pronunciacion-en.nombre": "Pronunciación en inglés", // nombre
+    "modo.pronunciacion-en.direccion": "Habla · EN", // tema
+    "modo.pronunciacion-en.detalle": "Escucha la palabra, pulsa «Hablar» y dila en voz alta. El navegador te dice si se te entendió.", // descripción
+    "modo.pronunciacion-es.nombre": "Pronunciación en español", // nombre
+    "modo.pronunciacion-es.direccion": "Habla · ES", // tema
+    "modo.pronunciacion-es.detalle": "Escucha la palabra, pulsa «Hablar» y dila en voz alta en español.", // descripción
+    "modo.pronunciacion-fr.nombre": "Pronunciación en francés", // nombre
+    "modo.pronunciacion-fr.direccion": "Habla · FR", // tema
+    "modo.pronunciacion-fr.detalle": "Escucha la palabra en francés, pulsa «Hablar» y dila en voz alta.", // descripción
+    "modo.palabras-fr.nombre": "Palabras en francés", // nombre
+    "modo.palabras-fr.direccion": "Vocabulario · FR", // tema
+    "modo.palabras-fr.detalle": "Casi 200 palabras comunes por temas. Escríbela en francés y elige qué significa.", // descripción
+    "modo.pronunciacion-pt.nombre": "Pronunciación en portugués", // nombre
+    "modo.pronunciacion-pt.direccion": "Habla · PT", // tema
+    "modo.pronunciacion-pt.detalle": "Escucha la palabra en portugués, pulsa «Hablar» y dila en voz alta.", // descripción
+    "modo.palabras-pt.nombre": "Palabras en portugués", // nombre
+    "modo.palabras-pt.direccion": "Vocabulario · PT", // tema
+    "modo.palabras-pt.detalle": "Casi 200 palabras comunes por temas. Escríbela en portugués y elige qué significa.", // descripción
+    "modo.pronunciacion-it.nombre": "Pronunciación en italiano", // nombre
+    "modo.pronunciacion-it.direccion": "Habla · IT", // tema
+    "modo.pronunciacion-it.detalle": "Escucha la palabra en italiano, pulsa «Hablar» y dila en voz alta.", // descripción
+    "modo.palabras-it.nombre": "Palabras en italiano", // nombre
+    "modo.palabras-it.direccion": "Vocabulario · IT", // tema
+    "modo.palabras-it.detalle": "Casi 200 palabras comunes por temas. Escríbela en italiano y elige qué significa.", // descripción
+    "modo.pronunciacion-de.nombre": "Pronunciación en alemán", // nombre
+    "modo.pronunciacion-de.direccion": "Habla · DE", // tema
+    "modo.pronunciacion-de.detalle": "Escucha la palabra en alemán, pulsa «Hablar» y dila en voz alta.", // descripción
+    "modo.palabras-de.nombre": "Palabras en alemán", // nombre
+    "modo.palabras-de.direccion": "Vocabulario · DE", // tema
+    "modo.palabras-de.detalle": "Casi 200 palabras comunes por temas. Escríbela en alemán y elige qué significa.", // descripción
+    "modo.numeros-en.nombre": "Números en inglés", // nombre
+    "modo.numeros-en.direccion": "Números · EN", // tema
+    "modo.numeros-en.detalle": "Ves un número (47) y lo escribes con letras: forty-seven. Del 0 al 9999.", // descripción
+    "modo.numeros-es.nombre": "Números en español", // nombre
+    "modo.numeros-es.direccion": "Números · ES", // tema
+    "modo.numeros-es.detalle": "Ves un número (47) y lo escribes con letras: cuarenta y siete. Con sus tildes (dieciséis, veintidós).", // descripción
+    "modo.verbos-en.nombre": "Verbos irregulares", // nombre
+    "modo.verbos-en.direccion": "Gramática · EN", // tema
+    "modo.verbos-en.detalle": "90 verbos: ves «to go» y escribes el pasado y el participio: went gone.", // descripción
+    "modo.falsos-en.nombre": "Falsos amigos (inglés)", // nombre
+    "modo.falsos-en.direccion": "Trampas · EN → ES", // tema
+    "modo.falsos-en.detalle": "Palabras que engañan: «embarrassed» no es «embarazada». Elige lo que significa y escríbela.", // descripción
+    "modo.falsos-es.nombre": "Falsos amigos (español)", // nombre
+    "modo.falsos-es.direccion": "Trampas · ES → EN", // tema
+    "modo.falsos-es.detalle": "Al revés: «embarazada» es «pregnant», no «embarrassed». Elige el significado en inglés y escríbela.", // descripción
+    "modo.calculo-sumas.nombre": "Sumas y restas", // nombre
+    "modo.calculo-sumas.direccion": "Cálculo mental", // tema
+    "modo.calculo-sumas.detalle": "Escribe solo el resultado y pulsa Intro. Empieza fácil y llega a números de tres cifras.", // descripción
+    "modo.calculo-operaciones.nombre": "Multiplica, divide y potencias", // nombre
+    "modo.calculo-operaciones.direccion": "Cálculo mental", // tema
+    "modo.calculo-operaciones.detalle": "Tablas de multiplicar, divisiones exactas, potencias como 2⁵ y algún resultado negativo.", // descripción
+    "modo.calculo-ecuaciones.nombre": "Fórmula general", // nombre
+    "modo.calculo-ecuaciones.direccion": "Ecuaciones de 2.º grado", // tema
+    "modo.calculo-ecuaciones.detalle": "Resuelve ax² + bx + c = 0 con x = (−b ± √Δ) / 2a y escribe las dos soluciones: 2; 3.", // descripción
+    "modo.calculo-mezcla.nombre": "De todo un poco", // nombre
+    "modo.calculo-mezcla.direccion": "Cálculo mental", // tema
+    "modo.calculo-mezcla.detalle": "Porcentajes, raíces, fracciones, ecuaciones sencillas y el orden de las operaciones.", // descripción
+    "modo.codigo-lenguaje.nombre": "¿Qué lenguaje es?", // nombre
+    "modo.codigo-lenguaje.direccion": "Programación", // tema
+    "modo.codigo-lenguaje.detalle": "Ves una línea de código y eliges en qué lenguaje está: Python, Java, C, Go, Rust, PHP, SQL y muchos más.", // descripción
+    "modo.datos-escribir.nombre": "Escribe fórmulas", // nombre
+    "modo.datos-escribir.direccion": "Análisis de datos", // tema
+    "modo.datos-escribir.detalle": "Copia fórmulas de Excel y código de pandas y NumPy viendo qué hacen, y luego elige qué hace cada uno.", // descripción
+    "modo.datos-errores.nombre": "Detecta el error", // nombre
+    "modo.datos-errores.direccion": "Análisis de datos", // tema
+    "modo.datos-errores.detalle": "Tres versiones y solo una está bien: un paréntesis, una coma, un nombre… Encuéntrala y escríbela.", // descripción
+    "modo.datos-usos.nombre": "Casos de uso", // nombre
+    "modo.datos-usos.direccion": "Análisis de datos", // tema
+    "modo.datos-usos.detalle": "Te damos una tarea (sumar una columna, filtrar filas, agrupar…) y eliges la fórmula o el código que la hace.", // descripción
+    "modo.raton-mover.nombre": "Mover el ratón", // nombre
+    "modo.raton-mover.direccion": "Lección 1", // tema
+    "modo.raton-mover.detalle": "Lleva el puntero hasta el círculo y déjalo encima un momento. Sin hacer clic.", // descripción
+    "modo.raton-clic.nombre": "Clic", // nombre
+    "modo.raton-clic.direccion": "Lección 2", // tema
+    "modo.raton-clic.detalle": "Haz clic con el botón izquierdo en cada círculo. Cada vez son más pequeños.", // descripción
+    "modo.raton-dobleclic.nombre": "Doble clic", // nombre
+    "modo.raton-dobleclic.direccion": "Lección 3", // tema
+    "modo.raton-dobleclic.detalle": "Dos clics rápidos seguidos, sin mover el ratón. Así se abren archivos y carpetas.", // descripción
+    "modo.raton-derecho.nombre": "Clic derecho", // nombre
+    "modo.raton-derecho.direccion": "Lección 4", // tema
+    "modo.raton-derecho.detalle": "El botón derecho abre menús con más opciones. Haz clic derecho en cada círculo.", // descripción
+    "modo.raton-arrastrar.nombre": "Arrastrar y soltar", // nombre
+    "modo.raton-arrastrar.direccion": "Lección 5", // tema
+    "modo.raton-arrastrar.detalle": "Mantén pulsado el botón sobre el cuadrado, llévalo hasta la caja y suéltalo.", // descripción
+    "modo.raton-rueda.nombre": "La rueda", // nombre
+    "modo.raton-rueda.direccion": "Lección 6", // tema
+    "modo.raton-rueda.detalle": "Gira la rueda (o desliza dos dedos en el panel táctil) para bajar y subir hasta la estrella.", // descripción
+    "modo.raton-mezcla.nombre": "De todo", // nombre
+    "modo.raton-mezcla.direccion": "Repaso", // tema
+    "modo.raton-mezcla.detalle": "Clic, doble clic, botón derecho y arrastrar, mezclados. Cada objetivo dice qué hacer.", // descripción
+
     // --- Créditos ---
     "creditos.frasesDe": "Frases de", // inicio de los créditos
     "creditos.codigo": "Código abierto con licencia MIT", // licencia del código
@@ -331,7 +527,7 @@ const TEXTOS = {
     "barra.ajustes": "Settings",
 
     // --- Menu ---
-    "menu.lema": "Learn by typing: English and Spanish, math formulas, code and the keyboard. Copy it exactly: every mistake costs you a life.",
+    "menu.lema": "Learn by typing: languages, math, code, data analysis, the keyboard and the mouse. Copy it exactly: every mistake costs you a life.",
     "menu.diasSeguidos": (d) => `${d.n}-day streak`,
     "menu.frasesEscritas": (d) => (d.n === 1 ? "1 sentence typed" : `${d.n} sentences typed`),
     "menu.tiempo": "{t} of practice",
@@ -625,6 +821,202 @@ const TEXTOS = {
     "buscador.dificiles": "Most searched:",
     "ajustes.teclado": "Keyboard type",
     "ajustes.tecladoEnPantalla": "Show the on-screen keyboard in every mode",
+
+    // --- Round 3: new sections, languages, answer modes, pronunciation, false friends, data and mouse ---
+    "seccion.datos": "Data",
+    "seccion.raton": "Mouse",
+    "seccion.ajuste.herramientaDatos": "Tool:",
+    "seccion.ajuste.idiomaAprender": "I want to learn:",
+    "seccion.nota.idiomas": "In French, Portuguese, Italian and German you practice the most common words: type them, hear them and say them.",
+    "seccion.nota.datos": "Excel and Google Sheets formulas follow the interface language: in English =SUM and =IF; in Spanish =SUMA and =SI.",
+    "seccion.nota.raton": "Use your mouse or touchpad. Each lesson has 10 targets: try to beat your best time!",
+    "idioma.en": "English",
+    "idioma.es": "Spanish",
+    "idioma.fr": "French",
+    "idioma.pt": "Portuguese",
+    "idioma.it": "Italian",
+    "idioma.de": "German",
+    "respuesta.placeholder": "Your answer…",
+    "respuesta.comprobar": "Check",
+    "respuesta.bien": "Correct!",
+    "respuesta.fallo": "No. Answer: {correcta}",
+    "respuesta.explicacion": "You typed “{escrito}”. Answer: {correcta}",
+    "respuesta.vacia": "Type an answer and press Enter.",
+    "numeros.consigna": "Write it in words",
+    "verbos.consigna": "Type the past simple and the past participle",
+    "calculo.consigna": "Type just the result",
+    "calculo.consigna.ecuacion": "Type the solutions separated by ; (for example: 2; −3)",
+    "calculo.consigna.mezcla": "Type the result (it can be a fraction, like 3/4)",
+    "dictado.consigna": "Listen and type what you hear",
+    "dictado.sinVoz": "Your browser has no voice to read this language aloud, so dictation doesn't work here.",
+    "hablar.consigna": "Listen to it and say it out loud",
+    "hablar.escuchar": "Listen",
+    "hablar.despacio": "Slowly",
+    "hablar.hablar": "Speak",
+    "hablar.escuchando": "Listening…",
+    "hablar.saltar": "Skip",
+    "hablar.instrucciones": "Press “Speak” (or Enter) and say the word.",
+    "hablar.diloAhora": "Say it now…",
+    "hablar.intentos": (d) => (d.n === 1 ? "1 try left" : `${d.n} tries left`),
+    "hablar.entendido": "Heard: “{oido}”",
+    "hablar.bien": "Well said!",
+    "hablar.otraVez": "Heard “{oido}”. Try again.",
+    "hablar.fallo": "Out of tries. Listen to it again and move on.",
+    "hablar.explicacion": "Heard “{oido}”.",
+    "hablar.saltada": "Skipped: this one doesn't count.",
+    "hablar.sinPermiso": "No permission to use the microphone. Allow it from the lock icon in the address bar.",
+    "hablar.nadaOido": "Nothing was heard. Get closer to the microphone and press “Speak” again.",
+    "hablar.error": "Speech recognition failed. In Chrome it needs an internet connection.",
+    "hablar.noDisponible": "Your browser can't recognize speech. Try Chrome, Edge or Safari.",
+    "hablar.grupo": "Pronunciation",
+    "falsos.consigna.en": "What does it mean in Spanish?",
+    "falsos.consigna.es": "What does it mean in English?",
+    "falsos.pregunta.en": "Pick its meaning",
+    "falsos.pregunta.es": "Pick its meaning",
+    "falsos.trampa": "Careful: “{trampa}” means “{significa}”.",
+    "falsos.esOtra": "“{significa}” is “{palabra}”.",
+    "lenguaje.consigna": "Which language is this written in?",
+    "lenguaje.pregunta": "Pick the language",
+    "lenguaje.excel": "Excel / Sheets",
+    "lenguaje.pandas": "pandas",
+    "lenguaje.numpy": "NumPy",
+    "raton.objetivos": "Targets",
+    "raton.fallos": "Misses",
+    "raton.zona": "Mouse practice area",
+    "raton.haz.mover": "Move the pointer over the circle and hold it there a moment (no clicking).",
+    "raton.haz.clic": "Click the circle.",
+    "raton.haz.dobleclic": "Double-click the circle: two quick clicks.",
+    "raton.haz.derecho": "Right-click the circle.",
+    "raton.haz.arrastrar": "Drag the square into the box and drop it there.",
+    "raton.haz.rueda": "Use the wheel to find the star.",
+    "raton.haz.ruedaAbajo": "Scroll down ↓ until you see the star, then click it.",
+    "raton.haz.ruedaArriba": "Now scroll up ↑ until you see the star, then click it.",
+    "raton.icono.clic": "Click",
+    "raton.icono.dobleclic": "2 clicks",
+    "raton.icono.derecho": "Right",
+    "raton.icono.arrastrar": "Drag",
+    "raton.icono.caja": "Here",
+    "raton.pista.dobleclic": "Almost: click twice faster, without moving the mouse.",
+    "raton.pista.derecho": "That's the left button. Use the right one (on a touchpad, tap with two fingers).",
+    "raton.pista.arrastrar": "Keep the button pressed until the square is inside the box.",
+    "raton.pista.fuera": "Missed! Aim for the center of the target.",
+    "raton.record": "New record!",
+    "raton.hecho": "Lesson complete!",
+    "raton.terminada": "Lesson ended",
+    "raton.resumen": (d) => `${d.hechos} of ${d.total} targets in ${d.tiempo} · ${d.fallos === 1 ? "1 miss" : `${d.fallos} misses`} · Best time: ${d.mejor}`,
+    "raton.estado": "{n} targets · Best time: {mejor}",
+    "raton.estadoNuevo": "{n} targets · No record yet",
+    "menu.empezar": "Start",
+    "reglas.9": "In the answer modes (mental math, numbers in words, verbs) you type the answer and press Enter.",
+    "reglas.10": "In Dictation the sentence is hidden: listen and type it. In Pronunciation you say it into the microphone (in Chrome and Edge, the browser uses its online service to recognize speech).",
+    "modo.dictado-en.nombre": "Dictation in English",
+    "modo.dictado-en.direccion": "Listening · EN",
+    "modo.dictado-en.detalle": "Hear a short English sentence and type it without seeing it. Press the speaker to hear it again.",
+    "modo.dictado-es.nombre": "Dictation in Spanish",
+    "modo.dictado-es.direccion": "Listening · ES",
+    "modo.dictado-es.detalle": "Hear a Spanish sentence and type it without seeing it, with its accents and punctuation.",
+    "modo.dictado-fr.nombre": "Dictation in French",
+    "modo.dictado-fr.direccion": "Listening · FR",
+    "modo.dictado-fr.detalle": "Hear a word in French and type it. You see its translation as a hint.",
+    "modo.dictado-pt.nombre": "Dictation in Portuguese",
+    "modo.dictado-pt.direccion": "Listening · PT",
+    "modo.dictado-pt.detalle": "Hear a word in Portuguese and type it. You see its translation as a hint.",
+    "modo.dictado-it.nombre": "Dictation in Italian",
+    "modo.dictado-it.direccion": "Listening · IT",
+    "modo.dictado-it.detalle": "Hear a word in Italian and type it. You see its translation as a hint.",
+    "modo.dictado-de.nombre": "Dictation in German",
+    "modo.dictado-de.direccion": "Listening · DE",
+    "modo.dictado-de.detalle": "Hear a word in German and type it. You see its translation as a hint.",
+    "modo.pronunciacion-en.nombre": "Pronunciation in English",
+    "modo.pronunciacion-en.direccion": "Speaking · EN",
+    "modo.pronunciacion-en.detalle": "Hear the word, press “Speak” and say it out loud. The browser tells you if it understood you.",
+    "modo.pronunciacion-es.nombre": "Pronunciation in Spanish",
+    "modo.pronunciacion-es.direccion": "Speaking · ES",
+    "modo.pronunciacion-es.detalle": "Hear the word, press “Speak” and say it out loud in Spanish.",
+    "modo.pronunciacion-fr.nombre": "Pronunciation in French",
+    "modo.pronunciacion-fr.direccion": "Speaking · FR",
+    "modo.pronunciacion-fr.detalle": "Hear the word in French, press “Speak” and say it out loud.",
+    "modo.palabras-fr.nombre": "Words in French",
+    "modo.palabras-fr.direccion": "Vocabulary · FR",
+    "modo.palabras-fr.detalle": "Nearly 200 common words by topic. Type it in French and pick what it means.",
+    "modo.pronunciacion-pt.nombre": "Pronunciation in Portuguese",
+    "modo.pronunciacion-pt.direccion": "Speaking · PT",
+    "modo.pronunciacion-pt.detalle": "Hear the word in Portuguese, press “Speak” and say it out loud.",
+    "modo.palabras-pt.nombre": "Words in Portuguese",
+    "modo.palabras-pt.direccion": "Vocabulary · PT",
+    "modo.palabras-pt.detalle": "Nearly 200 common words by topic. Type it in Portuguese and pick what it means.",
+    "modo.pronunciacion-it.nombre": "Pronunciation in Italian",
+    "modo.pronunciacion-it.direccion": "Speaking · IT",
+    "modo.pronunciacion-it.detalle": "Hear the word in Italian, press “Speak” and say it out loud.",
+    "modo.palabras-it.nombre": "Words in Italian",
+    "modo.palabras-it.direccion": "Vocabulary · IT",
+    "modo.palabras-it.detalle": "Nearly 200 common words by topic. Type it in Italian and pick what it means.",
+    "modo.pronunciacion-de.nombre": "Pronunciation in German",
+    "modo.pronunciacion-de.direccion": "Speaking · DE",
+    "modo.pronunciacion-de.detalle": "Hear the word in German, press “Speak” and say it out loud.",
+    "modo.palabras-de.nombre": "Words in German",
+    "modo.palabras-de.direccion": "Vocabulary · DE",
+    "modo.palabras-de.detalle": "Nearly 200 common words by topic. Type it in German and pick what it means.",
+    "modo.numeros-en.nombre": "Numbers in English",
+    "modo.numeros-en.direccion": "Numbers · EN",
+    "modo.numeros-en.detalle": "You see a number (47) and write it in words: forty-seven. From 0 to 9999.",
+    "modo.numeros-es.nombre": "Numbers in Spanish",
+    "modo.numeros-es.direccion": "Numbers · ES",
+    "modo.numeros-es.detalle": "You see a number (47) and write it in words: cuarenta y siete. With accents (dieciséis, veintidós).",
+    "modo.verbos-en.nombre": "Irregular verbs",
+    "modo.verbos-en.direccion": "Grammar · EN",
+    "modo.verbos-en.detalle": "90 verbs: you see “to go” and type the past and the participle: went gone.",
+    "modo.falsos-en.nombre": "False friends (English)",
+    "modo.falsos-en.direccion": "Traps · EN → ES",
+    "modo.falsos-en.detalle": "Tricky words: “embarrassed” isn't “embarazada”. Pick its Spanish meaning and type it.",
+    "modo.falsos-es.nombre": "False friends (Spanish)",
+    "modo.falsos-es.direccion": "Traps · ES → EN",
+    "modo.falsos-es.detalle": "The other way: “embarazada” means “pregnant”, not “embarrassed”. Pick the English meaning and type it.",
+    "modo.calculo-sumas.nombre": "Addition and subtraction",
+    "modo.calculo-sumas.direccion": "Mental math",
+    "modo.calculo-sumas.detalle": "Type just the result and press Enter. It starts easy and goes up to three-digit numbers.",
+    "modo.calculo-operaciones.nombre": "Multiply, divide and powers",
+    "modo.calculo-operaciones.direccion": "Mental math",
+    "modo.calculo-operaciones.detalle": "Times tables, exact divisions, powers like 2⁵ and some negative results.",
+    "modo.calculo-ecuaciones.nombre": "Quadratic formula",
+    "modo.calculo-ecuaciones.direccion": "Quadratic equations",
+    "modo.calculo-ecuaciones.detalle": "Solve ax² + bx + c = 0 with x = (−b ± √Δ) / 2a and type both solutions: 2; 3.",
+    "modo.calculo-mezcla.nombre": "A bit of everything",
+    "modo.calculo-mezcla.direccion": "Mental math",
+    "modo.calculo-mezcla.detalle": "Percentages, roots, fractions, simple equations and order of operations.",
+    "modo.codigo-lenguaje.nombre": "Which language is it?",
+    "modo.codigo-lenguaje.direccion": "Programming",
+    "modo.codigo-lenguaje.detalle": "You see a line of code and pick its language: Python, Java, C, Go, Rust, PHP, SQL and many more.",
+    "modo.datos-escribir.nombre": "Type formulas",
+    "modo.datos-escribir.direccion": "Data analysis",
+    "modo.datos-escribir.detalle": "Copy Excel formulas and pandas and NumPy code while seeing what they do, then pick what each one does.",
+    "modo.datos-errores.nombre": "Spot the error",
+    "modo.datos-errores.direccion": "Data analysis",
+    "modo.datos-errores.detalle": "Three versions and only one is right: a parenthesis, a comma, a name… Find it and type it.",
+    "modo.datos-usos.nombre": "Use cases",
+    "modo.datos-usos.direccion": "Data analysis",
+    "modo.datos-usos.detalle": "We give you a task (sum a column, filter rows, group…) and you pick the formula or code that does it.",
+    "modo.raton-mover.nombre": "Move the mouse",
+    "modo.raton-mover.direccion": "Lesson 1",
+    "modo.raton-mover.detalle": "Bring the pointer to the circle and hold it there a moment. No clicking.",
+    "modo.raton-clic.nombre": "Click",
+    "modo.raton-clic.direccion": "Lesson 2",
+    "modo.raton-clic.detalle": "Click each circle with the left button. They get smaller each time.",
+    "modo.raton-dobleclic.nombre": "Double-click",
+    "modo.raton-dobleclic.direccion": "Lesson 3",
+    "modo.raton-dobleclic.detalle": "Two quick clicks in a row, without moving the mouse. That's how you open files and folders.",
+    "modo.raton-derecho.nombre": "Right-click",
+    "modo.raton-derecho.direccion": "Lesson 4",
+    "modo.raton-derecho.detalle": "The right button opens menus with more options. Right-click each circle.",
+    "modo.raton-arrastrar.nombre": "Drag and drop",
+    "modo.raton-arrastrar.direccion": "Lesson 5",
+    "modo.raton-arrastrar.detalle": "Hold the button down on the square, move it into the box and let go.",
+    "modo.raton-rueda.nombre": "The wheel",
+    "modo.raton-rueda.direccion": "Lesson 6",
+    "modo.raton-rueda.detalle": "Turn the wheel (or slide two fingers on the touchpad) to scroll down and up to the star.",
+    "modo.raton-mezcla.nombre": "Everything",
+    "modo.raton-mezcla.direccion": "Review",
+    "modo.raton-mezcla.detalle": "Click, double-click, right-click and drag, mixed. Each target tells you what to do.",
 
     // --- Credits ---
     "creditos.frasesDe": "Sentences from",

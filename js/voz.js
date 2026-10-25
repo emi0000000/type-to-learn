@@ -10,6 +10,10 @@ const Voz = (() => {
   const PREFERIDAS = {
     en: ["en-us", "en-gb", "en-ca", "en-au"], // inglés de Estados Unidos, Reino Unido...
     es: ["es-es", "es-mx", "es-us", "es-419"], // español de España, México...
+    fr: ["fr-fr", "fr-ca", "fr-be"], // francés de Francia, Canadá...
+    pt: ["pt-br", "pt-pt"], // portugués de Brasil y de Portugal
+    it: ["it-it"], // italiano
+    de: ["de-de", "de-at", "de-ch"], // alemán de Alemania, Austria y Suiza
   };
   // Palabras que suelen tener las voces de mejor calidad.
   const CALIDAD = /natural|neural|premium|enhanced|google|siri/i;
@@ -48,6 +52,27 @@ const Voz = (() => {
     return delIdioma[0] || null;
   }
 
+  // Código de idioma con país, para el sintetizador y el reconocimiento de voz: "en" -> "en-US".
+  function codigoRegional(idioma) {
+    // Primera variante preferida, con el país en mayúscula ("pt-br" -> "pt-BR").
+    const preferida = (PREFERIDAS[idioma] || [idioma])[0];
+    // Separamos idioma y país.
+    const [lengua, pais] = preferida.split("-");
+    // Los juntamos con el país en mayúscula.
+    return pais ? `${lengua}-${pais.toUpperCase()}` : lengua;
+  }
+
+  // ¿Hay alguna voz para un idioma? (Si aún no se han cargado las voces, suponemos que sí).
+  function hayVozPara(idioma) {
+    // Sin sintetizador, no.
+    if (!sintesis) {
+      // No hay voz.
+      return false;
+    }
+    // Si la lista está vacía, puede que aún no haya llegado: suponemos que sí.
+    return voces.length === 0 || voces.some((voz) => voz.lang.toLowerCase().startsWith(idioma));
+  }
+
   // ¿Se puede leer en voz alta en este navegador?
   function disponible() {
     // Hace falta el sintetizador.
@@ -55,8 +80,9 @@ const Voz = (() => {
   }
 
   // Lee un texto en voz alta.
-  //   idioma: "en" o "es"
-  function decir(texto, idioma) {
+  //   idioma: "en", "es", "fr", "pt", "it" o "de"
+  //   rapidez: (opcional) velocidad de lectura; si no se indica, la de los ajustes
+  function decir(texto, idioma, rapidez) {
     // Sin sintetizador, no hay nada que hacer.
     if (!sintesis) {
       // Salimos.
@@ -79,9 +105,9 @@ const Voz = (() => {
       lectura.voice = voz;
     }
     // Idioma de la lectura (aunque no haya voz exacta, el sistema elige una).
-    lectura.lang = voz ? voz.lang : idioma === "en" ? "en-US" : "es-ES";
+    lectura.lang = voz ? voz.lang : codigoRegional(idioma);
     // Velocidad: algo más lenta que la normal, o bastante más lenta si se pidió.
-    lectura.rate = Ajustes.valor("vozLenta") ? 0.7 : 0.95;
+    lectura.rate = rapidez || (Ajustes.valor("vozLenta") ? 0.7 : 0.95);
     // Leemos.
     sintesis.speak(lectura);
   }
@@ -104,5 +130,5 @@ const Voz = (() => {
   }
 
   // Lo que este archivo ofrece al resto del juego.
-  return { disponible, decir, callar };
+  return { disponible, decir, callar, codigoRegional, hayVozPara };
 })();
