@@ -10,6 +10,8 @@
 
 ## Léeme primero
 
+> Si quieres un resumen corto de todo lo que tiene el proyecto, mira [RESUMEN.md](RESUMEN.md).
+
 ### ¿Para qué se creó?
 
 **Frase Exacta** nació con una sola idea: **enseñar**. Es un juego gratuito y abierto para aprender cosas útiles
