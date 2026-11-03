@@ -105,12 +105,14 @@ html {
 }
 
 body {
+  background-image: radial-gradient(color-mix(in srgb, var(--texto-suave) 13%, transparent) 1px, transparent 1.4px); /* puntitos muy suaves de fondo */
+  background-size: 26px 26px; /* separación de los puntitos */
   margin: 0; /* sin margen alrededor de la página */
   min-height: 100vh; /* ocupa al menos toda la altura de la ventana */
   min-height: 100dvh; /* en móviles, la altura real visible */
   display: flex; /* barra, contenido y créditos en columna... */
   flex-direction: column; /* ...uno debajo del otro */
-  background: var(--fondo); /* color de fondo */
+  background-color: var(--fondo); /* color de fondo (los puntitos van encima) */
   color: var(--texto); /* color del texto */
   font-family: var(--letra-general); /* letra general */
   line-height: 1.5; /* espacio entre líneas */
@@ -228,9 +230,19 @@ kbd {
 }
 
 .marca-icono {
-  width: 22px; /* tamaño del corazón */
-  height: 22px; /* tamaño del corazón */
-  color: var(--peligro); /* corazón coral */
+  width: 28px; /* tamaño del logo */
+  height: 28px; /* tamaño del logo */
+  border-radius: 8px; /* esquinas redondeadas */
+}
+
+.titulo-logo {
+  display: block; /* en su propia línea */
+  width: clamp(72px, 16vw, 104px); /* tamaño que se adapta */
+  height: auto; /* proporcional */
+  margin: 0 auto 14px; /* centrado y con espacio debajo */
+  border-radius: 24%; /* esquinas redondeadas como un icono */
+  box-shadow: 0 18px 40px -16px rgba(255, 111, 91, 0.55); /* brillo coral debajo */
+  animation: flotar 6s ease-in-out infinite; /* sube y baja muy despacio */
 }
 
 body[data-pantalla="pantalla-menu"] .marca {
@@ -428,7 +440,11 @@ body[data-pantalla="pantalla-menu"] .marca {
   border: 1px solid var(--borde); /* borde suave */
   border-radius: var(--radio-grande); /* esquinas redondeadas */
   box-shadow: var(--sombra); /* sombra */
-  transition: border-color 0.2s, transform 0.2s; /* cambios suaves */
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; /* cambios suaves */
+}
+
+.modo:hover:not(.modo-pronto) {
+  box-shadow: var(--sombra), 0 14px 34px -18px var(--color-modo); /* al pasar por encima, un brillo del color del modo */
 }
 
 .modo::before {
@@ -486,8 +502,9 @@ body[data-pantalla="pantalla-menu"] .marca {
   min-width: 44px; /* ancho mínimo */
   height: 44px; /* alto */
   padding: 0 8px; /* relleno lateral */
-  background: color-mix(in srgb, var(--color-modo) 16%, transparent); /* fondo del color del modo, muy suave */
+  background: linear-gradient(140deg, color-mix(in srgb, var(--color-modo) 26%, transparent), color-mix(in srgb, var(--color-modo) 8%, transparent)); /* degradado del color del modo */
   color: var(--color-modo); /* texto del color del modo */
+  border: 1px solid color-mix(in srgb, var(--color-modo) 30%, transparent); /* borde del color del modo */
   border-radius: 12px; /* esquinas redondeadas */
   font-family: var(--letra-maquina); /* letra de máquina */
   font-weight: 800; /* muy negrita */
@@ -551,7 +568,7 @@ body[data-pantalla="pantalla-menu"] .marca {
   max-width: 100%; /* sin salirse de la pantalla */
   background: var(--superficie); /* fondo de tarjeta */
   border: 1px solid var(--borde); /* borde */
-  border-radius: 999px; /* forma de píldora */
+  border-radius: 26px; /* esquinas redondeadas (con varias filas no queda ovalado) */
 }
 
 .pestana {
@@ -570,9 +587,24 @@ body[data-pantalla="pantalla-menu"] .marca {
 }
 
 .pestana[aria-selected="true"] {
-  background: var(--acento); /* pestaña elegida: fondo ámbar */
+  background: linear-gradient(120deg, var(--peligro), var(--acento)); /* pestaña elegida: degradado coral a ámbar */
   color: var(--sobre-acento); /* y texto oscuro */
+  box-shadow: 0 6px 16px -8px var(--acento); /* resplandor */
 }
+
+.pestana::before {
+  margin-right: 6px; /* separado del nombre */
+}
+
+/* Un dibujito para cada sección. */
+.pestana[data-seccion="idiomas"]::before { content: "🌍"; }
+.pestana[data-seccion="matematicas"]::before { content: "➗"; }
+.pestana[data-seccion="codigo"]::before { content: "💻"; }
+.pestana[data-seccion="datos"]::before { content: "📊"; }
+.pestana[data-seccion="teclado"]::before { content: "⌨️"; }
+.pestana[data-seccion="raton"]::before { content: "🖱️"; }
+.pestana[data-seccion="redes"]::before { content: "🌐"; }
+.pestana[data-seccion="seguridad"]::before { content: "🛡️"; }
 
 .seccion-opciones {
   display: flex; /* desplegable y nota en fila */
@@ -1848,6 +1880,36 @@ body[data-pantalla="pantalla-menu"] .marca {
   justify-content: center; /* botones centrados */
 }
 
+/* ===== Ventana «¿Cómo funciona?» ===== */
+.teoria h3 {
+  margin: 18px 0 6px; /* espacio arriba */
+  font-size: 1.05rem; /* algo grande */
+  color: var(--acento-fuerte); /* ámbar */
+}
+
+.teoria p {
+  margin: 0 0 10px; /* espacio debajo */
+}
+
+.teoria pre {
+  margin: 0 0 12px; /* espacio debajo */
+  padding: 10px 12px; /* relleno */
+  overflow-x: auto; /* se desplaza si es ancho */
+  background: #0b0d12; /* fondo de consola */
+  border-radius: 10px; /* esquinas redondeadas */
+  color: #d7dae3; /* texto claro */
+  font-family: var(--letra-maquina); /* letra de máquina */
+  font-size: 0.85rem; /* algo pequeña */
+  line-height: 1.5; /* espacio entre líneas */
+}
+
+.boton-teoria {
+  gap: 6px; /* separación entre el ? y el texto */
+  background: color-mix(in srgb, var(--acento) 85%, transparent); /* ámbar */
+  color: var(--sobre-acento); /* texto oscuro */
+  font-weight: 800; /* negrita */
+}
+
 /* ===== Laboratorios de redes ===== */
 body[data-pantalla="pantalla-lab"] .contenedor {
   max-width: 1240px; /* el laboratorio necesita más ancho: consola y lateral */
@@ -2611,6 +2673,12 @@ body[data-pantalla="pantalla-lab"] .contenedor {
   to {
     opacity: 0; /* desaparece... */
     scale: 2.2; /* ...mientras crece */
+  }
+}
+
+@keyframes flotar {
+  50% {
+    transform: translateY(-6px); /* el logo sube un poco y vuelve */
   }
 }
 

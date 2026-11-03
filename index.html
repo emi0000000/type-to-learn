@@ -63,6 +63,7 @@
   <script defer src="datos/registros.js"></script>
   <script defer src="datos/puertos.js"></script>
   <script defer src="datos/textos-largos.js"></script>
+  <script defer src="datos/teoria.js"></script>
   <!-- 2. Textos de la interfaz en español e inglés. -->
   <script defer src="js/textos.js"></script>
   <!-- 3. Guardar datos en el navegador. -->
@@ -98,6 +99,8 @@
   <!-- 12 bis. Teclado dibujado en la pantalla y buscador de teclas. -->
   <script defer src="js/tecladoVisual.js"></script>
   <!-- 13. El motor común de las partidas. -->
+  <!-- 12 ter. Explicaciones «¿Cómo funciona?». -->
+  <script defer src="js/teoria.js"></script>
   <script defer src="js/motor.js"></script>
   <!-- 14. Los modos de juego: primero las partes comunes (preguntas) y después cada modo. -->
   <script defer src="js/modos/pregunta.js"></script>
@@ -165,8 +168,8 @@
   <header class="barra">
     <!-- Nombre del juego (pequeño). -->
     <p class="marca" aria-hidden="true">
-      <!-- Icono del juego. -->
-      <svg class="marca-icono"><use href="#i-corazon"/></svg>
+      <!-- Logo del juego (una tecla con la F y un cursor). -->
+      <img class="marca-icono" src="iconos/icono.svg" alt="" width="28" height="28">
       <!-- Nombre. -->
       <span>Frase <b>Exacta</b></span>
     </p>
@@ -207,6 +210,8 @@
       <!-- Portada: título, lema y resumen del progreso. -->
       <div class="portada">
         <!-- Nombre del juego. -->
+        <!-- Logo grande. -->
+        <img class="titulo-logo" src="iconos/icono.svg" alt="" width="96" height="96">
         <h1 id="titulo-juego" class="titulo">Frase <span>Exacta</span></h1>
         <!-- Frase que resume el juego. -->
         <p class="lema" data-t="menu.lema">Aprende inglés y español escribiendo.</p>
@@ -301,6 +306,8 @@
             <!-- Tema, lenguaje de programación o tipo de teclado. -->
             <span id="juego-etiqueta" class="chip-etiqueta" hidden></span>
           </span>
+          <!-- ¿Cómo funciona? (solo si el modo tiene explicación). -->
+          <button id="juego-teoria" class="boton-chip boton-teoria" type="button" data-t-title="teoria.abrir" hidden>?<span data-t="teoria.boton">¿Cómo funciona?</span></button>
           <!-- Escuchar la frase en voz alta (lo maneja motor.js). -->
           <button id="juego-escuchar" class="boton-icono boton-pequeno" type="button" data-t-title="juego.escuchar" data-t-aria-label="juego.escuchar">
             <!-- Icono. -->
@@ -440,6 +447,8 @@
           <p id="lab-nivel" class="etiqueta-modo"></p>
           <!-- Título del laboratorio. -->
           <h2 id="lab-titulo" class="lab-titulo"></h2>
+          <!-- ¿Cómo funciona? (la explicación del tema). -->
+          <button id="lab-teoria" class="boton-chip boton-teoria" type="button" hidden>?<span data-t="teoria.boton">¿Cómo funciona?</span></button>
         </div>
         <!-- Guiado, plantilla o examen. -->
         <div id="lab-ayudas" class="lab-ayudas" role="radiogroup" data-t-aria-label="lab.ayuda">
@@ -869,6 +878,27 @@
         <!-- Filas (las crea abecedario.js). -->
         <tbody id="abecedario-filas"></tbody>
       </table>
+    </form>
+  </dialog>
+
+  <!-- ===== Ventana «¿Cómo funciona?»: la explicación del tema (la maneja teoria.js) ===== -->
+  <dialog id="teoria" class="dialogo dialogo-ancho" aria-labelledby="teoria-titulo">
+    <!-- Formulario para que el botón de cerrar cierre la ventana. -->
+    <form method="dialog">
+      <!-- Cabecera. -->
+      <header class="dialogo-cabecera">
+        <!-- Título (lo pone teoria.js). -->
+        <h2 id="teoria-titulo"></h2>
+        <!-- Cerrar. -->
+        <button class="boton-icono" value="cerrar" data-t-title="ajustes.cerrar" data-t-aria-label="ajustes.cerrar">
+          <!-- Icono. -->
+          <svg aria-hidden="true"><use href="#i-cerrar"/></svg>
+        </button>
+      </header>
+      <!-- Explicación (la crea teoria.js). -->
+      <div id="teoria-contenido" class="teoria"></div>
+      <!-- Botón para volver. -->
+      <div class="acciones"><button class="boton-principal" value="cerrar" data-t="teoria.entendido">Entendido</button></div>
     </form>
   </dialog>
 </body>

@@ -159,3 +159,21 @@ test("ciberseguridad y textos: textos de los modos", () => {
     assert.ok(clave in TEXTOS.es, clave);
   }
 });
+
+// Las explicaciones «¿Cómo funciona?» tienen título y bloques en los dos idiomas.
+test("teoría: formato de las explicaciones", () => {
+  // Explicaciones.
+  const teoria = cargar("teoria.js", "TEORIA");
+  // Unas cuantas.
+  assert.ok(Object.keys(teoria).length >= 20);
+  // Cada una.
+  for (const [clave, tema] of Object.entries(teoria)) {
+    // Título en los dos idiomas y algún bloque.
+    assert.ok(esPareja(tema.titulo) && tema.bloques.length > 0, clave);
+    // Cada bloque: subtítulo o párrafo con los dos idiomas, o ejemplo con un texto.
+    for (const bloque of tema.bloques) {
+      // Bien formado.
+      assert.ok(bloque[0] === "ej" ? typeof bloque[1] === "string" && bloque.length === 2 : ["h", "p"].includes(bloque[0]) && esPareja(bloque.slice(1)), `${clave}: ${bloque[1]}`);
+    }
+  }
+});

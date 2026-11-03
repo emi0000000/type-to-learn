@@ -98,6 +98,13 @@ const ModosSeguridad = (() => {
     // El enunciado, con «César» en el idioma de la interfaz.
     enunciado: (frase) => frase[2].replace("César", t("cripto.cesar")),
     consigna: () => t("cripto.consigna"), // "Descifra el mensaje"
+    // Nota: cómo funciona el método de este reto (para poder resolverlo sin herramientas).
+    nota: (frase) => {
+      // Método y desplazamiento.
+      const [, metodo, n] = frase[2].match(/^(César \+(\d+)|ROT13|Hex|Base64)/) || [];
+      // Pista según el método.
+      return metodo === "ROT13" ? t("cripto.pista.rot13") : metodo === "Hex" ? t("cripto.pista.hex") : metodo === "Base64" ? t("cripto.pista.base64") : t("cripto.pista.cesar", { n, ej: String.fromCharCode(65 + (Number(n) % 26)), ej2: String.fromCharCode(66 + (Number(n) % 26)) });
+    },
     comprobar: (escrito, frase) => comprobarCripto(escrito, frase[1]), // sin mayúsculas
     solucion: (frase) => frase[4].replace("César", t("cripto.cesar")), // cómo se descifra
   });

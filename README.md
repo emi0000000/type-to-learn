@@ -1,10 +1,71 @@
-# type-to-learn
-Typing game to learn English and Spanish (both ways, plus French, Portuguese, Italian and German words), vocabulary, dictation, pronunciation, mental math and formulas, programming, data analysis (Excel, pandas, NumPy), networking labs (Cisco IOS like Packet Tracer, and Linux servers), the keyboard and the mouse.
+<p align="center"><img src="iconos/icono.svg" alt="Logo de Frase Exacta" width="120"></p>
 
-## Qué es
+<h1 align="center">Frase Exacta</h1>
 
-**Frase Exacta** es un juego de mecanografía para aprender escribiendo. Aparece una frase (o una palabra, una fórmula,
-una línea de código), la copias exactamente igual y cada error te cuesta una vida. Está inspirado en la mecánica de *Final Sentence*.
+<p align="center"><b>Aprende escribiendo.</b> Idiomas, matemáticas, programación, datos, redes, ciberseguridad, el teclado y el ratón.</p>
+
+<p align="center"><i>Typing game to learn languages, math, programming, data, networking (Cisco and Linux labs), cybersecurity, the keyboard and the mouse.</i></p>
+
+---
+
+## Léeme primero
+
+### ¿Para qué se creó?
+
+**Frase Exacta** nació con una sola idea: **enseñar**. Es un juego gratuito y abierto para aprender cosas útiles
+practicando con el teclado, en vez de solo leerlas. Al principio era para aprender inglés y español; después creció con
+todo lo que sirve para estudiar y para trabajar: matemáticas, programación, análisis de datos, redes de Cisco, servidores
+Linux, ciberseguridad y hasta cómo usar el teclado y el ratón.
+
+La idea de fondo es sencilla: **lo que escribes tú, lo recuerdas mejor**. Por eso aquí no se elige solo la respuesta:
+casi siempre hay que escribirla, exacta, letra a letra. Y cada error cuesta una vida, como en el juego *Final Sentence*,
+para que te fijes bien.
+
+### ¿Cómo se usa? (en 30 segundos)
+
+1. Abre el juego (mira abajo cómo) y elige una **sección** arriba: Idiomas, Matemáticas, Código, Datos, Teclado, Ratón,
+   Redes o Ciberseguridad.
+2. Elige un **modo** (cada tarjeta es uno) y pulsa **Jugar** o **Empezar**.
+3. Si no sabes de qué va el tema, pulsa **«¿Cómo funciona?»**: te lo explica con ejemplos antes de empezar
+   (y también durante la partida).
+4. Escribe lo que te pide. Si te equivocas, el juego te dice qué esperaba y por qué.
+
+### ¿Cómo se ejecuta?
+
+No hay que instalar nada. Es una página web normal (HTML, CSS y JavaScript, sin librerías), así que funciona en cualquier
+navegador, en el ordenador o en el móvil:
+
+- **Lo más fácil:** descarga el proyecto (en GitHub: *Code → Download ZIP*), descomprímelo y haz doble clic en `index.html`.
+- **Como aplicación a pantalla completa:** en Windows, doble clic en `abrir-app.bat`; en Mac o Linux, `bash abrir-app.sh`.
+  Desde la versión publicada en internet también se puede **instalar** (botón *Instalar app*) y funciona sin conexión.
+- **Con un servidor local** (para programadores): `python -m http.server 8000` y abre <http://localhost:8000>.
+
+Más detalles en [Probarlo en local](#probarlo-en-local) y [Jugar como aplicación](#jugar-como-aplicación-a-pantalla-completa).
+
+### ¿Cómo funciona por dentro?
+
+Explicado sin tecnicismos:
+
+- **Los contenidos** (frases, palabras, fórmulas, comandos, laboratorios, explicaciones…) están en la carpeta `datos/`,
+  cada tema en su archivo. Las frases de idiomas vienen de [Tatoeba](https://tatoeba.org); el resto está escrito para
+  este proyecto. Para añadir contenido, casi siempre basta con añadir líneas a uno de esos archivos.
+- **El motor** (`js/motor.js`) es lo que comparten todos los modos: enseña la frase, comprueba cada letra que escribes,
+  quita y devuelve vidas, cuenta la racha y la velocidad y enseña el resultado final con los errores para repasar.
+- **Cada modo** (`js/modos/`) es una pequeña receta para el motor: de dónde salen sus frases, en qué idioma están y si
+  tiene algo especial (una pregunta de tres opciones, una respuesta que se comprueba con Intro, el micrófono…).
+- **Los laboratorios** de Redes y Ciberseguridad tienen su propia pantalla (`js/laboratorio.js`) con una consola que
+  imita la de un equipo Cisco, un servidor Linux o un PC (`js/consola.js`): calcula el prompt de cada modo, acepta las
+  abreviaturas y responde como el equipo de verdad.
+- **Tu progreso** (récords, frases vistas, errores, ajustes) se guarda solo en tu navegador. No se envía a ningún sitio.
+- **Los textos de la pantalla** están en español y en inglés (`js/textos.js`); el botón ES/EN cambia el idioma.
+- **Las pruebas** (`tests/`) comprueban automáticamente que todo está bien: que las respuestas de matemáticas son
+  correctas, que cada comando de Cisco va en su modo, que los textos están en los dos idiomas… Se ejecutan con `npm test`.
+
+Todo el código está comentado línea por línea en español, para que también se pueda aprender leyéndolo.
+
+---
+
+## Qué tiene
 
 Tiene ocho secciones, cada una con sus modos:
 
@@ -72,6 +133,8 @@ debajo de la caja de texto. En Matemáticas hay botones para √ π ± ≤ ≥ �
 
 ### Lo que te ayuda a aprender
 
+- **«¿Cómo funciona?»:** en las tarjetas y durante la partida, un botón abre la explicación del tema con ejemplos
+  (cifrados, phishing, puertos, registros, VLAN, OSPF, NAT, ACL, DHCP, la fórmula general, los números, los verbos…).
 - **Escuchar la frase:** el botón del altavoz lee la frase en voz alta con las voces de tu sistema
   (en inglés o en español). En los ajustes puedes hacer que lea cada frase sola y que hable más despacio.
 - **Racha:** encadena frases perfectas (sin ningún error). Con 5 seguidas recuperas una vida.
@@ -345,6 +408,8 @@ js/letras.js                El abecedario en inglés y en español, y cómo se d
 js/numerosEnPalabras.js     Escribe números con letras en inglés y en español
 js/aritmetica.js            Crea los problemas de cálculo y compara respuestas numéricas
 js/consola.js               Lógica de la consola de los laboratorios: abreviaturas de Cisco, prompts, errores, plantillas
+js/cripto.js                Retos de criptografía (César, ROT13, hexadecimal, Base64) y problemas de puertos
+js/teoria.js                Ventana «¿Cómo funciona?» con la explicación de cada tema
 js/pantallas.js             Cambia entre pantallas
 js/ajustes.js               Ajustes: idioma, tema, tamaño, dificultad, teclado, sonido y voz
 js/sonidos.js               Efectos de sonido (creados al momento, sin archivos de audio)
@@ -369,6 +434,8 @@ js/modos/matematicas.js     Modos de álgebra, trigonometría y cálculo
 js/modos/calculos.js        Modos de «solo el resultado» (sumas, operaciones, fórmula general, mezcla)
 js/modos/codigo.js          Modos de código y de datos (escribir, detectar el error, casos de uso) y «¿Qué lenguaje es?»
 js/modos/redes.js           Modos de comandos sueltos de redes
+js/modos/seguridad.js       Modos de ciberseguridad (phishing, código inseguro, registros, criptografía, puertos)
+js/modos/textos.js          Textos largos y traducción en seis idiomas
 js/modos/teclado.js         Lecciones de teclado
 js/raton.js                 Lecciones del ratón
 js/laboratorio.js           Pantalla de los laboratorios de redes (consola, plantilla, esquema, cuestionario, resultado)
@@ -385,6 +452,14 @@ datos/analisis.js           Fórmulas de Excel, pandas y NumPy con sus errores t
 datos/lenguajes.js          Líneas de 19 lenguajes para «¿Qué lenguaje es?» (escrito para el proyecto)
 datos/laboratorios.js       Laboratorios de redes de Cisco y Linux (escrito para el proyecto)
 datos/redes.js              Comandos de redes con sus errores típicos (escrito para el proyecto)
+datos/laboratorios-seguridad.js  Laboratorios de ciberseguridad (escrito para el proyecto)
+datos/phishing.js           Mensajes para «¿Es phishing?» (dominios inventados)
+datos/codigo-inseguro.js    Código seguro e inseguro
+datos/registros.js          Trozos de registros para leer
+datos/puertos.js            Puertos y protocolos
+datos/textos-largos.js      9 textos con las mismas frases en seis idiomas
+datos/teoria.js             Las explicaciones «¿Cómo funciona?» de cada tema
+iconos/icono.svg            Logo (una tecla con la F y un cursor)
 herramientas/preparar_frases.py   Descarga y filtra las frases de Tatoeba
 tests/                      Pruebas automáticas
 FICHA.md                    Ficha del proyecto

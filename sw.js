@@ -5,7 +5,7 @@
 // Solo funciona cuando el juego se abre desde internet o desde un servidor local, no como archivo.
 
 // Nombre de la copia guardada. Cambia el número al cambiar la lista de archivos, para empezar una copia nueva.
-const VERSION = "frase-exacta-v6";
+const VERSION = "frase-exacta-v7";
 
 // Archivos que forman el juego (tests/app.test.js comprueba que la lista está completa).
 const ARCHIVOS = [
@@ -31,6 +31,7 @@ const ARCHIVOS = [
   "datos/registros.js", // registros para leer
   "datos/puertos.js", // puertos y protocolos
   "datos/textos-largos.js", // textos largos en seis idiomas
+  "datos/teoria.js", // explicaciones «¿Cómo funciona?»
   "js/textos.js", // textos en español e inglés
   "js/memoria.js", // guardar datos
   "js/comparar.js", // comparar lo escrito
@@ -49,6 +50,7 @@ const ARCHIVOS = [
   "js/voz.js", // leer en voz alta
   "js/app.js", // aplicación y pantalla completa
   "js/tecladoVisual.js", // teclado en pantalla y buscador
+  "js/teoria.js", // ventana «¿Cómo funciona?»
   "js/motor.js", // motor de las partidas
   "js/modos/pregunta.js", // preguntas de opción múltiple
   "js/modos/traduccion.js", // escribir y elegir el significado

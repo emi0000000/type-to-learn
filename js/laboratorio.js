@@ -1100,6 +1100,8 @@ const Laboratorio = (() => {
     el.nivel.textContent = `${t(`seccion.${lab.seccion || "redes"}`)} · ${t(`redes.nivel.${["facil", "medio", "dificil"][lab.nivel - 1]}`)} · ${t(`lab.tipo.${lab.tipo}`)}`;
     // Título.
     el.titulo.textContent = bil(lab.titulo);
+    // Botón «¿Cómo funciona?» (si hay explicación).
+    $("lab-teoria").hidden = !Teoria.existe(`lab-${lab.id}`);
     // Objetivo.
     el.objetivo.textContent = bil(lab.objetivo);
     // Esquema.
@@ -1422,6 +1424,8 @@ const Laboratorio = (() => {
     }
   });
 
+  // Botón «¿Cómo funciona?».
+  $("lab-teoria").addEventListener("click", () => partida && Teoria.abrir(`lab-${partida.lab.id}`));
   // Botón terminar: se deja el laboratorio a medias.
   el.terminar.addEventListener("click", () => terminar(false));
   // Botón repetir.

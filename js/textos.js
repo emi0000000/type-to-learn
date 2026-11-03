@@ -661,6 +661,15 @@ const TEXTOS = {
     "modo.traducir-de.direccion": "Traducción · DE", // tema
     "modo.traducir-de.detalle": "Ves una frase y la escribes en alemán. Las rayas te dicen cuántas letras tiene cada palabra.", // descripción
 
+    // --- Ronda 6: explicaciones ---
+    "teoria.boton": "¿Cómo funciona?", // botón de la explicación
+    "teoria.abrir": "Explicación del tema, con ejemplos", // ayuda del botón
+    "teoria.entendido": "Entendido", // botón de cerrar la explicación
+    "cripto.pista.cesar": "Pista: cada letra se movió {n} posiciones en el abecedario. Para descifrar, muévela {n} hacia atrás: {ej} → A, {ej2} → B.", // pista del César
+    "cripto.pista.rot13": "Pista: ROT13 cambia cada letra por la que está 13 más allá: A↔N, B↔O, C↔P, D↔Q, E↔R, F↔S, G↔T, H↔U, I↔V, J↔W, K↔X, L↔Y, M↔Z.", // pista de ROT13
+    "cripto.pista.hex": "Pista: cada pareja es una letra en hexadecimal: 41 = A, 42 = B, 43 = C… 49 = I, 4a = J… 4f = O, 50 = P… 5a = Z.", // pista del hexadecimal
+    "cripto.pista.base64": "Pista: Base64 no esconde nada, solo cambia la forma de escribir. Empieza por «SGVsbG8» = «Hello», «T3Bl» = «Ope», «VXBk» = «Upd»… Si te atascas, pulsa «¿Cómo funciona?».", // pista del Base64
+
     // --- Créditos ---
     "creditos.frasesDe": "Frases de", // inicio de los créditos
     "creditos.codigo": "Código abierto con licencia MIT", // licencia del código
@@ -1323,6 +1332,15 @@ const TEXTOS = {
     "modo.traducir-de.nombre": "Translate texts into German",
     "modo.traducir-de.direccion": "Translation · DE",
     "modo.traducir-de.detalle": "You see a sentence and write it in German. The dashes show how many letters each word has.",
+
+    // --- Round 6: explanations ---
+    "teoria.boton": "How does it work?",
+    "teoria.abrir": "Explanation of the topic, with examples",
+    "teoria.entendido": "Got it",
+    "cripto.pista.cesar": "Hint: each letter moved {n} places in the alphabet. To decode, move it back {n}: {ej} → A, {ej2} → B.",
+    "cripto.pista.rot13": "Hint: ROT13 swaps each letter for the one 13 further on: A↔N, B↔O, C↔P, D↔Q, E↔R, F↔S, G↔T, H↔U, I↔V, J↔W, K↔X, L↔Y, M↔Z.",
+    "cripto.pista.hex": "Hint: each pair is a letter in hexadecimal: 41 = A, 42 = B, 43 = C… 49 = I, 4a = J… 4f = O, 50 = P… 5a = Z.",
+    "cripto.pista.base64": "Hint: Base64 hides nothing, it just changes how it's written. «SGVsbG8» = «Hello», «T3Bl» = «Ope», «VXBk» = «Upd»… If you get stuck, press «How does it work?».",
 
     // --- Credits ---
     "creditos.frasesDe": "Sentences from",

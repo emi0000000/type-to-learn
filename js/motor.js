@@ -251,6 +251,8 @@ const Motor = (() => {
     modo = modoElegido;
     // Creamos el estado de la nueva partida.
     partida = estadoInicial(Boolean(opciones.repaso));
+    // El botón «¿Cómo funciona?» solo aparece si el modo tiene explicación.
+    $("juego-teoria").hidden = !Teoria.existe(modo.id);
     // El botón de escuchar solo aparece si el navegador sabe leer en voz alta y el modo lo usa.
     el.escuchar.hidden = !Voz.disponible() || Boolean(modo.sinVoz);
     // El idioma de la frase solo se muestra en los modos de idiomas.
@@ -1496,6 +1498,8 @@ const Motor = (() => {
     // El foco vuelve a la caja.
     el.entrada.focus();
   });
+  // Botón «¿Cómo funciona?»: abre la explicación del modo.
+  $("juego-teoria").addEventListener("click", () => modo && Teoria.abrir(modo.id));
   // Botón "Terminar partida": acaba ya y muestra el resultado.
   el.terminar.addEventListener("click", () => terminarPartida(0));
   // Botón "Jugar otra vez": nueva partida normal del mismo modo.

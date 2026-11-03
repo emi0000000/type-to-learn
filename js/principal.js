@@ -296,6 +296,11 @@ function crearTarjeta({ modo, insignia, color, archivo, extra }, posicion) {
   acciones.append(jugar);
   // Las lecciones del ratón y los laboratorios tienen su propia línea de estado.
   if (modo.empezar) {
+    // Botón «¿Cómo funciona?», si hay explicación.
+    if (Teoria.existe(modo.id)) {
+      // Lo añadimos.
+      acciones.append(crearBoton("boton-secundario", t("teoria.boton"), () => Teoria.abrir(modo.id)));
+    }
     // Estado.
     estado.textContent = modo.estado();
     // Juntamos la tarjeta.
@@ -341,6 +346,11 @@ function crearTarjeta({ modo, insignia, color, archivo, extra }, posicion) {
   if (extra) {
     // Lo añadimos.
     acciones.append(crearBoton("boton-secundario", t(extra.texto), extra.accion));
+  }
+  // Botón «¿Cómo funciona?», si el modo tiene explicación.
+  if (Teoria.existe(modo.id)) {
+    // Lo añadimos.
+    acciones.append(crearBoton("boton-secundario", t("teoria.boton"), () => Teoria.abrir(modo.id)));
   }
   // Juntamos la tarjeta.
   tarjeta.append(cabecera, nombre, detalle, estado, acciones);
