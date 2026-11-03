@@ -6,7 +6,7 @@ Typing game to learn English and Spanish (both ways, plus French, Portuguese, It
 **Frase Exacta** es un juego de mecanografía para aprender escribiendo. Aparece una frase (o una palabra, una fórmula,
 una línea de código), la copias exactamente igual y cada error te cuesta una vida. Está inspirado en la mecánica de *Final Sentence*.
 
-Tiene siete secciones, cada una con sus modos:
+Tiene ocho secciones, cada una con sus modos:
 
 - **Idiomas:** eliges qué quieres aprender (*Quiero aprender:* inglés, español, francés, portugués, italiano o alemán).
   En inglés y en español hay frases, palabras por temas, dictado, pronunciación, números con letras, falsos amigos
@@ -25,6 +25,10 @@ Tiene siete secciones, cada una con sus modos:
   servidores Linux paso a paso en una consola realista, desde `enable` hasta tener la red funcionando (VLAN, troncales,
   rutas, OSPF, DHCP, SSH, ACL, NAT, EtherChannel, cortafuegos...). Con esquema de la red, tabla de direcciones y
   preguntas entre los pasos. También hay modos de comandos sueltos (escribir, detectar el error y ¿qué comando es?).
+- **Ciberseguridad:** siempre desde el lado de quien defiende. 9 laboratorios en tres niveles (permisos en Linux,
+  cerrar servicios, endurecer un router Cisco, detener un ataque de fuerza bruta, SSH con claves, auditar tu propio
+  servidor con nmap, AAA y SSH en Cisco, proteger un switch de ataques de capa 2 y responder a un incidente real paso
+  a paso), y modos rápidos: **¿Es phishing?**, **Código inseguro**, **Lee el registro**, **Criptografía** y **Puertos**.
 
 Funciona de dos formas, con el mismo código:
 
@@ -39,7 +43,7 @@ para que sirva tanto a quien aprende inglés como a quien aprende español.
 
 ### Cómo se juega
 
-1. Abre el juego, elige una sección (Idiomas, Matemáticas, Código, Datos, Teclado, Ratón o Redes) y un modo.
+1. Abre el juego, elige una sección (Idiomas, Matemáticas, Código, Datos, Teclado, Ratón, Redes o Ciberseguridad) y un modo.
 2. Aparece una frase. Escríbela tal cual: letras, tildes, mayúsculas, signos (¿ ¡ , . ') y espacios.
 3. Empiezas con 5 vidas. Cada carácter equivocado resta una y el juego te explica qué esperaba.
 4. Las frases empiezan cortas y se van alargando.
@@ -113,6 +117,12 @@ Cada modo es independiente: tiene sus propias frases, su récord, su lista de fr
 | Ratón | 7 lecciones | Mover, clic, doble clic, clic derecho, arrastrar y soltar, la rueda y un repaso con todo |
 | Redes | 21 laboratorios | Configurar equipos Cisco y servidores Linux paso a paso, en tres niveles (fácil, medio, difícil) |
 | Redes | Escribe comandos, Detecta el error, ¿Qué comando es? | Comandos sueltos de Cisco IOS y de Linux, del nivel elegido |
+| Ciberseguridad | 9 laboratorios | Proteger servidores Linux y equipos Cisco, detectar ataques y responder a un incidente |
+| Ciberseguridad | ¿Es phishing? | Un correo, SMS o web: decides si es estafa, de verdad o publicidad, y te explica las pistas |
+| Ciberseguridad | Código inseguro | Eliges la versión segura de una línea (inyección SQL, XSS, contraseñas, secretos...) y la escribes |
+| Ciberseguridad | Lee el registro, Criptografía, Puertos | Respondes leyendo registros, descifras César/ROT13/hex/Base64 y aprendes los puertos |
+| Idiomas | Textos largos (6 idiomas) | Copias párrafos enteros con su traducción debajo |
+| Idiomas | Traduce textos (6 idiomas) | Ves una frase y la escribes en el idioma que aprendes; las rayas dicen cuántas letras tiene cada palabra |
 
 En el menú, las teclas **1**, **2**, **3**... empiezan cada modo de la sección que estás viendo.
 
@@ -155,6 +165,7 @@ se hacen **siempre desde el principio**: `enable`, `configure terminal`... hasta
   pasos en Linux), medio (VLAN, troncales, router-on-a-stick, rutas estáticas, DHCP, SSH, servidor web Nginx) y difícil
   (OSPF, ACL, NAT/PAT, seguridad de puertos y STP, switch de capa 3, EtherChannel, un **proyecto de oficina completo**
   de 77 comandos y un servidor Linux seguro).
+- **Cambios en vivo:** a un lado de la consola ves la configuración del equipo tal como va quedando; la línea nueva se resalta.
 - **Al terminar** ves la configuración de cada equipo con un botón para copiarla y pegarla en la consola de Packet Tracer.
 - El juego guarda con qué forma completaste cada laboratorio y con cuántos errores.
 
@@ -218,6 +229,8 @@ Las pruebas están en [`tests/`](tests/) y comprueban:
   los verbos irregulares, los falsos amigos, las palabras en otros idiomas, las fórmulas de datos y los lenguajes.
 - `redes.test.js`: la consola (abreviaturas, errores, prompts de cada modo, plantillas, Tab, ? y ping), que cada paso de
   cada laboratorio está completo y que **cada comando de Cisco se escribe en el modo correcto del IOS**, y los comandos sueltos.
+- `seguridad.test.js`: que cada reto de criptografía se descifra de verdad a su respuesta, los puertos, los mensajes de
+  phishing, el código inseguro, los registros y que los textos largos tienen las mismas frases en los seis idiomas.
 - `app.test.js`: que la copia sin conexión (`sw.js`) incluye todos los archivos del juego y que la ficha de la app es válida.
 
 Si todo va bien, al final verás `pass` con el total de pruebas y `fail 0`.
@@ -390,6 +403,7 @@ Todo el código está comentado línea por línea para que se pueda leer y apren
 6. ✅ Más idiomas, dictado, pronunciación, números, verbos, falsos amigos, cálculo mental, «¿Qué lenguaje es?»,
    sección Datos (Excel, pandas, NumPy) y sección Ratón.
 7. ✅ Sección Redes: laboratorios de Cisco (como Packet Tracer) y de servidores Linux, en tres niveles.
+   ✅ Sección Ciberseguridad y, en Idiomas, textos largos y traducción en seis idiomas.
 8. Más adelante: lecturas, frases en francés, portugués, italiano y alemán, más laboratorios (IPv6, HSRP, VPN)
    y más temas de matemáticas (estadística, geometría).
 

@@ -17,8 +17,9 @@ const Ajustes = (() => {
     herramientaDatos: ["todos", "excel", "pandas", "numpy"], // herramienta de los modos de datos
     idiomaAprender: ["en", "es", "fr", "pt", "it", "de"], // idioma que se quiere aprender (sección Idiomas)
     nivelRedes: ["facil", "medio", "dificil"], // nivel de la sección Redes
+    nivelSeguridad: ["facil", "medio", "dificil"], // nivel de la sección Ciberseguridad
     ayudaLab: ["guiado", "plantilla", "examen"], // forma de hacer los laboratorios de redes
-    seccion: ["idiomas", "matematicas", "codigo", "datos", "teclado", "raton", "redes"], // sección del menú que se ve
+    seccion: ["idiomas", "matematicas", "codigo", "datos", "teclado", "raton", "redes", "seguridad"], // sección del menú que se ve
   };
   // Vidas de cada dificultad (Infinity: no se pierden nunca).
   const VIDAS = { normal: 5, dificil: 3, practica: Infinity };
@@ -39,6 +40,7 @@ const Ajustes = (() => {
     herramientaDatos: "todos", // todas las herramientas de datos
     idiomaAprender: "en", // se aprende inglés (o español si la interfaz está en inglés: se cambia justo debajo)
     nivelRedes: "facil", // la sección Redes empieza por lo fácil
+    nivelSeguridad: "facil", // y la de Ciberseguridad también
     ayudaLab: "guiado", // los laboratorios empiezan guiados
     seccion: "idiomas", // el menú empieza en los idiomas
   };

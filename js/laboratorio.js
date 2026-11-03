@@ -49,6 +49,8 @@ const Laboratorio = (() => {
     direcciones: $("lab-direcciones"), // tabla de direcciones
     direccionesCaja: $("lab-direcciones-caja"), // su desplegable (se oculta si no hay)
     pasos: $("lab-pasos"), // la plantilla de pasos
+    cambios: $("lab-cambios"), // los cambios del equipo, en vivo
+    cambiosTitulo: $("lab-cambios-titulo"), // título del panel de cambios
     fin: $("lab-fin"), // resultado
     finTitulo: $("lab-fin-titulo"), // título del resultado
     finTexto: $("lab-fin-texto"), // resumen
@@ -251,8 +253,32 @@ const Laboratorio = (() => {
     pintarEquipos();
     // Consola.
     pintarConsola();
+    // Cambios de ese equipo.
+    pintarCambios(false);
     // Línea de escribir.
     pintarLinea();
+  }
+
+  // Pinta el panel de cambios: la configuración del equipo que se ve, tal como va quedando.
+  //   nuevo: true para resaltar la última línea (se acaba de añadir)
+  function pintarCambios(nuevo) {
+    // Equipo que se ve.
+    const equipo = partida.viendo;
+    // Título: "Cambios en S1".
+    el.cambiosTitulo.textContent = t("lab.cambios", { equipo });
+    // Líneas de configuración de ese equipo.
+    const lineas = partida.exportado[equipo] || [];
+    // Sin cambios todavía (o un PC, que no guarda configuración).
+    if (lineas.length === 0) {
+      // Aviso.
+      el.cambios.replaceChildren(crear("li", "lab-cambio-vacio", t(tipoDe(equipo) === "pc" ? "lab.cambios.pc" : "lab.cambios.vacio")));
+      // Salimos.
+      return;
+    }
+    // Una línea por cambio; la última, resaltada si es nueva.
+    el.cambios.replaceChildren(...lineas.map((linea, posicion) => crear("li", `lab-cambio${nuevo && posicion === lineas.length - 1 ? " lab-cambio-nuevo" : ""}`, linea)));
+    // Bajamos hasta el final.
+    el.cambios.scrollTop = el.cambios.scrollHeight;
   }
 
   // Pinta la línea de escribir: prompt, tipo de caja y si se puede escribir.
@@ -720,6 +746,14 @@ const Laboratorio = (() => {
     return /^(do\s+)?(show|sh)\b|^(ping|traceroute|tracert|disable)\b/i.test(comando.trim());
   }
 
+  // Órdenes de Linux que solo miran (no cambian nada): no son «cambios».
+  function esConsultaLinux(comando) {
+    // Sin sudo delante.
+    const orden = comando.trim().replace(/^sudo\s+/, "");
+    // ls, cat, grep, ss, who, last, ps, nmap, estados, comprobaciones...
+    return /^(ls|cat|grep|ss|who|whoami|last|ps|nmap|find|df|ip|pwd|hostname|tail|head|sha256sum|curl|groups|cd|ssh|systemctl (status|list-unit-files)|ufw status|fail2ban-client status|crontab -u \S+ -l|sshd -t|nginx -t)\b/.test(orden);
+  }
+
   // Anota un comando en la configuración final del equipo (para copiarla al terminar).
   function exportar(paso, comando) {
     // Tipo de equipo.
@@ -731,8 +765,8 @@ const Laboratorio = (() => {
     }
     // Comando que se exporta.
     const texto = paso.exp || comando;
-    // En Cisco, sin consultas ni enable repetidos.
-    if (tipo === "cisco" && (esDeConsulta(texto) || (texto === "enable" && partida.exportado[paso.e].includes("enable")))) {
+    // En Cisco, sin consultas ni enable repetidos; en Linux, sin las órdenes que solo miran.
+    if ((tipo === "cisco" && (esDeConsulta(texto) || (texto === "enable" && partida.exportado[paso.e].includes("enable")))) || (tipo === "linux" && esConsultaLinux(texto))) {
       // Salimos.
       return;
     }
@@ -798,6 +832,8 @@ const Laboratorio = (() => {
     partida.estados[paso.e] = estado;
     // Lo anotamos para la configuración final.
     exportar(paso, resultado.comando);
+    // El panel de cambios lo muestra al momento.
+    pintarCambios(true);
     // Preguntas del equipo tras el comando.
     const preguntas = preguntasDe(paso);
     // Si se usó la forma completa y el equipo pregunta algo...
@@ -1061,7 +1097,7 @@ const Laboratorio = (() => {
     // Laboratorio.
     const lab = partida.lab;
     // Nivel y tipo.
-    el.nivel.textContent = `${t(`redes.nivel.${["facil", "medio", "dificil"][lab.nivel - 1]}`)} · ${t(`lab.tipo.${lab.tipo}`)}`;
+    el.nivel.textContent = `${t(`seccion.${lab.seccion || "redes"}`)} · ${t(`redes.nivel.${["facil", "medio", "dificil"][lab.nivel - 1]}`)} · ${t(`lab.tipo.${lab.tipo}`)}`;
     // Título.
     el.titulo.textContent = bil(lab.titulo);
     // Objetivo.
@@ -1128,6 +1164,8 @@ const Laboratorio = (() => {
     pintarAyudas();
     // Consola vacía.
     el.salida.replaceChildren();
+    // Panel de cambios vacío.
+    pintarCambios(false);
     // Mostramos la pantalla.
     mostrarPantalla("pantalla-lab");
     // Reloj.
@@ -1279,10 +1317,12 @@ const Laboratorio = (() => {
 
   // Laboratorio siguiente al actual (del mismo nivel, o el primero del siguiente), o null.
   function siguienteLab() {
+    // Laboratorios de la misma sección.
+    const misma = lista().filter((lab) => (lab.seccion || "redes") === (partida.lab.seccion || "redes"));
     // Posición del actual.
-    const posicion = lista().findIndex((lab) => lab.id === partida.lab.id);
-    // El siguiente de la lista.
-    return lista()[posicion + 1] || null;
+    const posicion = misma.findIndex((lab) => lab.id === partida.lab.id);
+    // El siguiente de la sección.
+    return misma[posicion + 1] || null;
   }
 
   // --- Teclado y botones ---
@@ -1433,6 +1473,7 @@ const Laboratorio = (() => {
   // Laboratorios como «modos» para las tarjetas del menú.
   const modos = lista().map((lab) => ({
     id: `lab-${lab.id}`, // nombre interno
+    seccion: lab.seccion || "redes", // sección del menú donde sale
     nivel: lab.nivel, // nivel (para el desplegable de la sección)
     insignia: lab.insignia, // texto del cuadrado de color
     color: lab.color, // color de la tarjeta

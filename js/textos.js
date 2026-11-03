@@ -18,7 +18,7 @@ const TEXTOS = {
     "barra.ajustes": "Ajustes", // botón de ajustes
 
     // --- Menú ---
-    "menu.lema": "Aprende escribiendo: idiomas, matemáticas, código, datos, redes, el teclado y el ratón. Copia exacto: cada error te cuesta una vida.", // frase bajo el título
+    "menu.lema": "Aprende escribiendo: idiomas, matemáticas, código, datos, redes, ciberseguridad, el teclado y el ratón. Copia exacto: cada error te cuesta una vida.", // frase bajo el título
     "menu.diasSeguidos": (d) => (d.n === 1 ? "1 día seguido" : `${d.n} días seguidos`), // racha de días
     "menu.frasesEscritas": (d) => (d.n === 1 ? "1 frase escrita" : `${d.n} frases escritas`), // frases totales
     "menu.tiempo": "{t} practicando", // tiempo total
@@ -536,7 +536,7 @@ const TEXTOS = {
     "lab.paso": "Paso", // contador de pasos
     "lab.equipos": "Equipos", // pestañas de equipos para lectores de pantalla
     "lab.atajos": "Intro: enviar · Tab: completar la palabra · ↑ ↓: comandos anteriores · ?: ayuda (en Cisco)", // atajos de la consola
-    "lab.objetivo": "Objetivo", // título del objetivo
+    "lab.objetivo": "Caso y objetivo", // título del objetivo
     "lab.esquema": "Esquema de la red", // título del esquema
     "lab.direcciones": "Tabla de direcciones", // título de la tabla
     "lab.pasos": "Plantilla de pasos", // título de la lista de pasos
@@ -588,6 +588,79 @@ const TEXTOS = {
     "modo.redes-usos.direccion": "Comandos", // tema
     "modo.redes-usos.detalle": "Te damos una tarea (crear una VLAN, una ruta, una ACL…) y eliges el comando que la hace.", // descripción
 
+    // --- Ronda 5: Ciberseguridad, textos largos y traducción ---
+    "seccion.seguridad": "Ciberseguridad", // pestaña de ciberseguridad
+    "seccion.ajuste.nivelSeguridad": "Nivel:", // desplegable de nivel
+    "seccion.nota.seguridad": "Todo desde el lado de quien defiende: proteger equipos, detectar ataques y reaccionar. En los laboratorios ves a un lado cómo cambia la configuración del equipo con cada comando.", // nota de la sección
+    "reglas.12": "En Ciberseguridad, además de laboratorios, hay mensajes para detectar phishing, código inseguro, registros para leer, retos de cifrado y puertos.", // regla 12
+    "phishing.canal.correo": "Correo", // canal
+    "phishing.canal.sms": "SMS", // canal
+    "phishing.canal.web": "Web", // canal
+    "phishing.pregunta": "¿Qué es este mensaje?", // pregunta
+    "phishing.tipo.phishing": "Phishing: una estafa para robar datos o dinero", // opción
+    "phishing.tipo.legitimo": "Legítimo: es de verdad", // opción
+    "phishing.tipo.spam": "Spam: publicidad, pero no roba nada", // opción
+    "seguridad.registro": "Registro", // etiqueta
+    "cripto.cesar": "César", // nombre del cifrado
+    "cripto.consigna": "Descifra el mensaje y escríbelo", // consigna
+    "puertos.consigna.puerto": "Escribe el número de puerto", // consigna
+    "puertos.consigna.protocolo": "Escribe el protocolo (el servicio)", // consigna
+    "traducir.nota": "Las rayas te dicen cuántas letras tiene cada palabra.", // nota de la traducción
+    "lab.cambios": (d) => `Cambios en ${d.equipo}`, // título del panel de cambios
+    "lab.cambios.vacio": "Todavía no has cambiado nada en este equipo.", // panel vacío
+    "lab.cambios.pc": "Un PC no guarda configuración: aquí solo se comprueba.", // panel de un PC
+    "modo.seguridad-phishing.nombre": "¿Es phishing?", // nombre
+    "modo.seguridad-phishing.direccion": "Detectar estafas", // tema
+    "modo.seguridad-phishing.detalle": "Lee un correo, un SMS o una web y decide si es una estafa, de verdad o solo publicidad. Después te explica las pistas.", // descripción
+    "modo.seguridad-errores.nombre": "Código inseguro", // nombre
+    "modo.seguridad-errores.direccion": "Programar seguro", // tema
+    "modo.seguridad-errores.detalle": "Tres versiones de la misma línea y solo una es segura: inyección SQL, XSS, contraseñas, secretos… Encuéntrala y escríbela.", // descripción
+    "modo.seguridad-registros.nombre": "Lee el registro", // nombre
+    "modo.seguridad-registros.direccion": "Detectar ataques", // tema
+    "modo.seguridad-registros.detalle": "Ves trozos de registros reales y respondes: qué IP atacó, qué usuario probó, qué tipo de ataque es…", // descripción
+    "modo.seguridad-cripto.nombre": "Criptografía", // nombre
+    "modo.seguridad-cripto.direccion": "Retos", // tema
+    "modo.seguridad-cripto.detalle": "Descifra mensajes en César, ROT13, hexadecimal y Base64, y aprende la diferencia entre codificar y cifrar.", // descripción
+    "modo.seguridad-puertos.nombre": "Puertos", // nombre
+    "modo.seguridad-puertos.direccion": "Lo básico", // tema
+    "modo.seguridad-puertos.detalle": "¿Qué puerto usa SSH? ¿Qué servicio va por el 3389? Los puertos que hay que saber de memoria.", // descripción
+    "modo.textos-en.nombre": "Textos largos en inglés", // nombre
+    "modo.textos-en.direccion": "Escritura · EN", // tema
+    "modo.textos-en.detalle": "Copia párrafos enteros en inglés, con sus acentos y signos, viendo la traducción debajo.", // descripción
+    "modo.traducir-en.nombre": "Traduce textos al inglés", // nombre
+    "modo.traducir-en.direccion": "Traducción · EN", // tema
+    "modo.traducir-en.detalle": "Ves una frase y la escribes en inglés. Las rayas te dicen cuántas letras tiene cada palabra.", // descripción
+    "modo.textos-es.nombre": "Textos largos en español", // nombre
+    "modo.textos-es.direccion": "Escritura · ES", // tema
+    "modo.textos-es.detalle": "Copia párrafos enteros en español, con sus acentos y signos, viendo la traducción debajo.", // descripción
+    "modo.traducir-es.nombre": "Traduce textos al español", // nombre
+    "modo.traducir-es.direccion": "Traducción · ES", // tema
+    "modo.traducir-es.detalle": "Ves una frase y la escribes en español. Las rayas te dicen cuántas letras tiene cada palabra.", // descripción
+    "modo.textos-fr.nombre": "Textos largos en francés", // nombre
+    "modo.textos-fr.direccion": "Escritura · FR", // tema
+    "modo.textos-fr.detalle": "Copia párrafos enteros en francés, con sus acentos y signos, viendo la traducción debajo.", // descripción
+    "modo.traducir-fr.nombre": "Traduce textos al francés", // nombre
+    "modo.traducir-fr.direccion": "Traducción · FR", // tema
+    "modo.traducir-fr.detalle": "Ves una frase y la escribes en francés. Las rayas te dicen cuántas letras tiene cada palabra.", // descripción
+    "modo.textos-pt.nombre": "Textos largos en portugués", // nombre
+    "modo.textos-pt.direccion": "Escritura · PT", // tema
+    "modo.textos-pt.detalle": "Copia párrafos enteros en portugués, con sus acentos y signos, viendo la traducción debajo.", // descripción
+    "modo.traducir-pt.nombre": "Traduce textos al portugués", // nombre
+    "modo.traducir-pt.direccion": "Traducción · PT", // tema
+    "modo.traducir-pt.detalle": "Ves una frase y la escribes en portugués. Las rayas te dicen cuántas letras tiene cada palabra.", // descripción
+    "modo.textos-it.nombre": "Textos largos en italiano", // nombre
+    "modo.textos-it.direccion": "Escritura · IT", // tema
+    "modo.textos-it.detalle": "Copia párrafos enteros en italiano, con sus acentos y signos, viendo la traducción debajo.", // descripción
+    "modo.traducir-it.nombre": "Traduce textos al italiano", // nombre
+    "modo.traducir-it.direccion": "Traducción · IT", // tema
+    "modo.traducir-it.detalle": "Ves una frase y la escribes en italiano. Las rayas te dicen cuántas letras tiene cada palabra.", // descripción
+    "modo.textos-de.nombre": "Textos largos en alemán", // nombre
+    "modo.textos-de.direccion": "Escritura · DE", // tema
+    "modo.textos-de.detalle": "Copia párrafos enteros en alemán, con sus acentos y signos, viendo la traducción debajo.", // descripción
+    "modo.traducir-de.nombre": "Traduce textos al alemán", // nombre
+    "modo.traducir-de.direccion": "Traducción · DE", // tema
+    "modo.traducir-de.detalle": "Ves una frase y la escribes en alemán. Las rayas te dicen cuántas letras tiene cada palabra.", // descripción
+
     // --- Créditos ---
     "creditos.frasesDe": "Frases de", // inicio de los créditos
     "creditos.codigo": "Código abierto con licencia MIT", // licencia del código
@@ -607,7 +680,7 @@ const TEXTOS = {
     "barra.ajustes": "Settings",
 
     // --- Menu ---
-    "menu.lema": "Learn by typing: languages, math, code, data, networking, the keyboard and the mouse. Copy it exactly: every mistake costs you a life.",
+    "menu.lema": "Learn by typing: languages, math, code, data, networking, cybersecurity, the keyboard and the mouse. Copy it exactly: every mistake costs you a life.",
     "menu.diasSeguidos": (d) => `${d.n}-day streak`,
     "menu.frasesEscritas": (d) => (d.n === 1 ? "1 sentence typed" : `${d.n} sentences typed`),
     "menu.tiempo": "{t} of practice",
@@ -1126,7 +1199,7 @@ const TEXTOS = {
     "lab.paso": "Step",
     "lab.equipos": "Devices",
     "lab.atajos": "Enter: send · Tab: complete the word · ↑ ↓: previous commands · ?: help (on Cisco)",
-    "lab.objetivo": "Objective",
+    "lab.objetivo": "Scenario and goal",
     "lab.esquema": "Network diagram",
     "lab.direcciones": "Addressing table",
     "lab.pasos": "Step template",
@@ -1177,6 +1250,79 @@ const TEXTOS = {
     "modo.redes-usos.nombre": "Which command?",
     "modo.redes-usos.direccion": "Commands",
     "modo.redes-usos.detalle": "We give you a task (create a VLAN, a route, an ACL…) and you pick the command that does it.",
+
+    // --- Round 5: Cybersecurity, long texts and translation ---
+    "seccion.seguridad": "Cybersecurity",
+    "seccion.ajuste.nivelSeguridad": "Level:",
+    "seccion.nota.seguridad": "Everything from the defender's side: protecting machines, detecting attacks and responding. In the labs you see on the side how the device's configuration changes with each command.",
+    "reglas.12": "In Cybersecurity, besides labs, there are messages to spot phishing, insecure code, logs to read, cipher challenges and ports.",
+    "phishing.canal.correo": "Email",
+    "phishing.canal.sms": "SMS",
+    "phishing.canal.web": "Web",
+    "phishing.pregunta": "What is this message?",
+    "phishing.tipo.phishing": "Phishing: a scam to steal data or money",
+    "phishing.tipo.legitimo": "Legitimate: it's real",
+    "phishing.tipo.spam": "Spam: advertising, but it steals nothing",
+    "seguridad.registro": "Log",
+    "cripto.cesar": "Caesar",
+    "cripto.consigna": "Decode the message and type it",
+    "puertos.consigna.puerto": "Type the port number",
+    "puertos.consigna.protocolo": "Type the protocol (the service)",
+    "traducir.nota": "The dashes show how many letters each word has.",
+    "lab.cambios": (d) => `Changes on ${d.equipo}`,
+    "lab.cambios.vacio": "You haven't changed anything on this device yet.",
+    "lab.cambios.pc": "A PC keeps no configuration: here you only check things.",
+    "modo.seguridad-phishing.nombre": "Is it phishing?",
+    "modo.seguridad-phishing.direccion": "Spotting scams",
+    "modo.seguridad-phishing.detalle": "Read an email, SMS or website and decide whether it's a scam, real or just advertising. Then it explains the clues.",
+    "modo.seguridad-errores.nombre": "Insecure code",
+    "modo.seguridad-errores.direccion": "Secure coding",
+    "modo.seguridad-errores.detalle": "Three versions of the same line and only one is safe: SQL injection, XSS, passwords, secrets… Find it and type it.",
+    "modo.seguridad-registros.nombre": "Read the log",
+    "modo.seguridad-registros.direccion": "Detecting attacks",
+    "modo.seguridad-registros.detalle": "You see pieces of real logs and answer: which IP attacked, which user was tried, what kind of attack it is…",
+    "modo.seguridad-cripto.nombre": "Cryptography",
+    "modo.seguridad-cripto.direccion": "Challenges",
+    "modo.seguridad-cripto.detalle": "Decode messages in Caesar, ROT13, hexadecimal and Base64, and learn the difference between encoding and encrypting.",
+    "modo.seguridad-puertos.nombre": "Ports",
+    "modo.seguridad-puertos.direccion": "The basics",
+    "modo.seguridad-puertos.detalle": "Which port does SSH use? Which service runs on 3389? The ports you need to know by heart.",
+    "modo.textos-en.nombre": "Long texts in English",
+    "modo.textos-en.direccion": "Writing · EN",
+    "modo.textos-en.detalle": "Copy whole paragraphs in English, with their accents and punctuation, with the translation below.",
+    "modo.traducir-en.nombre": "Translate texts into English",
+    "modo.traducir-en.direccion": "Translation · EN",
+    "modo.traducir-en.detalle": "You see a sentence and write it in English. The dashes show how many letters each word has.",
+    "modo.textos-es.nombre": "Long texts in Spanish",
+    "modo.textos-es.direccion": "Writing · ES",
+    "modo.textos-es.detalle": "Copy whole paragraphs in Spanish, with their accents and punctuation, with the translation below.",
+    "modo.traducir-es.nombre": "Translate texts into Spanish",
+    "modo.traducir-es.direccion": "Translation · ES",
+    "modo.traducir-es.detalle": "You see a sentence and write it in Spanish. The dashes show how many letters each word has.",
+    "modo.textos-fr.nombre": "Long texts in French",
+    "modo.textos-fr.direccion": "Writing · FR",
+    "modo.textos-fr.detalle": "Copy whole paragraphs in French, with their accents and punctuation, with the translation below.",
+    "modo.traducir-fr.nombre": "Translate texts into French",
+    "modo.traducir-fr.direccion": "Translation · FR",
+    "modo.traducir-fr.detalle": "You see a sentence and write it in French. The dashes show how many letters each word has.",
+    "modo.textos-pt.nombre": "Long texts in Portuguese",
+    "modo.textos-pt.direccion": "Writing · PT",
+    "modo.textos-pt.detalle": "Copy whole paragraphs in Portuguese, with their accents and punctuation, with the translation below.",
+    "modo.traducir-pt.nombre": "Translate texts into Portuguese",
+    "modo.traducir-pt.direccion": "Translation · PT",
+    "modo.traducir-pt.detalle": "You see a sentence and write it in Portuguese. The dashes show how many letters each word has.",
+    "modo.textos-it.nombre": "Long texts in Italian",
+    "modo.textos-it.direccion": "Writing · IT",
+    "modo.textos-it.detalle": "Copy whole paragraphs in Italian, with their accents and punctuation, with the translation below.",
+    "modo.traducir-it.nombre": "Translate texts into Italian",
+    "modo.traducir-it.direccion": "Translation · IT",
+    "modo.traducir-it.detalle": "You see a sentence and write it in Italian. The dashes show how many letters each word has.",
+    "modo.textos-de.nombre": "Long texts in German",
+    "modo.textos-de.direccion": "Writing · DE",
+    "modo.textos-de.detalle": "Copy whole paragraphs in German, with their accents and punctuation, with the translation below.",
+    "modo.traducir-de.nombre": "Translate texts into German",
+    "modo.traducir-de.direccion": "Translation · DE",
+    "modo.traducir-de.detalle": "You see a sentence and write it in German. The dashes show how many letters each word has.",
 
     // --- Credits ---
     "creditos.frasesDe": "Sentences from",

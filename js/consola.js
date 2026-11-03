@@ -53,6 +53,10 @@ const Consola = (() => {
       "sticky", "violation", "restrict", "protect", "portfast", "bpduguard", "root", "primary", "secondary",
       "channel-group", "active", "passive", "desirable", "port-channel", "standby", "priority", "preempt", "ntp",
       "server", "www", "local", "all",
+      // Seguridad del equipo.
+      "security", "passwords", "min-length", "block-for", "attempts", "within", "http", "run", "none", "aaa",
+      "new-model", "authentication", "default", "time-out", "authentication-retries", "snooping", "trust", "limit",
+      "inspection", "information", "option", "login",
     ],
   );
   // Palabras que en el IOS se pueden abreviar con una sola letra (como "conf t").
@@ -66,11 +70,14 @@ const Consola = (() => {
     "hostname", "hostnamectl", "tail", "head", "grep", "sed", "nano", "vim", "mkdir", "rm", "cp", "mv", "chmod",
     "chown", "useradd", "usermod", "userdel", "adduser", "passwd", "groups", "id", "ufw", "nginx", "ping", "exit",
     "su", "journalctl", "uptime", "top", "ps", "kill", "man", "less", "touch", "find", "wget", "tar", "date",
+    "awk", "sort", "uniq", "wc", "fail2ban-client", "ssh", "ssh-keygen", "ssh-copy-id", "sshd", "nmap", "last", "who",
+    "pkill", "crontab", "sha256sum", "base64", "xxd", "openssl", "mysql",
   ]);
   // Palabras de Linux que van detrás de una orden y forman parte del comando (el resto son argumentos: nombres, rutas, IP...).
   const PALABRAS_LINUX = new Set([
     "update", "upgrade", "install", "remove", "enable", "disable", "start", "stop", "restart", "reload", "status",
     "allow", "deny", "default", "incoming", "outgoing", "addr", "route", "link", "show", "verbose", "numbered",
+    "purge", "insert", "from", "list-unit-files", "status",
   ]);
   // Órdenes que entiende el símbolo del sistema de un PC de Packet Tracer.
   const ORDENES_PC = new Set(["ping", "ipconfig", "tracert", "arp", "ssh", "telnet", "netstat", "nslookup", "exit"]);

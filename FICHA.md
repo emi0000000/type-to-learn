@@ -25,6 +25,8 @@ Cada modo va separado: no se mezclan.
 | Datos | Fórmulas de Excel / Sheets, pandas y NumPy | Igual que Código | ✅ |
 | Ratón | Objetivos en la pantalla | Mover, clic, doble clic, clic derecho, arrastrar, rueda | ✅ |
 | Redes | Laboratorios de Cisco y Linux con esquema y tabla de direcciones | Configuras cada equipo paso a paso en una consola realista (guiado, plantilla o examen) | ✅ |
+| Ciberseguridad | Laboratorios de defensa, phishing, código inseguro, registros, cifrado y puertos | Proteges, detectas y respondes; eliges o escribes la respuesta | ✅ |
+| Textos largos y traducción | Párrafos en seis idiomas | Los copias, o traduces cada frase con pistas | ✅ |
 
 ## Lo que NO debe hacer
 
@@ -166,3 +168,12 @@ Cada modo va separado: no se mezclan.
 - **Packet Tracer:** las salidas imitan las suyas (2960, 2911, 3560) y la configuración final se puede copiar y pegar
   en su consola. Al exportar, `copy running-config startup-config` se cambia por `write memory` (que no pregunta).
 - **Comprobado por las pruebas:** cada comando de Cisco de cada laboratorio se simula y se comprueba que va en su modo.
+
+## Decisiones tomadas para Ciberseguridad y los textos largos
+
+- **Solo defensa:** proteger, detectar y reaccionar (lo que piden los cursos y los trabajos). Nada de cómo atacar a otros;
+  los ataques solo aparecen para reconocerlos en un registro o en un correo. El escaneo con nmap es siempre de un equipo propio.
+- **Cambios en vivo:** en los laboratorios (también los de Redes) se ve a un lado la configuración del equipo que va quedando.
+- **Phishing con dominios inventados** (.example, nombres ficticios): ninguna empresa real.
+- **Traduce textos:** la traducción está oculta con rayas y se descubre al acertar; así se puede comprobar una traducción
+  exacta y a la vez se ve la forma de la frase. Los textos son propios y están alineados frase a frase en seis idiomas.

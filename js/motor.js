@@ -24,6 +24,7 @@
 //     enunciado(frase)    lo que se muestra (por ejemplo "37 + 48")
 //     comprobar(escrito, frase)  true si la respuesta es correcta (por defecto, igual a frase[1])
 //     solucion(frase)     la respuesta correcta que se enseña al fallar (por defecto, frase[1])
+//     enunciadoBloque     true si el enunciado es largo (varias líneas, como un registro): letra pequeña y alineado a la izquierda
 //   sinEscribir           true si no se escribe nada (pronunciación: se habla al micrófono)
 //   largo(frase)          «largo» de la frase para la dificultad (por defecto, sus caracteres)
 //   alMostrarFrase(frase, api)        se llama al mostrar cada frase nueva
@@ -1021,8 +1022,10 @@ const Motor = (() => {
       const enunciado = modo.enunciado ? modo.enunciado(partida.frase) : partida.frase[1];
       // Quitamos las animaciones y el tapado de la frase anterior.
       el.fraseVisible.classList.remove("lograda", "tapada", "frase-oculta");
-      // Marcamos que es un enunciado (para el estilo).
+      // Marcamos que es un enunciado (para el estilo); los largos (registros) van en bloque, letra pequeña.
       el.fraseVisible.classList.add("enunciado");
+      // Enunciado en bloque o normal.
+      el.fraseVisible.classList.toggle("enunciado-bloque", Boolean(modo.enunciadoBloque));
       // Ponemos el texto.
       el.fraseVisible.textContent = enunciado;
       // Lo mismo para lectores de pantalla.
@@ -1038,7 +1041,7 @@ const Motor = (() => {
       return;
     }
     // Ya no es un enunciado.
-    el.fraseVisible.classList.remove("enunciado");
+    el.fraseVisible.classList.remove("enunciado", "enunciado-bloque");
     // Texto de la frase.
     const texto = partida.frase[1];
     // ¿La frase se oculta hasta escribirla? (deletreo)

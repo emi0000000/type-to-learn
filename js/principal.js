@@ -1,5 +1,5 @@
 // principal.js: arranca el juego y maneja el menú principal.
-// El menú está dividido en secciones (Idiomas, Matemáticas, Código, Datos, Teclado, Ratón y Redes); cada una tiene sus modos.
+// El menú está dividido en secciones (Idiomas, Matemáticas, Código, Datos, Teclado, Ratón, Redes y Ciberseguridad); cada una tiene sus modos.
 // Es el último archivo que se carga, así que todo lo demás ya está disponible.
 
 // Idiomas que se pueden aprender en la sección Idiomas (el desplegable «Quiero aprender»).
@@ -12,7 +12,23 @@ function tarjetasDeOtroIdioma(idioma, insignia, color) {
     { modo: ModosVocabulario[idioma], insignia, color, archivo: "datos/vocabulario-idiomas.js", aprende: [idioma] }, // palabras
     { modo: ModosDictado[idioma], insignia: "♪", color: "cian", archivo: "datos/vocabulario-idiomas.js", aprende: [idioma] }, // dictado
     { modo: ModosPronunciacion[idioma], insignia: "/ə/", color: "violeta", archivo: "datos/vocabulario-idiomas.js", aprende: [idioma] }, // pronunciación
+    ...tarjetasDeTextos(idioma), // textos largos y traducción
   ];
+}
+
+// Las dos tarjetas de textos de un idioma: copiar textos largos y traducirlos.
+function tarjetasDeTextos(idioma) {
+  // Textos largos y traducción.
+  return [
+    { modo: ModosTextos.largos[idioma], insignia: "¶", color: "verde", archivo: "datos/textos-largos.js", aprende: [idioma] }, // textos largos
+    { modo: ModosTextos.traducir[idioma], insignia: "⇄", color: "ambar", archivo: "datos/textos-largos.js", aprende: [idioma] }, // traduce textos
+  ];
+}
+
+// Tarjetas de los laboratorios de una sección ("redes" o "seguridad"), con su nivel.
+function tarjetasDeLaboratorios(seccion) {
+  // Solo los de esa sección.
+  return Laboratorio.modos.filter((modo) => modo.seccion === seccion).map((modo) => ({ modo, insignia: modo.insignia, color: modo.color, nivel: modo.nivel }));
 }
 
 // Secciones del menú con sus modos.
@@ -34,6 +50,7 @@ const SECCIONES = [
       { modo: ModosNumeros.en, insignia: "47", color: "verde", archivo: "js/numerosEnPalabras.js", aprende: ["en"] }, // números con letras
       { modo: ModoVerbos, insignia: "go→", color: "ambar", archivo: "datos/verbos.js", aprende: ["en"] }, // verbos irregulares
       { modo: ModosFalsos.ingles, insignia: "≠", color: "coral", archivo: "datos/falsos-amigos.js", aprende: ["en"] }, // falsos amigos
+      ...tarjetasDeTextos("en"), // textos largos y traducción
       // --- Para aprender español ---
       { modo: ModoOrtografia, insignia: "Ñ", color: "ambar", archivo: "datos/frases-es.js", aprende: ["es"] }, // ortografía
       { modo: ModoEspanol, insignia: "ES", color: "coral", archivo: "datos/frases-en.js", aprende: ["es"] }, // frases en español
@@ -42,6 +59,7 @@ const SECCIONES = [
       { modo: ModosPronunciacion.es, insignia: "/ə/", color: "violeta", archivo: "datos/vocabulario.js", aprende: ["es"] }, // pronunciación en español
       { modo: ModosNumeros.es, insignia: "47", color: "verde", archivo: "js/numerosEnPalabras.js", aprende: ["es"] }, // números con letras
       { modo: ModosFalsos.espanol, insignia: "≠", color: "azul", archivo: "datos/falsos-amigos.js", aprende: ["es"] }, // falsos amigos
+      ...tarjetasDeTextos("es"), // textos largos y traducción
       // --- Para los dos ---
       { modo: ModoAbecedario, insignia: "ABC", color: "verde", archivo: "datos/vocabulario.js", aprende: ["en", "es"], extra: { texto: "abc.verTabla", accion: () => TablaAbecedario.abrir() } }, // abecedario
       // --- Francés, portugués, italiano y alemán ---
@@ -108,11 +126,27 @@ const SECCIONES = [
     nota: "seccion.nota.redes", // aclaración bajo el desplegable
     modos: [
       // Un laboratorio por tarjeta (solo los del nivel elegido).
-      ...Laboratorio.modos.map((modo) => ({ modo, insignia: modo.insignia, color: modo.color, nivel: modo.nivel })),
+      ...tarjetasDeLaboratorios("redes"),
       // Comandos sueltos del nivel elegido.
       { modo: ModosRedes.escribir, insignia: ">_", color: "verde", archivo: "datos/redes.js" }, // escribir comandos
       { modo: ModosRedes.errores, insignia: "✓✗", color: "coral", archivo: "datos/redes.js" }, // detectar el error
       { modo: ModosRedes.usos, insignia: "?#", color: "azul", archivo: "datos/redes.js" }, // casos de uso
+    ],
+  },
+  // Ciberseguridad: laboratorios de defensa y modos rápidos.
+  {
+    id: "seguridad", // nombre interno
+    ajuste: "nivelSeguridad", // desplegable de nivel encima de las tarjetas
+    nota: "seccion.nota.seguridad", // aclaración bajo el desplegable
+    modos: [
+      // Un laboratorio por tarjeta (solo los del nivel elegido).
+      ...tarjetasDeLaboratorios("seguridad"),
+      // Modos rápidos.
+      { modo: ModosSeguridad.phishing, insignia: "@?", color: "coral", archivo: "datos/phishing.js" }, // ¿es phishing?
+      { modo: ModosSeguridad.inseguro, insignia: "{!}", color: "violeta", archivo: "datos/codigo-inseguro.js" }, // código inseguro
+      { modo: ModosSeguridad.registros, insignia: "log", color: "verde", archivo: "datos/registros.js" }, // lee el registro
+      { modo: ModosSeguridad.cripto, insignia: "#?", color: "ambar", archivo: "js/cripto.js" }, // criptografía
+      { modo: ModosSeguridad.puertos, insignia: ":22", color: "azul", archivo: "datos/puertos.js" }, // puertos
     ],
   },
 ];
@@ -127,6 +161,8 @@ const OPCIONES_DE_SECCION = {
   herramientaDatos: ["todos", ...ModosDatos.LENGUAJES].map((valor) => [valor, `lenguaje.${valor}`]),
   // Nivel de la sección Redes.
   nivelRedes: ["facil", "medio", "dificil"].map((valor) => [valor, `redes.nivel.${valor}`]),
+  // Nivel de la sección Ciberseguridad.
+  nivelSeguridad: ["facil", "medio", "dificil"].map((valor) => [valor, `redes.nivel.${valor}`]),
   // Tipos de teclado.
   teclado: ["auto", "es", "la", "us"].map((valor) => [valor, valor === "auto" ? "teclado.auto" : `teclado.nombre.${valor}`]),
 };
@@ -144,8 +180,8 @@ function seccionActual() {
 function modosVisibles(seccion) {
   // Idioma que se aprende.
   const aprende = Ajustes.valor("idiomaAprender");
-  // Nivel de Redes (1, 2 o 3).
-  const nivel = ["facil", "medio", "dificil"].indexOf(Ajustes.valor("nivelRedes")) + 1;
+  // Nivel elegido en la sección (Redes o Ciberseguridad): 1, 2 o 3.
+  const nivel = ["facil", "medio", "dificil"].indexOf(seccion.ajuste ? Ajustes.valor(seccion.ajuste) : "") + 1;
   // Las que no dicen idioma ni nivel, o las que coinciden.
   return seccion.modos.filter((tarjeta) => (!tarjeta.aprende || tarjeta.aprende.includes(aprende)) && (!tarjeta.nivel || tarjeta.nivel === nivel));
 }

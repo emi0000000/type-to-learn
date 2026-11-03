@@ -57,6 +57,12 @@
   <script defer src="datos/lenguajes.js"></script>
   <script defer src="datos/redes.js"></script>
   <script defer src="datos/laboratorios.js"></script>
+  <script defer src="datos/laboratorios-seguridad.js"></script>
+  <script defer src="datos/phishing.js"></script>
+  <script defer src="datos/codigo-inseguro.js"></script>
+  <script defer src="datos/registros.js"></script>
+  <script defer src="datos/puertos.js"></script>
+  <script defer src="datos/textos-largos.js"></script>
   <!-- 2. Textos de la interfaz en español e inglés. -->
   <script defer src="js/textos.js"></script>
   <!-- 3. Guardar datos en el navegador. -->
@@ -77,6 +83,8 @@
   <script defer src="js/aritmetica.js"></script>
   <!-- 7 quater. Lógica de la consola de los laboratorios (Cisco, Linux y PC). -->
   <script defer src="js/consola.js"></script>
+  <!-- 7 quinquies. Retos de criptografía y de puertos. -->
+  <script defer src="js/cripto.js"></script>
   <!-- 8. Cambiar de pantalla. -->
   <script defer src="js/pantallas.js"></script>
   <!-- 9. Ajustes: idioma, tema, dificultad, sonido, voz. -->
@@ -104,11 +112,13 @@
   <script defer src="js/modos/numeros.js"></script>
   <script defer src="js/modos/verbos.js"></script>
   <script defer src="js/modos/falsos.js"></script>
+  <script defer src="js/modos/textos.js"></script>
   <script defer src="js/modos/abecedario.js"></script>
   <script defer src="js/modos/matematicas.js"></script>
   <script defer src="js/modos/calculos.js"></script>
   <script defer src="js/modos/codigo.js"></script>
   <script defer src="js/modos/redes.js"></script>
+  <script defer src="js/modos/seguridad.js"></script>
   <script defer src="js/modos/teclado.js"></script>
   <!-- 14 bis. Lecciones del ratón (tienen su propia pantalla). -->
   <script defer src="js/raton.js"></script>
@@ -211,7 +221,7 @@
         </ul>
       </div>
 
-      <!-- Pestañas de las secciones: Idiomas, Matemáticas, Código, Datos, Teclado, Ratón y Redes (las crea principal.js). -->
+      <!-- Pestañas de las secciones: Idiomas, Matemáticas, Código, Datos, Teclado, Ratón, Redes y Ciberseguridad (las crea principal.js). -->
       <nav id="menu-secciones" class="secciones" role="tablist" data-t-aria-label="menu.secciones"></nav>
       <!-- Opciones de la sección (idioma que se aprende, lenguaje de programación, tipo de teclado...). -->
       <div id="menu-opciones" class="seccion-opciones"></div>
@@ -246,6 +256,8 @@
           <li data-t="reglas.10"></li>
           <!-- Laboratorios de redes. -->
           <li data-t="reglas.11"></li>
+          <!-- Ciberseguridad. -->
+          <li data-t="reglas.12"></li>
         </ol>
       </details>
       <!-- Pista de los atajos de teclado (se oculta en pantallas táctiles). -->
@@ -494,6 +506,13 @@
         </div>
         <!-- Columna lateral: objetivo, esquema, direcciones y plantilla de pasos. -->
         <aside class="lab-lateral">
+          <!-- Cambios del equipo, en vivo: su configuración tal como va quedando. -->
+          <details class="lab-caja" open>
+            <!-- Título ("Cambios en S1"). -->
+            <summary id="lab-cambios-titulo">Cambios</summary>
+            <!-- Líneas (las crea laboratorio.js; la última, resaltada). -->
+            <ol id="lab-cambios" class="lab-cambios" aria-live="polite"></ol>
+          </details>
           <!-- Objetivo. -->
           <details class="lab-caja" open>
             <!-- Título. -->

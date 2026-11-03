@@ -1639,6 +1639,21 @@ body[data-pantalla="pantalla-menu"] .marca {
   white-space: normal; /* corta las líneas normalmente */
 }
 
+.frase.enunciado.enunciado-bloque {
+  max-height: 16em; /* no demasiado alto */
+  overflow: auto; /* se desplaza si es largo */
+  padding: 10px 12px; /* relleno */
+  background: #0b0d12; /* fondo de consola: es un registro */
+  border-radius: 10px; /* esquinas redondeadas */
+  color: #d7dae3; /* texto claro */
+  font-size: calc(0.82rem * min(var(--escala-frase), 1.25)); /* letra pequeña */
+  font-weight: 400; /* normal */
+  line-height: 1.5; /* espacio entre líneas */
+  text-align: left; /* a la izquierda */
+  white-space: pre-wrap; /* respeta los saltos de línea */
+  overflow-wrap: anywhere; /* corta las líneas larguísimas */
+}
+
 /* ===== Pronunciación ===== */
 .hablar {
   margin: 0 0 18px; /* espacio debajo */
@@ -2246,6 +2261,37 @@ body[data-pantalla="pantalla-lab"] .contenedor {
 
 .esq-led {
   fill: var(--hecho); /* luz verde del servidor */
+}
+
+.lab-cambios {
+  max-height: 220px; /* alto máximo con desplazamiento */
+  margin: 8px 0 2px; /* espacio */
+  padding: 8px 10px; /* relleno */
+  overflow-y: auto; /* se desplaza */
+  list-style: none; /* sin números */
+  background: #0b0d12; /* fondo de consola */
+  border-radius: 10px; /* esquinas redondeadas */
+  color: #d7dae3; /* texto claro */
+  font-family: var(--letra-maquina); /* letra de máquina */
+  font-size: 0.8rem; /* pequeña */
+}
+
+.lab-cambio {
+  padding: 1px 4px; /* relleno */
+  border-radius: 4px; /* esquinas suaves */
+  white-space: pre-wrap; /* respeta los espacios */
+  overflow-wrap: anywhere; /* corta los largos */
+}
+
+.lab-cambio-nuevo {
+  background: rgba(111, 213, 154, 0.18); /* la línea nueva, en verde suave */
+  color: #6fd59a; /* verde */
+  animation: aparecer 0.3s ease; /* aparece suavemente */
+}
+
+.lab-cambio-vacio {
+  color: #7f8698; /* apagado */
+  font-family: var(--letra-general); /* letra normal */
 }
 
 .lab-direcciones {

@@ -5,7 +5,7 @@
 // Solo funciona cuando el juego se abre desde internet o desde un servidor local, no como archivo.
 
 // Nombre de la copia guardada. Cambia el número al cambiar la lista de archivos, para empezar una copia nueva.
-const VERSION = "frase-exacta-v5";
+const VERSION = "frase-exacta-v6";
 
 // Archivos que forman el juego (tests/app.test.js comprueba que la lista está completa).
 const ARCHIVOS = [
@@ -25,6 +25,12 @@ const ARCHIVOS = [
   "datos/lenguajes.js", // líneas de muchos lenguajes
   "datos/redes.js", // comandos de redes
   "datos/laboratorios.js", // laboratorios de redes
+  "datos/laboratorios-seguridad.js", // laboratorios de ciberseguridad
+  "datos/phishing.js", // mensajes de phishing
+  "datos/codigo-inseguro.js", // código inseguro
+  "datos/registros.js", // registros para leer
+  "datos/puertos.js", // puertos y protocolos
+  "datos/textos-largos.js", // textos largos en seis idiomas
   "js/textos.js", // textos en español e inglés
   "js/memoria.js", // guardar datos
   "js/comparar.js", // comparar lo escrito
@@ -36,6 +42,7 @@ const ARCHIVOS = [
   "js/numerosEnPalabras.js", // números con letras
   "js/aritmetica.js", // problemas de cálculo
   "js/consola.js", // lógica de la consola de los laboratorios
+  "js/cripto.js", // retos de criptografía y puertos
   "js/pantallas.js", // cambiar de pantalla
   "js/ajustes.js", // ajustes
   "js/sonidos.js", // efectos de sonido
@@ -55,11 +62,13 @@ const ARCHIVOS = [
   "js/modos/numeros.js", // números con letras
   "js/modos/verbos.js", // verbos irregulares
   "js/modos/falsos.js", // falsos amigos
+  "js/modos/textos.js", // textos largos y traducción
   "js/modos/abecedario.js", // modo abecedario
   "js/modos/matematicas.js", // modos de matemáticas
   "js/modos/calculos.js", // modos de cálculo (solo el resultado)
   "js/modos/codigo.js", // modos de código
   "js/modos/redes.js", // modos de comandos de redes
+  "js/modos/seguridad.js", // modos de ciberseguridad
   "js/modos/teclado.js", // lecciones de teclado
   "js/raton.js", // lecciones del ratón
   "js/laboratorio.js", // laboratorios de redes

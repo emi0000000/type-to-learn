@@ -27,7 +27,17 @@ function cargar(archivo, variable) {
 }
 
 // Laboratorios.
-const LABORATORIOS = cargar("laboratorios.js", "LABORATORIOS");
+const LABORATORIOS = (() => {
+  // Ventana compartida: los de seguridad se añaden a la misma lista.
+  const ventana = {};
+  // Los dos archivos, en orden.
+  for (const archivo of ["laboratorios.js", "laboratorios-seguridad.js"]) {
+    // Ejecutamos.
+    vm.runInNewContext(fs.readFileSync(path.join(__dirname, "..", "datos", archivo), "utf8"), { window: ventana });
+  }
+  // La lista entera.
+  return ventana.LABORATORIOS;
+})();
 // Comandos sueltos.
 const COMANDOS_RED = cargar("redes.js", "COMANDOS_RED");
 
@@ -153,10 +163,13 @@ test("consola: plantilla, Tab, ayuda y ping", () => {
 
 // Cada laboratorio tiene todos sus datos bien.
 test("laboratorios: formato", () => {
-  // Unos cuantos de cada nivel.
-  for (const nivel of [1, 2, 3]) {
-    // Al menos 5.
-    assert.ok(LABORATORIOS.filter((lab) => lab.nivel === nivel).length >= 5, `nivel ${nivel}`);
+  // Unos cuantos de cada nivel en cada sección.
+  for (const [seccion, minimo] of [["redes", 5], ["seguridad", 2]]) {
+    // Cada nivel.
+    for (const nivel of [1, 2, 3]) {
+      // Al menos el mínimo.
+      assert.ok(LABORATORIOS.filter((lab) => (lab.seccion || "redes") === seccion && lab.nivel === nivel).length >= minimo, `${seccion} nivel ${nivel}`);
+    }
   }
   // Nombres distintos.
   assert.equal(new Set(LABORATORIOS.map((lab) => lab.id)).size, LABORATORIOS.length);
@@ -253,8 +266,8 @@ test("laboratorios: cada comando de Cisco va en su modo", () => {
   const VALIDOS = {
     user: /^(enable|show |ping |traceroute |ssh |telnet )/,
     priv: /^(show |copy |write|disable|configure terminal|ping |traceroute |reload|clock )/,
-    config: /^(hostname |enable secret |no ip domain-lookup|service |banner |ip (route|default-gateway|domain-name|nat inside source|routing|ssh|dhcp excluded-address)\b|username |crypto key |access-list |spanning-tree vlan |end$|exit$|do )/,
-    "config-if": /^(description |ip (address|nat (inside|outside)$|access-group|helper-address)|no (shutdown|switchport)$|shutdown$|switchport |encapsulation |clock rate |channel-group |spanning-tree (portfast|bpduguard)|end$|exit$|do )/,
+    config: /^(hostname |enable secret |no ip (domain-lookup|http server|dhcp snooping information option)$|no cdp run$|service |banner |ip (route|default-gateway|domain-name|nat inside source|routing|ssh|dhcp excluded-address|dhcp snooping|arp inspection vlan)\b|username |crypto key |access-list |spanning-tree vlan |security passwords |login block-for |aaa |end$|exit$|do )/,
+    "config-if": /^(description |ip (address|nat (inside|outside)$|access-group|helper-address|dhcp snooping (trust|limit rate)|arp inspection trust)|no (shutdown|switchport)$|shutdown$|switchport |encapsulation |clock rate |channel-group |spanning-tree (portfast|bpduguard)|end$|exit$|do )/,
     "config-vlan": /^(name |end$|exit$)/,
     "config-line": /^(password |login|transport input |access-class |exec-timeout |logging synchronous|end$|exit$)/,
     "config-router": /^(router-id |network |passive-interface |default-information |end$|exit$)/,
